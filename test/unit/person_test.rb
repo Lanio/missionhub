@@ -227,18 +227,28 @@ class PersonTest < ActiveSupport::TestCase
 
   end
 
-  context "collect_all_child_organizations function" do
+  context "all_organization_and_children function" do
     should "return child orgs" do
       @person = Factory(:person)
-      @org = Factory(:organization, id: 1)
-      @org1 = Factory(:organization, id: 2, ancestry: "1")
-      @org2 = Factory(:organization, id: 3, ancestry: "1")
-      @org3 = Factory(:organization, id: 4, ancestry: "1/2")
+      @org1 = Factory(:organization, id: 1)
+      @org2 = Factory(:organization, id: 2, ancestry: "1")
+      @org3 = Factory(:organization, id: 3, ancestry: "1")
+      @org4 = Factory(:organization, id: 4, ancestry: "1/2")
+      @org5 = Factory(:organization, id: 5)
+      @org6 = Factory(:organization, id: 6, ancestry: "5")
+      
+      @org_role1 = Factory(:organizational_role, person: @person, organization: @org1, role: Role.admin)
 
-      results = @person.collect_all_child_organizations(@org)
-      assert(results.include?(@org1), "Organization1 should be included")
+      results = @person.all_organization_and_children
       assert(results.include?(@org2), "Organization2 should be included")
       assert(results.include?(@org3), "Organization3 should be included")
+      assert(results.include?(@org4), "Organization4 should be included")
+      assert(!results.include?(@org5), "Organization5 should not be included")
+      assert(!results.include?(@org6), "Organization6 should not be included")
+      
+      @org_role1 = Factory(:organizational_role, person: @person, organization: @org6, role: Role.leader)
+      results = @person.all_organization_and_children
+      assert(results.include?(@org6), "Organization6 should now be included")
     end
   end
 

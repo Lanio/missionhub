@@ -409,25 +409,19 @@ class Person < ActiveRecord::Base
   end
 
   def all_organization_and_children
-    orgs = Array.new
-    organizations.each do |org|
-      orgs << org
-      child_org = collect_all_child_organizations(org)
-      orgs += child_org
+    # get all of the user's roles
+    org_roles = OrganizationalRole.includes(:organization).where(person_id: id, role_id: Role.leader_ids)
+    # find the organization for each role
+    root_orgs = Organization.find(org_roles.collect{|x| x.organization_id})
+    
+    # create a set of all of the organization the user has permission to access
+    orgs  = Set.new
+    root_orgs.each do |org|
+      orgs.add(org.id) # include the direct path and current org
+      orgs.merge(org.descendant_ids) # include all of the descendants
     end
-    Organization.where(id: orgs.collect(&:id))
-  end
-
-  def collect_all_child_organizations(org)
-    child_orgs = Array.new
-    if org.children.present?
-      org.children.each do |child_org|
-        child_orgs << child_org
-        other_child_org = collect_all_child_organizations(child_org)
-        child_orgs += other_child_org
-      end
-    end
-    child_orgs
+    
+    Organization.where('organizations.id' => orgs.to_a)
   end
 
   def phone_number
