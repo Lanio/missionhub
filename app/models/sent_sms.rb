@@ -68,19 +68,17 @@ class SentSms < ActiveRecord::Base
       request = "#{url}?login=#{login}&password=#{password}"
       request += "&msgid=#{msgid}&expediteur=#{expediteur}&msg=#{msg}&numero=#{numero}"
       request += "&flash=0&unicode=0&binaire=0"
-
       begin
         response = open(request).read
         response_hash = Hash.from_xml(response)
         response_code = response_hash['REPONSE']['statut'].to_i
-        self.update_attribute('reports', response_hash)
         if response_code == 0
-          puts "Success (#{response_code})"
+          self.update_attribute('reports', {"status" => "Message Sent", "response_string" => response_hash})
         else
-          puts "Failed (#{response_code})"
+          self.update_attribute('reports', {"status" => "Sending Failed", "response_string" => response_hash})
         end
       rescue
-        puts "Connection Failed"
+        self.update_attribute('reports', {"status" => "Connection Failed"})
       end
     end
   end
