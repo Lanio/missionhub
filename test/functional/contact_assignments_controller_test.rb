@@ -26,6 +26,20 @@ class ContactAssignmentsControllerTest < ActionController::TestCase
       assert_equal "uncontacted", OrganizationalRole.where(person_id: contact2.id, organization_id: @org.id, role_id: Role::CONTACT_ID).first.followup_status
     end
     
+    should "not assign contact to itself" do
+      contact1 = Factory(:person)
+      contact2 = Factory(:person)
+      @org.add_contact(contact1)
+      @org.add_contact(contact2)
+      
+      assert_equal 0, ContactAssignment.count
+      xhr :post, :create, { :assign_to => contact1.id, :ids => [contact1,contact2], :org_id => @org.id }
+      assert_equal 1, ContactAssignment.count
+      assert_equal contact2.id, ContactAssignment.first.person_id
+    end
+    
+    
+    
     should "no new ContactAssignment created when rescued from RecordNotUnique error" do
 =begin create must be refactored so that on every creating of ContactAssignments, destroying initially of all the assignments won't be required'
       contact1 = Factory(:person)

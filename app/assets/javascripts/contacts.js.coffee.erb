@@ -470,6 +470,9 @@ $ ->
         $(this).show()
       else
         $(this).hide()
+    if $('.contact_checkbox:checked').size() == 1
+      $('.contact_checkbox:checked').each ->
+        $("#assign_search ul li[data-id=" + $(this).attr('data-id') + "]").hide()
 
   $('#transfer_to_org .org_search_name').observe_field 0.5, ->
     name = $(this).val()
@@ -514,6 +517,9 @@ $ ->
     $('#assign_search .assign_button').hide()
     $('#assign_search ul li').each ->
       $(this).show()
+    if $('.contact_checkbox:checked').size() == 1
+      $('.contact_checkbox:checked').each ->
+        $("#assign_search ul li[data-id=" + $(this).attr('data-id') + "]").hide()
 
   $('#assign_to_org').live 'click', ->
     $('#assign_search .leader_search').hide()
