@@ -3,9 +3,9 @@ class Chart < ActiveRecord::Base
 
   belongs_to :person
   has_many :chart_organizations
-  
+
   validates_presence_of :person_id, :chart_type
-  
+
   def update_movements(orgs)
     corg_ids = chart_organizations.all.collect(&:organization_id)
     orgs.each do |org|
@@ -14,14 +14,14 @@ class Chart < ActiveRecord::Base
       end
     end
   end
-  
+
   def update_movements_displayed(selections)
     chart_organizations.each do |movement|
       movement.snapshot_display = selections.include?(movement.organization_id.to_s)
       movement.save
     end
   end
-  
+
   def self.evang_range_options
     {
       "Past Week" => 0,
@@ -33,7 +33,7 @@ class Chart < ActiveRecord::Base
       "Past 3 Years" => 36
     }
   end
-  
+
   def self.laborers_range_options
     {
       "Today" => 0,
