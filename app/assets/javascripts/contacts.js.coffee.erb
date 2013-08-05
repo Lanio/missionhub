@@ -949,6 +949,7 @@ $.fn.assignTo = (leader, skip_remote) ->
     if assign_to == "do_not_contact" || ($.params.assigned_to != leader_name)
       unless skip_remote
         $.rails.handleRemote($('#new_contact_assignment'))
+
   $('#assign_to').val('')
 
 $.mh.saveContact = (add_more) ->
