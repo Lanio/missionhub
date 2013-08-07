@@ -25,6 +25,21 @@ class PersonTest < ActiveSupport::TestCase
     end
   end
 
+  context "clean_permissions_for_org_id method" do
+    setup do
+      @person = Factory(:person)
+      @org = Factory(:organization, id: 1)
+      @other_org = Factory(:organization, id: 2)
+    end
+    should "limit a person permission to 1" do
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.user)
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.no_permissions)
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.admin)
+      @person.clean_permissions_for_org_id(@org.id)
+      raise @person.organizational_permissions.inspect
+    end
+  end
+
   context "get people functions" do
     should "return people that are updated within the specified date_rage" do
       @person = Factory(:person, date_attributes_updated: "2012-07-25".to_date)

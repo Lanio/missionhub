@@ -491,9 +491,9 @@ class Organization < ActiveRecord::Base
   end
 
   def add_label_to_person(person, label_id, added_by_id = nil)
-    person_id = person.is_a?(Person) ? person.id : person
+    person = person.is_a?(Person) ? person : Person.find(person)
     Retryable.retryable :times => 5 do
-      label = OrganizationalLabel.where(person_id: person_id, organization_id: id, label_id: label_id).first_or_create!(added_by_id: added_by_id)
+      label = OrganizationalLabel.where(person_id: person.id, organization_id: id, label_id: label_id).first_or_create!(added_by_id: added_by_id)
       label.update_attributes(removed_date: nil)
       label
     end
