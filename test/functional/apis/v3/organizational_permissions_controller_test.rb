@@ -106,5 +106,17 @@ class Apis::V3::OrganizationalPermissionsControllerTest < ActionController::Test
     end
   end
 
+
+  context '.bulk_archive' do
+    should 'archive bulk organizational_permissions' do
+      get :bulk_archive, filters: {ids: "#{@person1.id},#{@person2.id}"}, permission: "#{@permission1.id}", secret: @client.secret, order: 'created_at'
+      assert_response :success
+      json = JSON.parse(response.body)
+      assert_equal 2, json['people'].count, json.inspect
+      assert !@person1.permissions.include?(@permission1), @person1.permissions.inspect
+      assert !@person2.permissions.include?(@permission1), @person2.permissions.inspect
+    end
+  end
+
 end
 

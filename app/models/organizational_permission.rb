@@ -7,7 +7,8 @@ class OrganizationalPermission < ActiveRecord::Base
   belongs_to :person, :touch => true
   belongs_to :permission
   belongs_to :organization
-  scope :active, where("organizational_permissions.archive_date is NULL")
+  default_scope where("organizational_permissions.deleted_at is NULL")
+  scope :active, where("organizational_permissions.archive_date is NULL AND organizational_permissions.deleted_at is NULL")
   scope :contact, where("permission_id = #{Permission::NO_PERMISSIONS_ID}")
   # scope :not_dnc, where("followup_status <> 'do_not_contact' AND permission_id = #{Permission::NO_PERMISSIONS_ID}")
   scope :dnc, where("followup_status = 'do_not_contact' AND permission_id = #{Permission::NO_PERMISSIONS_ID}")

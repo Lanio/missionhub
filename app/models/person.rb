@@ -42,7 +42,7 @@ class Person < ActiveRecord::Base
   has_many :rejoicables, inverse_of: :person
 
   has_many :organization_memberships, inverse_of: :person
-  has_many :organizational_permissions, conditions: {archive_date: nil}
+  has_many :organizational_permissions, conditions: {archive_date: nil, deleted_at: nil}
   has_one :contact_permission, class_name: 'OrganizationalPermission'
   has_many :permissions, through: :organizational_permissions
   has_many :organizational_permissions_including_archived, class_name: "OrganizationalPermission", foreign_key: "person_id"
@@ -110,7 +110,7 @@ class Person < ActiveRecord::Base
   scope :find_by_date_created_before_date_given, lambda { |before_date| {
     :select => "people.*",
     :joins => "LEFT JOIN organizational_permissions AS ors ON people.id = ors.person_id",
-    :conditions => ["ors.permission_id = ? AND ors.created_at <= ? AND ors.archive_date IS NULL", Permission::NO_PERMISSIONS_ID, before_date]
+    :conditions => ["ors.permission_id = ? AND ors.created_at <= ? AND (ors.archive_date IS NULL AND ors.deleted_at IS NULL)", Permission::NO_PERMISSIONS_ID, before_date]
   }}
 
   scope :order_by_highest_default_permission, lambda { |order, tables_already_joined = false| {
@@ -332,7 +332,7 @@ class Person < ActiveRecord::Base
   end
 
   scope :get_archived, lambda { |org_id| {
-    :conditions => "organizational_permissions.archive_date IS NOT NULL",
+    :conditions => "(organizational_permissions.archive_date IS NOT NULL AND organizational_permissions.deleted_at IS NULL)",
     :group => "people.id",
     :having => "COUNT(*) = (SELECT COUNT(*) FROM people AS mpp JOIN organizational_permissions orss ON mpp.id = orss.person_id WHERE mpp.id = people.id AND orss.organization_id = #{org_id})"
   } }
@@ -366,7 +366,7 @@ class Person < ActiveRecord::Base
   end
 
   scope :get_archived_not_included, lambda { {
-    :conditions => "organizational_permissions.archive_date IS NULL",
+    :conditions => "(organizational_permissions.archive_date IS NULL AND organizational_permissions.deleted_at IS NULL)",
     :group => "people.id"
   } }
 
@@ -412,7 +412,7 @@ class Person < ActiveRecord::Base
 
   def is_archived?(org)
     org_permission = organizational_permission_for_org(org)
-    return org_permission.present? && org_permission.archive_date.present?
+    return org_permission.present? && org_permission.archive_date.present? && org_permission.deleted_at.nil?
   end
 
   def assigned_tos_by_org(org)
@@ -512,7 +512,7 @@ class Person < ActiveRecord::Base
 
   def permissions_by_org_id(org_id)
     unless @permissions_by_org_id
-      @permissions_by_org_id = Hash[OrganizationalPermission.connection.select_all("select organization_id, group_concat(permission_id) as permission_ids from organizational_permissions where person_id = #{id} and archive_date is NULL group by organization_id").collect { |row| [row['organization_id'], row['permission_ids'].split(',').map(&:to_i) ]}]
+      @permissions_by_org_id = Hash[OrganizationalPermission.connection.select_all("select organization_id, group_concat(permission_id) as permission_ids from organizational_permissions where person_id = #{id} and (archive_date is NULL and deleted_at is NULL) group by organization_id").collect { |row| [row['organization_id'], row['permission_ids'].split(',').map(&:to_i) ]}]
     end
     @permissions_by_org_id[org_id]
   end
@@ -548,11 +548,11 @@ class Person < ActiveRecord::Base
   end
 
   def organizational_permissions_for_org(org)
-    organizational_permissions.where(organization_id: org.id, archive_date: nil)
+    organizational_permissions.where(organization_id: org.id, archive_date: nil, deleted_at: nil)
   end
 
   def organizational_permission_for_org(org)
-    organizational_permissions.where(organization_id: org.id, archive_date: nil).try(:first)
+    organizational_permissions.where(organization_id: org.id, archive_date: nil, deleted_at: nil).try(:first)
   end
 
   def organizational_labels_for_org(org)
@@ -1241,15 +1241,15 @@ class Person < ActiveRecord::Base
   end
 
   def assigned_organizational_permissions(organization_id)
-    permissions.where('organizational_permissions.organization_id' => organization_id, 'organizational_permissions.archive_date' => nil)
+    permissions.where('organizational_permissions.organization_id' => organization_id, 'organizational_permissions.archive_date' => nil, 'organizational_permissions.deleted_at' => nil)
   end
 
   def assigned_organizational_permissions_including_archived(organization_id)
-    permissions.where('organizational_permissions.organization_id = ? AND organizational_permissions.archive_date IS NOT NULL', organization_id)
+    permissions.where('organizational_permissions.organization_id = ? AND organizational_permissions.archive_date IS NOT NULL AND organizational_permissions.deleted_at IS NULL', organization_id)
   end
 
   def is_permission_archived?(org_id, permission_id)
-    return false if organizational_permissions_including_archived.where(organization_id: org_id, permission_id: permission_id).first.archive_date.blank?
+    return false if organizational_permissions_including_archived.where(organization_id: org_id, permission_id: permission_id, deleted_at: nil).first.archive_date.blank?
     true
   end
 
