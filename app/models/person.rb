@@ -1019,6 +1019,15 @@ class Person < ActiveRecord::Base
         end
       end
 
+      # Organizational Labels
+      # other.organizational_labels.each do |label|
+      #   begin
+      #     label.update_attribute(:person_id, id) unless label.frozen?
+      #   rescue ActiveRecord::RecordNotUnique
+      #     label.destroy
+      #   end
+      # end
+
       # Organizational Permissions
       organizational_permissions.each do |pn|
         opn = other.organizational_permissions.detect {|oa| oa.organization_id == pn.organization_id}
@@ -1030,6 +1039,7 @@ class Person < ActiveRecord::Base
         rescue ActiveRecord::RecordNotUnique
           permission.destroy
         end
+        clean_permissions_for_org_id(permission.organization_id)
       end
 
       # Answer Sheets

@@ -483,8 +483,9 @@ class Organization < ActiveRecord::Base
       permission.update_attributes(archive_date: nil)
 
       # Assure single permission per organization
-      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id)
-      org_permissions.where("id <> ?", permission.id).destroy_all
+      permission = Person.find(person_id).clean_permissions_for_org_id(id)
+      # org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id)
+      # org_permissions.where("id <> ?", permission.id).destroy_all
 
       return permission
     end

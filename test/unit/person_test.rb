@@ -17,26 +17,51 @@ class PersonTest < ActiveSupport::TestCase
   should have_many(:assigned_tos)
   should have_many(:assigned_contacts)
 
-  context "create a person from params" do
-    should "not fail if there's no phone number when adding a person who already exists" do
-      Factory(:user_with_auxs, email: 'test@uscm.org')
-      person = Person.new_from_params({"email_address" => {"email" => "test@uscm.org"},"first_name" => "Test","last_name" => "Test","phone_number" => {"number" => ""}})
-      assert_nil(person.phone_numbers.first)
-    end
-  end
-
   context "clean_permissions_for_org_id method" do
     setup do
       @person = Factory(:person)
       @org = Factory(:organization, id: 1)
       @other_org = Factory(:organization, id: 2)
     end
-    should "limit a person permission to 1" do
+    should "limit a person to a single permission" do
       Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.user)
       Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.no_permissions)
       Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.admin)
+      assert_equal 3, @person.organizational_permissions.where(organization_id: @org.id).count
       @person.clean_permissions_for_org_id(@org.id)
-      raise @person.organizational_permissions.inspect
+      assert_equal 1, @person.organizational_permissions.where(organization_id: @org.id).count
+    end
+    should "prioritize admin permission" do
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.user)
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.no_permissions)
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.admin)
+      assert_equal 3, @person.organizational_permissions.where(organization_id: @org.id).count
+      @person.clean_permissions_for_org_id(@org.id)
+      assert_equal 1, @person.organizational_permissions.where(organization_id: @org.id).count
+      assert_equal Permission.admin, @person.permission_for_org_id(@org.id)
+    end
+    should "prioritize user permission" do
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.user)
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.no_permissions)
+      assert_equal 2, @person.organizational_permissions.where(organization_id: @org.id).count
+      @person.clean_permissions_for_org_id(@org.id)
+      assert_equal 1, @person.organizational_permissions.where(organization_id: @org.id).count
+      assert_equal Permission.user, @person.permission_for_org_id(@org.id)
+    end
+    should "leave the contact permission" do
+      Factory(:organizational_permission, person: @person, organization: @org, permission: Permission.no_permissions)
+      assert_equal 1, @person.organizational_permissions.where(organization_id: @org.id).count
+      @person.clean_permissions_for_org_id(@org.id)
+      assert_equal 1, @person.organizational_permissions.where(organization_id: @org.id).count
+      assert_equal Permission.no_permissions, @person.permission_for_org_id(@org.id)
+    end
+  end
+
+  context "create a person from params" do
+    should "not fail if there's no phone number when adding a person who already exists" do
+      Factory(:user_with_auxs, email: 'test@uscm.org')
+      person = Person.new_from_params({"email_address" => {"email" => "test@uscm.org"},"first_name" => "Test","last_name" => "Test","phone_number" => {"number" => ""}})
+      assert_nil(person.phone_numbers.first)
     end
   end
 

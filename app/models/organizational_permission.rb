@@ -37,18 +37,22 @@ class OrganizationalPermission < ActiveRecord::Base
     # We can have multiple permissions, but if we're a contact that should be the only permission
     OrganizationalPermission.transaction do
       case
-      when permission_id == Permission::NO_PERMISSIONS_ID && other.permission_id != Permission::NO_PERMISSIONS_ID
+      when permission_id == other.permission_id
+        # Both permissions are the same, and we only need one contact permission
+        MergeAudit.create!(mergeable: self, merge_looser: other)
+        other.destroy
+      when permission_id == Permission::ADMIN_ID && other.permission_id != Permission::ADMIN_ID
+        MergeAudit.create!(mergeable: self, merge_looser: other)
+        other.destroy
+      when permission_id != Permission::ADMIN_ID && other.permission_id == Permission::ADMIN_ID
         MergeAudit.create!(mergeable: other, merge_looser: self)
         self.destroy
-      when other.permission_id == Permission::NO_PERMISSIONS_ID && permission_id != Permission::NO_PERMISSIONS_ID
+      when permission_id == Permission::USER_ID && other.permission_id != Permission::USER_ID
         MergeAudit.create!(mergeable: self, merge_looser: other)
         other.destroy
-      when other.permission_id == Permission::NO_PERMISSIONS_ID && permission_id == Permission::NO_PERMISSIONS_ID
-        # Both permissions are contact, and we only need one contact permission
-        MergeAudit.create!(mergeable: self, merge_looser: other)
-        other.destroy
-      else
-        # keep both permissions
+      when permission_id != Permission::USER_ID && other.permission_id == Permission::USER_ID
+        MergeAudit.create!(mergeable: other, merge_looser: self)
+        self.destroy
       end
     end
   end

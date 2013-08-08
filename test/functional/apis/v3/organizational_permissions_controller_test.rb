@@ -71,26 +71,40 @@ class Apis::V3::OrganizationalPermissionsControllerTest < ActionController::Test
 
 
   context '.bulk' do
+    setup do
+      @contact1 = Factory(:person)
+      @org.add_contact(@contact1)
+      @contact2 = Factory(:person)
+      @org.add_contact(@contact2)
+      @admin_permission = Permission.find_by_i18n("admin")
+    end
     should 'create and destroy bulk organizational_permissions' do
-      get :bulk, filters: {ids: "#{@person1.id},#{@person2.id}"}, add_permission: "#{@permission1.id}", remove_permission: "#{@permission_contact.id}", secret: @client.secret, order: 'created_at'
+      get :bulk, filters: {ids: "#{@contact1.id},#{@contact2.id}"}, add_permission: "#{@admin_permission.id}", remove_permission: "#{@permission_contact.id}", secret: @client.secret, order: 'created_at'
       assert_response :success
       json = JSON.parse(response.body)
       assert_equal 2, json['people'].count, json.inspect
-      assert_equal @permission1.id, @person1.permissions.first.id
-      assert_equal @permission1.id, @person2.permissions.first.id
-      assert !@person1.permissions.include?(@permission_contact), @person1.permissions.inspect
-      assert !@person2.permissions.include?(@permission_contact), @person2.permissions.inspect
+      assert_equal @admin_permission.id, @contact1.permissions.first.id
+      assert_equal @admin_permission.id, @contact2.permissions.first.id
+      assert !@contact1.permissions.include?(@permission_contact), @contact1.permissions.inspect
+      assert !@contact2.permissions.include?(@permission_contact), @contact2.permissions.inspect
     end
   end
 
   context '.bulk_create' do
+    setup do
+      @contact1 = Factory(:person)
+      @org.add_contact(@contact1)
+      @contact2 = Factory(:person)
+      @org.add_contact(@contact2)
+      @admin_permission = Permission.find_by_i18n("admin")
+    end
     should 'create bulk organizational_permissions' do
-      get :bulk_create, filters: {ids: "#{@person1.id},#{@person2.id}"}, permission: "#{@permission1.id}", secret: @client.secret, order: 'created_at'
+      get :bulk_create, filters: {ids: "#{@contact1.id},#{@contact2.id}"}, permission: "#{@admin_permission.id}", secret: @client.secret, order: 'created_at'
       assert_response :success
       json = JSON.parse(response.body)
       assert_equal 2, json['people'].count, json.inspect
-      assert_equal @permission1.id, @person1.permissions.first.id
-      assert_equal @permission1.id, @person2.permissions.first.id
+      assert_equal @admin_permission.id, @contact1.permissions.first.id
+      assert_equal @admin_permission.id, @contact2.permissions.first.id
     end
   end
 
