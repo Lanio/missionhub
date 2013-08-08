@@ -485,17 +485,18 @@ class Organization < ActiveRecord::Base
       permission.update_attributes(archive_date: nil, deleted_at: nil)
 
       # Assure single permission per organization
-      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id)
-      org_permissions.where("id <> ?", permission.id).destroy_all
+      permission = Person.find(person_id).clean_permissions_for_org_id(id)
+      # org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id)
+      # org_permissions.where("id <> ?", permission.id).destroy_all
 
       return permission
     end
   end
 
   def add_label_to_person(person, label_id, added_by_id = nil)
-    person_id = person.is_a?(Person) ? person.id : person
+    person = person.is_a?(Person) ? person : Person.find(person)
     Retryable.retryable :times => 5 do
-      label = OrganizationalLabel.where(person_id: person_id, organization_id: id, label_id: label_id).first_or_create!(added_by_id: added_by_id)
+      label = OrganizationalLabel.where(person_id: person.id, organization_id: id, label_id: label_id).first_or_create!(added_by_id: added_by_id)
       label.update_attributes(removed_date: nil)
       label
     end

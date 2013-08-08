@@ -220,6 +220,33 @@ class Person < ActiveRecord::Base
   scope :faculty, -> { non_staff.where(faculty: true) }
   scope :students, -> { non_staff.where(faculty: false) }
 
+  def clean_permissions_for_org_id(org_id)
+    org_permissions_with_archived = organizational_permissions.where("organizational_permissions.organization_id = ?", org_id)
+    org_permissions = organizational_permissions.where("organizational_permissions.organization_id = ? AND organizational_permissions.archive_date IS NULL AND organizational_permissions.deleted_at IS NULL", org_id)
+    return org_permissions.first.try(:permission) unless org_permissions.count > 1
+
+    admin = org_permissions.where("organizational_permissions.permission_id = ?", Permission::ADMIN_ID)
+    if admin.present?
+      org_permission = admin.first
+      org_permissions_with_archived.where("organizational_permissions.id <> ?", org_permission.id).destroy_all
+      return org_permission.try(:permission)
+    end
+
+    user = org_permissions.where("organizational_permissions.permission_id = ?", Permission::USER_ID)
+    if user.present?
+      org_permission = user.first
+      org_permissions_with_archived.where("organizational_permissions.id <> ?", org_permission.id).destroy_all
+      return org_permission.try(:permission)
+    end
+
+    contact = org_permissions.where("organizational_permissions.permission_id = ?", Permission::NO_PERMISSIONS_ID)
+    if contact.present?
+      org_permission = contact.first
+      org_permissions_with_archived.where("organizational_permissions.id <> ?", org_permission.id).destroy_all
+      return org_permission.try(:permission)
+    end
+  end
+
   def filtered_interactions(viewer, current_org)
     q = Array.new
 
@@ -992,6 +1019,15 @@ class Person < ActiveRecord::Base
         end
       end
 
+      # Organizational Labels
+      # other.organizational_labels.each do |label|
+      #   begin
+      #     label.update_attribute(:person_id, id) unless label.frozen?
+      #   rescue ActiveRecord::RecordNotUnique
+      #     label.destroy
+      #   end
+      # end
+
       # Organizational Permissions
       organizational_permissions.each do |pn|
         opn = other.organizational_permissions.detect {|oa| oa.organization_id == pn.organization_id}
@@ -1003,6 +1039,7 @@ class Person < ActiveRecord::Base
         rescue ActiveRecord::RecordNotUnique
           permission.destroy
         end
+        clean_permissions_for_org_id(permission.organization_id)
       end
 
       # Answer Sheets
