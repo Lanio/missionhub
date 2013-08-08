@@ -488,6 +488,7 @@ ActiveRecord::Schema.define(:version => 20130806154625) do
     t.string   "reply_to"
     t.string   "subject"
     t.text     "message"
+    t.string   "status"
     t.string   "sent_via"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
