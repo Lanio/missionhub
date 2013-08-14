@@ -8,9 +8,6 @@
         <div id="snapshot_radio_button_custom">
           <%= radio_button_tag 'all', 'false', !@chart.snapshot_all_movements, :id => "snap_all_false" %> Custom
         </div>
-        <div id="snapshot_button_uncheck_all">
-          <%= radio_button_tag 'all', 'none', false, :id => "snap_all_none" %> None
-        </div>
       </div>
       <div id="snapshot_movements">
         <% @movements.each do |movement| %>
@@ -23,6 +20,7 @@
     </div>
     <div id="snapshot_movements_submit">
       <%= submit_tag 'Update Chart', class: 'large_gray' %>
+      <%= button_tag 'Uncheck All', class: 'large_gray', id: 'uncheck_all_movements' %>
     </div>
   <% end %>
 </div>
