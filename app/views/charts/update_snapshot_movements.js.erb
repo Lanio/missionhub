@@ -2,4 +2,13 @@ $('div#snap_spinner').hide()
 if(<%= @selected_movements.present? || @chart.snapshot_all_movements %>){
   $('div#snap_container1, div#snap_container2, div#snap_container3').show()
   $("#snap_chart").html("<%= escape_javascript(render partial: 'snapshot_js') %>")
+//   if(<%= @chart.snapshot_all_movements %>){
+//     $('input.snap_movement').attr('data-checked','true')
+//   }else if(<%= @selected_movements.present? && @selected_movements.count() > 0 %>){
+//     $('input.snap_movement').attr('data-checked','false')
+//     <% selector = @selected_movements.collect{|id| "input.snap_movement[value=#{id}]"}.join(", ") if @selected_movements.present? && @selected_movements.count() > 0%>
+//     $('<%= selector %>').attr('data-checked','true')
+//   }
+// }else{
+//   $('input.snap_movement').attr('data-checked','false')
 }
