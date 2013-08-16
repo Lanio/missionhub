@@ -73,6 +73,14 @@
       </ul>
     </li>
 	</ul>
+  <% if (params[:do_search] == "1" || params[:search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
+    <ul class="button_bar">
+      <li class="action_lightblue">
+        <%= link_to("Save Search", "", id: 'search_people_filters_save_search_button') %>
+      </li>
+    </ul>
+  <% end %>
+
 </div>
 
 <div id="ac_pagination">
