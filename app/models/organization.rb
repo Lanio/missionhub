@@ -481,8 +481,14 @@ class Organization < ActiveRecord::Base
     person_id = person.is_a?(Person) ? person.id : person
 
     Retryable.retryable :times => 5 do
-      permission = OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_id).first_or_create!(added_by_id: added_by_id)
-      permission.update_attributes(archive_date: nil, deleted_at: nil)
+      current_permission = OrganizationalPermission.where(person_id: person_id, organization_id: id).first
+      if current_permission.present? && current_permission.permission_id == permission_id
+        permission = current_permission
+        permission.update_attributes(archive_date: nil, deleted_at: nil)
+      else
+        permission = OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_id).first_or_create(added_by_id: added_by_id)
+        permission.update_attributes(archive_date: nil, deleted_at: nil)
+      end
 
       # Assure single permission per organization
       permission = Person.find(person_id).clean_permissions_for_org_id(id)
