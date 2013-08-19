@@ -8,8 +8,7 @@ $(document).ready(function() {
   });
   $('input#snap_all_true').bind('click', function () {
     $('input.snap_movement').prop({
-      disabled: true,
-      checked: true
+      disabled: true
     });
   });
   $('input#snap_all_false').bind('click', function () {

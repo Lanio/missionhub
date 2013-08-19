@@ -12,8 +12,8 @@
       <div id="snapshot_movements">
         <% @movements.each do |movement| %>
           <div class="movement_line">
-            <% checked = @chart.snapshot_all_movements || @chart.chart_organizations.where("organization_id = ?", movement.id).first.snapshot_display %>
-            <%= check_box_tag "movements[]", movement.id, checked, disabled: @chart.snapshot_all_movements, class: 'snap_movement', 'data-checked' => checked %>
+            <% checked = @chart.chart_organizations.where("organization_id = ?", movement.id).first.snapshot_display %>
+            <%= check_box_tag "movements[]", movement.id, checked, disabled: @chart.snapshot_all_movements, class: 'snap_movement' %>
             <span><%= movement.name %></span>
           </div>
         <% end %>
