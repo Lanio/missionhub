@@ -6,7 +6,7 @@ class InteractionsController < ApplicationController
     groups_for_assign
     labels_for_assign
 
-    @person = current_person.id == params[:id].to_i ? current_person : current_organization.people.where(id: params[:id]).first
+    @person = current_person.id == params[:id].to_i ? current_person : current_organization.all_people.where(id: params[:id]).first
     if @person.present?
       @interaction = Interaction.new
       @completed_answer_sheets = @person.completed_answer_sheets(current_organization).where("completed_at IS NOT NULL").order('completed_at DESC')
@@ -130,7 +130,7 @@ class InteractionsController < ApplicationController
   end
 
   def change_followup_status
-    @person = current_organization.people.where(id: params[:person_id]).try(:first)
+    @person = current_organization.all_people.where(id: params[:person_id]).try(:first)
     return false unless @person.present?
     @new_status = params[:status]
     @contact_permission = @person.contact_permission_for_org(current_organization)
@@ -157,7 +157,7 @@ class InteractionsController < ApplicationController
   def search_initiators
     @person = Person.find(params[:person_id])
     @current_person = current_person
-    @people = current_organization.people.where("first_name LIKE :key OR last_name LIKE :key", key: "%#{params[:keyword].strip}%")
+    @people = current_organization.all_people.where("first_name LIKE :key OR last_name LIKE :key", key: "%#{params[:keyword].strip}%")
     @people = @people.where("people.id NOT IN (?)", params[:except].split(',')) if params[:except].present?
     # @people = @people.limit(5)
   end
@@ -165,7 +165,7 @@ class InteractionsController < ApplicationController
   def search_receivers
     @person = Person.find(params[:person_id])
     @current_person = current_person
-    @people = current_organization.people.where("first_name LIKE :key OR last_name LIKE :key", key: "%#{params[:keyword].strip}%")
+    @people = current_organization.all_people.where("first_name LIKE :key OR last_name LIKE :key", key: "%#{params[:keyword].strip}%")
     @people = @people.where("people.id NOT IN (?)", params[:except].split(',')) if params[:except].present?
     # @people = @people.limit(5)
   end
