@@ -138,7 +138,7 @@ class InteractionsController < ApplicationController
   end
 
   def reset_edit_form
-    @person = current_organization.all_people.where(id: params[:person_id]).try(:first)
+    @person = current_organization.people.where(id: params[:person_id]).try(:first)
     if @person.present?
       @assigned_tos = @person.assigned_tos.where('contact_assignments.organization_id' => current_organization.id)
     end
