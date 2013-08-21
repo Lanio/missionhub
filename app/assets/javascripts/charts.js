@@ -15,13 +15,6 @@ $(document).ready(function() {
     $('input.snap_movement').prop({
       disabled: false
     });
-    $('input.snap_movement').each(function(){
-      if($(this).attr('data-checked') == "true"){
-        $(this).prop('checked', true);
-      }else{
-        $(this).prop('checked', false)
-      }
-    })
   });
 
   $('div#snapshot_movements_submit input.large_gray').bind('click', function () {
