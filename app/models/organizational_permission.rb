@@ -9,10 +9,10 @@ class OrganizationalPermission < ActiveRecord::Base
   belongs_to :organization
   default_scope where("organizational_permissions.deleted_at is NULL")
   scope :active, where("organizational_permissions.archive_date is NULL AND organizational_permissions.deleted_at is NULL")
-  scope :contact, where("permission_id = #{Permission::NO_PERMISSIONS_ID}")
+  scope :contact, where("permission_id = #{Permission::NO_PERMISSIONS_ID} AND organizational_permissions.deleted_at is NULL")
   # scope :not_dnc, where("followup_status <> 'do_not_contact' AND permission_id = #{Permission::NO_PERMISSIONS_ID}")
-  scope :dnc, where("followup_status = 'do_not_contact' AND permission_id = #{Permission::NO_PERMISSIONS_ID}")
-  scope :completed, where("followup_status = 'completed' AND permission_id = #{Permission::NO_PERMISSIONS_ID}")
+  scope :dnc, where("followup_status = 'do_not_contact' AND permission_id = #{Permission::NO_PERMISSIONS_ID} AND organizational_permissions.deleted_at is NULL")
+  scope :completed, where("followup_status = 'completed' AND permission_id = #{Permission::NO_PERMISSIONS_ID} AND organizational_permissions.deleted_at is NULL")
   # scope :uncontacted, where("followup_status = 'uncontacted' AND permission_id = #{Permission::NO_PERMISSIONS_ID}")
   before_create :set_start_date, :set_contact_uncontacted
   before_create :notify_new_leader, :if => :permission_is_leader_or_admin

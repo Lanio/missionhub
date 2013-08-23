@@ -686,7 +686,7 @@ class PeopleController < ApplicationController
       @all_people = a + @q.result(distinct: false).order_alphabetically_by_non_default_permission(order, permission_tables_joint)
     end
 
-    @all_people = @all_people.where(id: current_organization.people.archived.where("organizational_permissions.archive_date > ? AND organizational_permissions.archive_date < ?", params[:archived_date], (params[:archived_date].to_date+1).strftime("%Y-%m-%d")).collect{|x| x.id}) unless params[:archived_date].blank?
+    @all_people = @all_people.where(id: current_organization.people.archived.where("organizational_permissions.archive_date > ? AND organizational_permissions.archive_date < ? AND organizational_permissions.deleted_at IS NULL", params[:archived_date], (params[:archived_date].to_date+1).strftime("%Y-%m-%d")).collect{|x| x.id}) unless params[:archived_date].blank?
     @people = Kaminari.paginate_array(@all_people).page(params[:page])
   end
 
