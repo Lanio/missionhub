@@ -8,8 +8,8 @@ class EmailAddress < ActiveRecord::Base
   before_validation :set_primary, on: :create
   after_commit :ensure_only_one_primary
   after_destroy :set_new_primary
-  validates_uniqueness_of :email, on: :create, message: "already taken"
-  validates_uniqueness_of :email, on: :update, message: "already taken"
+  #validates_uniqueness_of :email, on: :create, message: "already taken"
+  #validates_uniqueness_of :email, on: :update, message: "already taken"
   strip_attributes :only => :email
 
   def to_s
@@ -54,11 +54,19 @@ class EmailAddress < ActiveRecord::Base
   end
 
   def ensure_only_one_primary
+    remove_duplicate_email_from_person if person.email_addresses.length > 1
+
     primary_emails = person.email_addresses.where(primary: true)
     if primary_emails.blank?
       person.email_addresses.last.update_column(:primary, true)
     elsif primary_emails.length > 1
       primary_emails[0..-2].map {|e| e.update_column(:primary, false)}
+    end
+  end
+
+  def remove_duplicate_email_from_person
+    person.email_addresses.order("id DESC").group(:email).uniq.each do |e|
+      person.email_addresses.where("person_id = ? AND id <> ? AND email = ?", person.id, e.id, e.to_s).try(:destroy_all)
     end
   end
 
