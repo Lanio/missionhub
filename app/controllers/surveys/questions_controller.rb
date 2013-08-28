@@ -9,8 +9,8 @@ class Surveys::QuestionsController < ApplicationController
   def index
     session[:wizard] = false
     @questions = @survey.questions
-    @predefined_questions = @predefined.questions.uniq - @questions
-    @other_questions = current_organization.all_questions.uniq - @predefined.questions.uniq - @survey.questions
+    @predefined_questions = current_organization.predefined_survey_questions.uniq - @questions
+    @other_questions = current_organization.all_questions.uniq - current_organization.predefined_survey_questions.uniq - @survey.questions
     respond_to do |wants|
       wants.html # index.html.erb
       wants.xml  { render xml: @questions }
@@ -35,14 +35,14 @@ class Surveys::QuestionsController < ApplicationController
   # GET /questions/1/edit
   def edit
     survey_element = @survey.survey_elements.find_by_element_id(@question.id)
-    
+
     rule_notify = Rule.find_by_rule_code('AUTONOTIFY')
     @auto_notify = survey_element.question_rules.find_by_rule_id(rule_notify.id) if survey_element
-  
+
     rule_assign = Rule.find_by_rule_code('AUTOASSIGN')
     @auto_assign = survey_element.question_rules.find_by_rule_id(rule_assign.id) if survey_element
   end
-  
+
   def add
   end
 
@@ -147,10 +147,9 @@ class Surveys::QuestionsController < ApplicationController
       current_organization.settings[:visible_surveys_column] = false
       current_organization.save!
   	else
-		  @predefined_survey = Survey.find(APP_CONFIG['predefined_survey'])
-		  @predefined_questions = @predefined_survey.questions
+		  @predefined_questions = current_organization.predefined_survey_questions
 		  if @predefined_questions.collect(&:id).include?(@selected_question_id.to_i)
-		    @question = @predefined_survey.elements.find(@selected_question_id.to_i)
+		    @question = @predefined_questions.find(@selected_question_id.to_i)
 		    @organization = current_organization
 		    @organization.survey_elements.each do |pe|
 		      pe.update_attribute(:hidden, true) if pe.element_id == @question.id
@@ -178,10 +177,9 @@ class Surveys::QuestionsController < ApplicationController
       current_organization.settings[:visible_surveys_column] = true
       current_organization.save!
   	else
-		  @predefined_survey = Survey.find(APP_CONFIG['predefined_survey'])
-		  @predefined_questions = @predefined_survey.questions
+		  @predefined_questions = current_organization.predefined_survey_questions
 		  if @predefined_questions.collect(&:id).include?(@selected_question_id.to_i)
-		    @question = @predefined_survey.elements.find(@selected_question_id.to_i)
+		    @question = @predefined_questions.find(@selected_question_id.to_i)
 		    @organization = current_organization
 		    @survey = @predefined_survey
 		    current_organization.settings[:visible_predefined_questions] = Array.new if current_organization.settings[:visible_predefined_questions].nil?
@@ -201,10 +199,10 @@ class Surveys::QuestionsController < ApplicationController
     end
   end
 
-  def suggestion    
+  def suggestion
     type = params[:type]
     keyword = params[:q]
-    
+
     @response = Array.new
     if type.present? && keyword.present?
    	 	keyword = keyword.strip
@@ -224,7 +222,7 @@ class Surveys::QuestionsController < ApplicationController
 			else
 			end
 		end
-    
+
 		respond_to do |format|
 		  format.json { render json: @response.to_json }
 		end
