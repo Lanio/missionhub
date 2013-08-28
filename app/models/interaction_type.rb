@@ -46,13 +46,13 @@ class InteractionType < ActiveRecord::Base
     contacts_with_permission
   end
 
-  def interaction_receivers_from_org_sidebar(org)
+  def interaction_receivers_from_org_preloaded(org)
     people_with_interaction = interactions.collect(&:receiver_id)
     contacts_with_permission = org.all_people.includes(:organizational_permissions).where('organizational_permissions.organization_id' => org.id, 'organizational_permissions.archive_date' => nil, 'organizational_permissions.deleted_at' => nil, 'organizational_permissions.person_id' => people_with_interaction)
     contacts_with_permission
   end
 
-  def interaction_receivers_from_org_with_archived_sidebar(org)
+  def interaction_receivers_from_org_with_archived_preloaded(org)
     people_with_interaction = interactions.collect(&:receiver_id)
     contacts_with_permission = org.all_people_with_archived.includes(:organizational_permissions).where('organizational_permissions.organization_id' => org.id, 'organizational_permissions.person_id' => people_with_interaction)
     contacts_with_permission
