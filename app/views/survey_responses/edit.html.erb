@@ -14,16 +14,21 @@
   <% end %>
   <div class="user_defined_contact_fields survey_edit">
     <% current_organization.surveys.each do |survey| %>
-      <% if survey.questions.count > 0 %>
-        <div class="survey_title"><%= link_to survey.title, "##{'s_'+survey.id.to_s}", "name"=>'s_'+survey.id.to_s %></div>
-        <% answer_sheet = @person.answer_sheets.detect {|as| survey.id == as.survey_id} %>
-        <% survey.questions.each do |question| %>
+      <% answer_sheet = @person.answer_sheets.detect {|as| survey.id == as.survey_id} %>
+      <% all_questions = survey.questions %>
+      <% if all_questions.count > 0 && (answer_sheet.blank? || (answer_sheet.present? && answer_sheet.completed_at.blank?))%>
+        <div class="survey_title">
+          <%= link_to survey.title, "##{'s_'+survey.id.to_s}", "name"=>'s_'+survey.id.to_s %>
+        </div>
+        <% all_questions.each do |question| %>
           <% next if ['email', 'phone_number'].include?(question.attribute_name) %>
           <% answer = question.display_response(answer_sheet, @person) %>
-          <div class="field">
-          	<label><%= raw question.label %></label>
-          	<%= render :partial => 'survey/' + question.ptemplate, object: question, locals: {col: nil, answer_sheet: answer_sheet, survey: survey, person: @person} %>
-          </div>
+          <% if answer.blank? %>
+            <div class="field">
+            	<label><%= raw question.label %></label>
+            	<%= render :partial => 'survey/' + question.ptemplate, object: question, locals: {col: nil, answer_sheet: answer_sheet, survey: survey, person: @person} %>
+            </div>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>
