@@ -14,7 +14,7 @@ class ContactsController < ApplicationController
   end
 
   def all_contacts
-    permissions_for_assign
+#    permissions_for_assign
     groups_for_assign
     labels_for_assign
     params[:page] ||= 1

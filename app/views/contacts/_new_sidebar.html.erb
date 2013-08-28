@@ -104,12 +104,12 @@
     </a>
   </li>
   <div id='interaction_list' class="side_list" style="<%= 'display:block;' if selected %>">
-    <% @organization.interaction_types.exclude_comment.each do |interaction_type| %>
+    <% @organization.interaction_types_sidebar(@organization).each do |interaction_type| %>
       <% if params[:include_archived_interactions] %>
-        <% count = interaction_type.interaction_receivers_from_org_with_archived(@organization).collect(&:id).count %>
+        <% count = interaction_type.interaction_receivers_from_org_with_archived_sidebar(@organization).collect(&:id).count %>
         <% link = all_contacts_path(interaction_type: interaction_type.id, include_archived_interactions: 'true') %>
       <% else %>
-        <% count = interaction_type.interaction_receivers_from_org(@organization).collect(&:id).count %>
+        <% count = interaction_type.interaction_receivers_from_org_sidebar(@organization).collect(&:id).count %>
         <% link = all_contacts_path(interaction_type: interaction_type.id) %>
       <% end %>
 

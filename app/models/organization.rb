@@ -101,6 +101,10 @@ class Organization < ActiveRecord::Base
     return InteractionType.where(organization_id: [0, id]).order('id')
   end
 
+  def interaction_types_sidebar(org)
+    return InteractionType.where(organization_id: [0, id]).where(Interaction.table_name + ".organization_id = ?", org.id).where(Interaction.table_name + ".deleted_at is null", org.id).includes(:interactions).order(InteractionType.table_name + '.id').exclude_comment
+  end
+
   def interaction_privacy_settings
     list = Array.new
     list << ["Everyone", "everyone"]
