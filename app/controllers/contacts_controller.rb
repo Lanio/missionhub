@@ -772,7 +772,7 @@ class ContactsController < ApplicationController
         answers[id] = {}
       end
       @surveys = {}
-      AnswerSheet.where(survey_id: survey_ids, person_id: people_ids).includes({:person => :primary_email_address}).each do |answer_sheet|
+      AnswerSheet.where(survey_id: survey_ids, person_id: people_ids).includes({:person => :primary_email_address}, :answers).each do |answer_sheet|
         @surveys[answer_sheet.person_id] ||= {}
         @surveys[answer_sheet.person_id][answer_sheet.survey] = answer_sheet.completed_at
 
