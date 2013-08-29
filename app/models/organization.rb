@@ -101,8 +101,12 @@ class Organization < ActiveRecord::Base
     return InteractionType.where(organization_id: [0, id]).order('id')
   end
 
-  def interaction_types_preload(org)
-    return InteractionType.where(organization_id: [0, id]).where(Interaction.table_name + ".organization_id = ?", org.id).where(Interaction.table_name + ".deleted_at is null", org.id).includes(:interactions).order(InteractionType.table_name + '.id').exclude_comment
+  def interaction_types_preload
+    return InteractionType.where(organization_id: [0, id]).where(Interaction.table_name + ".organization_id = ?", id).where(Interaction.table_name + ".deleted_at is null", id).includes(:interactions).order(InteractionType.table_name + '.id').exclude_comment
+  end
+
+  def leaders_preload
+    leaders.includes(:contact_assignments)
   end
 
   def interaction_privacy_settings

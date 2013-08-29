@@ -458,6 +458,16 @@ class Person < ActiveRecord::Base
     people = org.all_people_with_archived.where(id: assigned_id_list.collect(&:person_id).uniq)
   end
 
+  def assigned_contacts_limit_org_preload(org)
+    assigned_id_list = contact_assignments.where(organization_id: org.id)
+    people = org.all_people.where(id: assigned_id_list.collect(&:person_id).uniq)
+  end
+
+  def assigned_contacts_limit_org_with_archived_preload(org)
+    assigned_id_list = contact_assignments.where(organization_id: org.id)
+    people = org.all_people_with_archived.where(id: assigned_id_list.collect(&:person_id).uniq)
+  end
+
   def has_similar_person_by_name_and_email?(email)
     Person.joins(:primary_email_address).where(first_name: first_name, last_name: last_name, 'email_addresses.email' => email).where("people.id != ?", id).first
   end

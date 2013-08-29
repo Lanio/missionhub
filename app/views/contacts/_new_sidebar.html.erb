@@ -26,12 +26,12 @@
     </a>
   </li>
   <div id='leader_list' class="side_list" style="<%= 'display:block;' if selected %>">
-    <% @organization.leaders.each_with_index do |person| %>
+    <% @organization.leaders_preload.each_with_index do |person| %>
       <% if params[:include_archived] %>
-        <% count = person.assigned_contacts_limit_org_with_archived(@organization).collect(&:id).count %>
+        <% count = person.assigned_contacts_limit_org_with_archived_preload(@organization).collect(&:id).count %>
         <% link = all_contacts_path(assigned_to: person.id, include_archived: 'true') %>
       <% else %>
-        <% count = person.assigned_contacts_limit_org(@organization).collect(&:id).count %>
+        <% count = person.assigned_contacts_limit_org_preload(@organization).collect(&:id).count %>
         <% link = all_contacts_path(assigned_to: person.id) %>
       <% end %>
 
@@ -104,7 +104,7 @@
     </a>
   </li>
   <div id='interaction_list' class="side_list" style="<%= 'display:block;' if selected %>">
-    <% @organization.interaction_types_preload(@organization).each do |interaction_type| %>
+    <% @organization.interaction_types_preload.each do |interaction_type| %>
       <% if params[:include_archived_interactions] %>
         <% count = interaction_type.interaction_receivers_from_org_with_archived_preloaded(@organization).collect(&:id).count %>
         <% link = all_contacts_path(interaction_type: interaction_type.id, include_archived_interactions: 'true') %>
