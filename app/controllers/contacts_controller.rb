@@ -748,7 +748,7 @@ class ContactsController < ApplicationController
 
         @people = @all_people.page(page)
       else
-        @people = @people_scope.order(order_query).group('people.id').page(page)
+        @people = @people_scope.includes(:primary_email_address, :primary_phone_number).order(order_query).group('people.id').page(page)
       end
     end
 
