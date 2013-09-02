@@ -7,16 +7,15 @@
           <%= t('interactions.add_comment_title') %>
         </span>
       </div>
-      <div id="add_bulk_comment_loader" style="display:none;" align="center">
-        <%= image_tag 'loader.gif' %><br/>Loading...
+      <div id="add_bulk_comment_loader" class="dialog_center_loader" align="center">
+        <p><%= image_tag 'loader.gif' %><br/>Loading...</p>
       </div>
       <div id="add_bulk_comment_content" class="mh_popup_box_content" align="center">
-        <br/>
         <%= form_for "", method: :post, remote: true do |f| %>
           <%= hidden_field_tag 'comment_receiver_ids', "" %>
           <table>
             <tr>
-              <td><%= t('interactions.comment_field_title') %></td>
+              <td valign="top"><%= t('interactions.comment_field_title') %></td>
               <td class="field">
                 <%= text_area_tag 'interaction[comment]', '', id: 'bulk_send_comment' %>
               </td>
