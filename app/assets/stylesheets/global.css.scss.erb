@@ -2114,10 +2114,11 @@ div.field_with_errors div.ui-effects-wrapper {
 
 /* PAGINATION  */
 div.pagination {
+  margin: 10px;
   text-align: center;
-		display:inline-block;
+	display:block;
   span.page {
-    a {
+    a, a:visited {
       color: $blue;
       display: inline-block;
       background: $light-blue;
@@ -2131,6 +2132,11 @@ div.pagination {
     display: inline-block;
     border-radius: 12px;
     padding: 3px 7px;
+  }
+  span.next, span.last, span.first, span.prev {
+    a, a:visited {
+      color: $blue;
+    }
   }
 }
 
