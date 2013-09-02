@@ -18,6 +18,7 @@ class ContactsController < ApplicationController
     groups_for_assign
     labels_for_assign
     params[:page] ||= 1
+    params[:limit] ||= 25
     url = request.url.split('?')
     @attr = url.size > 1 ? url[1] : ''
 
@@ -382,7 +383,7 @@ class ContactsController < ApplicationController
       filter_by_mine if params[:status].present?
 
       # Sort & Limit Results
-      sort_people(params[:page], load_all)
+      sort_people(params[:page], params[:limit], load_all)
     end
 
     def update_fb_friends
@@ -716,7 +717,7 @@ class ContactsController < ApplicationController
       end
     end
 
-    def sort_people(page = 1, fetch_all = false)
+    def sort_people(page = 1, limit = 25, fetch_all = false)
       @q = Person.where('1 <> 1').search(params[:search]) # Fake a search object for sorting
       if params[:search].present?
         sort_query = params[:search][:meta_sort].gsub('.',' ')
@@ -755,9 +756,9 @@ class ContactsController < ApplicationController
         @permissions_by_person_id = {}
         all_permissions.each {|p| @permissions_by_person_id[p['person_id']] = p['permission_ids']}
 
-        @people = @all_people.page(page)
+        @people = @all_people.page(page).per(limit)
       else
-        @people = @people_scope.order(order_query).group('people.id').page(page)
+        @people = @people_scope.order(order_query).group('people.id').page(page).per(limit)
       end
     end
 

@@ -16,6 +16,10 @@ $ ->
         else $.fn.moveToCompleted ui.draggable  if $(this).hasClass("completed")
     $.fn.tip()
 
+  $(document).on 'change', "#pagination_limit", (e)->
+    e.preventDefault()
+    $(this).parents("form").submit()
+
   $(document).on 'change', '#add_contact_div .permission_checkbox', (e)->
     email_address = $("#person_email_address_email").val()
     identify = $(this).attr("data-i18n")
