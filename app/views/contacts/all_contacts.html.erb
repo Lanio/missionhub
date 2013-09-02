@@ -52,6 +52,12 @@
 		</li>
 	</ul>
 
+	<ul class="button_bar">
+		<li class="action_lightblue">
+      <%= link_to(t('people.index.group_comment'), "#", id: "action_menu_comment") %>
+		</li>
+	</ul>
+
   <% with_save_search = (params[:do_search] == "1" || params[:search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
 
 	<ul class="button_bar">
@@ -205,3 +211,6 @@
 
 <!-- Saved Contact Search Dialog -->
 <%= render 'dialogs/saved_contact_search' %>
+
+<!-- Add Comment Dialog -->
+<%= render 'dialogs/bulk_add_comment'%>
