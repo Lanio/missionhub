@@ -58,11 +58,16 @@ body{
     position: fixed;
     top: 0;
     left: 0;
-
+    .dialog_center_loader{
+      margin-top:45px;
+      display:none;
+    }
     .mh_popup_box {
       z-index: 1002;
       margin: 25px auto;
-
+      #add_bulk_comment_content{
+        margin: 10px 0px;
+      }
       &.add_new_org_content_div, &.import_from_crs_content_div, &.add_bulk_comment_content_div{
         min-height:100px;
         padding-bottom: 40px; // gives space for the buttons which is set as absolute
