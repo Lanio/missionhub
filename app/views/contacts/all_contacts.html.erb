@@ -159,6 +159,8 @@
       <div class="contentpad no_contacts">
         <%= t('contacts.index.no_contacts') %>
       </div>
+    <% else %>
+      <%= paginate @people %>
   	<% end %>
     <%= render 'application/assign' %>
   <% end %>
