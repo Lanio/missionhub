@@ -65,7 +65,7 @@ class Apis::V3::OrganizationalPermissionsControllerTest < ActionController::Test
     should 'create and return an organizational_permission' do
       delete :destroy, id: @org_permission.id, secret: @client.secret
       @org_permission.reload
-      assert_not_nil @org_permission.archive_date, @org_permission.inspect
+      assert_not_nil @org_permission.deleted_at, @org_permission.inspect
     end
   end
 
