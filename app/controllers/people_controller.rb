@@ -401,7 +401,14 @@ class PeopleController < ApplicationController
       if person.present? && person.primary_phone_number
         if person.primary_phone_number.email_address.present?
           # Use email to sms if we have it
-          from = "do-not-reply@missionhub.com"
+          change_default_email = params[:change_default_email]
+          new_default_email = params[:new_default_for_mobile_email]
+
+          from = I18n.t('general.default_email_from')
+          if change_default_email && new_default_email =~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+            from = new_default_email
+          end
+
           @message = current_person.sent_messages.create(
             receiver_id: person.id,
             organization_id: current_organization.id,
