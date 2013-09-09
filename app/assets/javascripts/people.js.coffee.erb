@@ -421,6 +421,8 @@ $('#send_bulkemail_link_new, #action_menu_email').live 'click', (e)->
   $('#bulk_send_msg_dialog #bulk_send_body').off()
   false
 
+$('#change_default_email').live 'click', ()->
+  $("#default_email_from_div").toggle()
 
 $('#send_bulksms_link_new, #action_menu_text').live 'click', (e)->
   e.preventDefault()
@@ -462,6 +464,13 @@ $('#send_bulksms_link_new, #action_menu_text').live 'click', (e)->
   $('#preview_body').html('')
   $('#bulk_send_msg_dialog #bulk_send_body').keyup ->
     $('#preview_body').html($(this).val())
+
+  $("#bulk_send_msg_dialog #new_default_for_mobile_email").val(t("general.default_email_from"))
+  $("#change_default_email").prop 'checked', false
+  $("#default_email_from_div").hide()
+  $('#bulk_send_msg_dialog #new_default_for_mobile_email').keyup ->
+    if $("#change_default_email").is(':checked')
+      $('#message_preview_from_email').html($(this).val())
 
   total_chars = 0
   $('.message_desc').each ->

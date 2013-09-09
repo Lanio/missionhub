@@ -8,7 +8,20 @@
       <div class="mh_popup_box_content">
       <%= form_tag "", class: 'bulk-msg' do %>
         <div class="note send_text">
-          <%=raw t('general.sms_note') %>
+          <div><%=raw t('general.sms_note') %></div>
+          <br/>
+          <div>
+            <div>
+              <%= check_box_tag "change_default_email", 1, false, id: "change_default_email" %>
+              <%=raw t('general.sms_change_default_email_desc', default_email_from: t('general.default_email_from')) %>
+            </div>
+            <div id="default_email_from_div" style="display: none;">
+              <%= t('general.sms_change_default_email_send_as_desc') %>
+              <%= text_field_tag :new_default_for_mobile_email, t('general.default_email_from'), id: "new_default_for_mobile_email" %>
+              <br/>
+              <%= t('general.sms_change_default_email_guide') %>
+            </div>
+          </div>
         </div>
         <div class="note send_email">
           <div class="reply_to_toggle">
@@ -43,8 +56,12 @@
       		  			<td colspan="2" class="title"><%= t('general.sms_preview_title') %></td>
       		  		</tr>
       		  		<tr>
-      		  			<td class="message_desc"><%= t('general.sms_preview_from') %></td>
-      		  			<td class="message_body" id="preview_from"><%= current_user %></td>
+      		  			<td class="message_desc" valign="top"><%= t('general.sms_preview_from') %></td>
+      		  			<td class="message_body">
+                    <span id="message_preview_from_email"><%= t("general.default_email_from") %></span>
+                    &nbsp;or&nbsp;
+                    <span id="preview_from"><%= current_user %></span>
+                  </td>
       		  		</tr>
       		  		<tr>
       		  			<td class="message_desc" valign="top"><%= t('general.sms_preview_body') %></td>
@@ -56,7 +73,7 @@
       		  </div>
           </div>
           <div id="bulk_send_msg_error" class="flash" style="display: none;">
-            <div id="bulk_send_msg_message" class="flash_message notice alignleft" style="margin-bottom: 50px; padding: 5px; padding-left: 40px; min-height: 30px;"></div>
+            <div id="bulk_send_msg_message" class="flash_message notice alignleft">&nbsp;</div>
           </div>
         </div>
       <% end %>
