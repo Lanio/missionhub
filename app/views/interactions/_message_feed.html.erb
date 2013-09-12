@@ -1,6 +1,6 @@
 <div class="feed_box survey_display">
 	<div class="feed_icon">
-    <% if message.sent_via == "sms" %>
+    <% if message.sent_via == "sms" || message.sent_via == "sms_email" %>
       <%= image_tag("comment.png", class: 'tip', title: "SMS") %>
     <% elsif message.sent_via == "email" %>
       <%= image_tag("mail.png", class: 'tip', title: "Email") %>
