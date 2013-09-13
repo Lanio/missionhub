@@ -1188,10 +1188,21 @@ class Person < ActiveRecord::Base
               'name' => permission.apiv1_name,
               'primary' => primary_organization.id == p.organization_id ? 'true' : 'false'
           }
+          organization = Organization.find(p.organization_id)
+          if organization.present?
+            organization.descendant_ids.each do |child_org_id|
+              roles_array << {
+                  'org_id' => child_org_id,
+                  'role' => permission.apiv1_i18n,
+                  'name' => permission.apiv1_name,
+                  'primary' => 'false'
+              }
+            end
+          end
         end
       end
 
-      @organizational_roles_hash = roles_array
+      @organizational_roles_hash = roles_array.uniq
     end
     @organizational_roles_hash
   end
