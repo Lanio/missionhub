@@ -399,14 +399,13 @@ class PeopleController < ApplicationController
     person_ids.uniq.each do |id|
     	person = Person.find_by_id(id)
       if person.present? && person.primary_phone_number
-        if person.primary_phone_number.email_address.present?
+        if person.primary_phone_number.email_address.present? && params[:change_default_email]
           # Use email to sms if we have it
-          change_default_email = params[:change_default_email]
-          new_default_email = params[:new_default_for_mobile_email]
 
+          current_person_send_as = current_person.phone_numbers.where("id = ?", params[:send_as_phone_number])
           from = I18n.t('general.default_email_from')
-          if change_default_email && new_default_email =~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-            from = new_default_email
+          if current_person_send_as.present?
+            from = current_person_send_as.first.number.to_s + t("general.sms_append_to_phone_number")
           end
 
           @message = current_person.sent_messages.create(
