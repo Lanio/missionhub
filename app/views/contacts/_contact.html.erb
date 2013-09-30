@@ -82,13 +82,13 @@
       <%- assigned_tos_name = assigned_tos.try(:name) %>
     <% else %>
       <%- ids = assigned_tos.collect(&:id).join(",") %>
-      <%- assigned_tos_name = assigned_tos.collect(&:name).to_sentence %>
+      <%- assigned_tos_name = assigned_tos.collect(&:name) %>
     <% end %>
-    <% tip = "#{t('contacts.index.unassign_contact')} from #{assigned_tos_name}" %>
+    <% tip = "#{t('contacts.index.unassign_contact')} from #{assigned_tos_name.to_sentence if assigned_tos_name.present?}" %>
 
     <span class="assigned_to" style="display:none;"><%= assigned_tos_name %></span>
     <span class="unassign_link" style="<%= 'display:none' unless assigned_tos.present? || params[:dnc].present? %>">
-      <%= link_to(t('contacts.unassign'), contact_assignments_path(ids: person.id, from: ids), remote: true, method: :delete, class: "icon unassign tipitleft", :title => tip, "data-assigned_to_id" => ids) %>
+      <%= link_to(t('contacts.unassign'), contact_assignments_path(ids: person.id, from: ids), remote: true, method: :delete, class: "icon unassign tipitleft", :title => tip, "data-assigned_to_id" => ids, "data-assigned_to_name" => "#{assigned_tos_name.join('~') if assigned_tos_name.present?}") %>
     </span>
     <% if params[:dnc] == 'true' %>
       <%= link_to(t('contacts.index.delete_contact'), person_path(person), :method => :delete, :remote => true, :class => "icon delete dnc tipitleft", :title => t('contacts.index.delete_contact'), :confirm => t('contacts.index.destroy_confirm')) %>
