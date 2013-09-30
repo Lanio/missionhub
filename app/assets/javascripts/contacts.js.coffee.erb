@@ -952,17 +952,27 @@ $.fn.assignTo = (leader, skip_remote) ->
 
       if leader.hasClass('unassigned') or leader.hasClass('dn')
         assigned_to.text('')
-
       else
         assigned_to.text(leader_name)
         #hide assigned to
         $('#person_title').hide()
 
-      $('.unassign_link a', row).attr('title', 'Unassign contact from ' + leader_name)
-      $('.unassign_link a', row).attr('data-assigned_to_id', leader.attr('data-id'))
+      if $('.unassign_link a', row).attr("data-assigned_to_name") == ""
+        $('.unassign_link a', row).attr('title', 'Unassign contact from ' + leader_name)
+        $('.unassign_link a', row).attr('data-assigned_to_id', leader.attr('data-id'))
+        $('.unassign_link a', row).attr('data-assigned_to_name', leader_name)
+      else
+        current_href_ids = $('.unassign_link a', row).attr("data-assigned_to_id").split(",").join("%2C")
+        current_assigned_to_ids = $('.unassign_link a', row).attr("data-assigned_to_id").split(",")
+        current_assigned_to_names = $('.unassign_link a', row).attr("data-assigned_to_name").split("~")
+        current_assigned_to_ids.push(leader.attr('data-id'))
+        current_assigned_to_names.push(leader_name)
+        $('.unassign_link a', row).attr('title', 'Unassign contact from ' + $.unique(current_assigned_to_names).join(", ").replace(/,([^,]*)$/,', and$1'))
+        $('.unassign_link a', row).attr('data-assigned_to_id', $.unique(current_assigned_to_ids).join(","))
+        $('.unassign_link a', row).attr('data-assigned_to_name', $.unique(current_assigned_to_names).join("~"))
+        new_href = $('.unassign_link a', row).attr('href').replace(current_href_ids, $.unique(current_assigned_to_ids).join("%2C"))
+        $('.unassign_link a', row).attr('href',new_href)
       $.fn.tip()
-      assigned_to.text(leader_name)
-      leader.show()
     # hide people assigned to someone other than the current or if we're moving to dnc
     assign_to = $('#new_contact_assignment').find("#assign_to").val()
     if assign_to == "do_not_contact" || ($.params.assigned_to != leader_name)
