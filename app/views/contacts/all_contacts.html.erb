@@ -159,16 +159,21 @@
         <% end %>
       </tbody>
     </table>
-
-    <% if @people.blank? %>
-      <div class="contentpad no_contacts">
-        <%= t('contacts.index.no_contacts') %>
-      </div>
-    <% else %>
-      <%= paginate @people %>
-  	<% end %>
     <%= render 'application/assign' %>
   <% end %>
+
+  <% if @people.blank? %>
+    <div class="contentpad no_contacts">
+      <%= t('contacts.index.no_contacts') %>
+    </div>
+  <% else %>
+    <%= form_tag all_contacts_path, method: :get, id: "pagination_limit_form" do %>
+      Display
+      <%= select_tag :limit, options_for_select([25, 50, 100], selected: params[:limit] || 25), id: "pagination_limit" %>
+      results
+    <% end %>
+    <%= paginate @people %>
+	<% end %>
 
   <%- if false %>
     <div id="update_notice_div">
