@@ -31,7 +31,7 @@ FactoryGirl.define do
     comment "Sample Comment #{Factory.next(:count)}"
     privacy_setting 'everyone'
   end
-  
+
   factory :interaction_type do
     association :organization
     name "Sample Interaction Type #{Factory.next(:count)}"
@@ -93,6 +93,10 @@ FactoryGirl.define do
     initial_response "Hi there!"
     association :user
     association :survey
+  end
+
+  factory :unsubscribe do
+    association :organization
   end
 
   factory :approved_keyword, parent: :sms_keyword do
@@ -249,11 +253,11 @@ FactoryGirl.define do
     association :permission
     followup_status "attempted_contact"
   end
-  
+
   factory :permission do
     name "permission #{Factory.next(:count)}"
   end
-  
+
   factory :label do
     association :organization
     name "label #{Factory.next(:count)}"
