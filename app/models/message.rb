@@ -16,6 +16,10 @@ class Message < ActiveRecord::Base
     end
   end
 
+  def self.outbound_text_messages(phone_number)
+    self.where("`messages`.to = ? AND `messages`.sent_via = 'sms'", phone_number)
+  end
+
   private
 
   def process_message
