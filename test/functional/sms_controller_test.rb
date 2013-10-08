@@ -145,14 +145,19 @@ class SmsControllerTest < ActionController::TestCase
       assert_equal(@response.body, '<Response></Response>')
     end
 
-    should "have response when user sends stop" do
-      post :mo, @post_params.merge!({message: 'stop', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
-      assert_equal 'You have been unsubscribed from MHub SMS alerts. You will receive no more messages.', assigns(:msg)
-    end
-
     should "have response when user sends help" do
       post :mo, @post_params.merge!({message: 'help', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
       assert_equal 'MHub SMS. Msg & data rates may apply. Reply STOP to quit. Go to http://mhub.cc/terms for more help. Msg frequency depends on user.', assigns(:msg)
+    end
+
+    should "have response when user sends 'on' subscribe" do
+      post :mo, @post_params.merge!({message: 'on', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
+      assert_equal 'You have been subscribed from MHub SMS alerts. You can now receive text messages.', assigns(:msg)
+    end
+
+    should "have response when user sends 'stop' unsubscribe" do
+      post :mo, @post_params.merge!({message: 'stop', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
+      assert_equal 'You have been unsubscribed from MHub SMS alerts. You will receive no more messages.', assigns(:msg)
     end
   end
 
