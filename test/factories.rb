@@ -22,7 +22,7 @@ FactoryGirl.define do
     sequence(:comment) {|n| "interaction_comment_#{n}"}
     privacy_setting 'everyone'
   end
-  
+
   factory :interaction_type do
     association :organization
     sequence(:name) {|n| "interaction_type_name_#{n}"}
@@ -84,6 +84,10 @@ FactoryGirl.define do
     initial_response "Hi there!"
     association :user
     association :survey
+  end
+
+  factory :unsubscribe do
+    association :organization
   end
 
   factory :approved_keyword, parent: :sms_keyword do
@@ -240,11 +244,11 @@ FactoryGirl.define do
     association :permission
     followup_status "attempted_contact"
   end
-  
+
   factory :permission do
     sequence(:name) {|n| "permission_name_#{n}"}
   end
-  
+
   factory :label do
     association :organization
     sequence(:name) {|n| "label_name_#{n}"}
