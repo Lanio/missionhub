@@ -21,14 +21,15 @@ class SmsController < ApplicationController
     @sms_session = @sms_session.first
 
     # Handle STOP and HELP messages
+
     case message.downcase
     when 'stop'
+      @phone_numbers = PhoneNumber.where('phone_numbers.number' => PhoneNumber.strip_us_country_code(sms_params[:phone_number]))
       if @sms_session
         # If SMS Session initiated, means there's a keyword generated which has organization
         # Unsubscribe specific phone number within a organization
         @sms_session.update_attribute(:interactive, false)
         @organization = @sms_session.sms_keyword.organization
-        @phone_numbers = PhoneNumber.where(number: @sms_session.phone_number)
         @phone_numbers.each do |phone|
           orgs = phone.person.active_organizations
           if orgs && orgs.collect(&:id).include?(@organization.id)
@@ -50,11 +51,11 @@ class SmsController < ApplicationController
       @sent_sms = send_message(@msg, sms_params[:phone_number])
       render xml: @sent_sms.to_twilio and return
     when 'on'
+      @phone_numbers = PhoneNumber.where('phone_numbers.number' => PhoneNumber.strip_us_country_code(sms_params[:phone_number]))
       if @sms_session
         # If SMS Session initiated, means there's a keyword generated which has organization
         # Subscribe specific phone number within a organization
         @organization = @sms_session.sms_keyword.organization
-        @phone_numbers = PhoneNumber.where(number: @sms_session.phone_number)
         @phone_numbers.each do |phone|
           orgs = phone.person.active_organizations
           if orgs && orgs.collect(&:id).include?(@organization.id)
@@ -64,7 +65,6 @@ class SmsController < ApplicationController
         end if @phone_numbers
       else
         # No organization, remove all unsubscribe records within the matched phone_number
-        @phone_numbers = PhoneNumber.where('phone_numbers.number' => PhoneNumber.strip_us_country_code(sms_params[:phone_number]))
         @phone_numbers.each do |phone|
           unsubscribe = Unsubscribe.where(phone_number_id: phone.id)
           unsubscribe.destroy_all if unsubscribe
