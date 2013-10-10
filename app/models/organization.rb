@@ -593,11 +593,10 @@ class Organization < ActiveRecord::Base
     person.ensure_single_permission_for_org_id(id) if person.present?
 
     if permission_ids.present?
-      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil)
+      OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil).update_all(deleted_at: Time.now)
     else
-      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil)
+      OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil).update_all(deleted_at: Time.now)
     end
-    org_permissions.update_all(deleted_at: Time.now) if org_permissions.present?
   end
 
   def remove_permissions_from_people(people, permissions = nil)
@@ -614,13 +613,11 @@ class Organization < ActiveRecord::Base
       person = Person.where(id: person_id).first
     end
     person.ensure_single_permission_for_org_id(id) if person.present?
-
     if permission_ids.present?
-      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil)
+      OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil).update_all(archive_date: Time.now)
     else
-      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil)
+      OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil).update_all(archive_date: Time.now)
     end
-    org_permissions.update_all(archive_date: Time.now) if org_permissions.present?
   end
 
   def archive_permissions_from_people(people, permissions = nil)
