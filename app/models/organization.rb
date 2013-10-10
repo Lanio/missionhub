@@ -31,7 +31,7 @@ class Organization < ActiveRecord::Base
   has_many :organizational_permissions, inverse_of: :organization
   has_many :movement_indicator_suggestions
   has_many :organizational_goal
-  has_many :unsubscribe_text_messages, class_name: "Unsubscribe", foreign_key: "organization_id"
+  has_many :sms_unsubscribes
 
   if Permission.table_exists? # added for travis testing
 
@@ -298,8 +298,8 @@ class Organization < ActiveRecord::Base
     !ancestry.nil?
   end
 
-  def is_subscribe?(phone_number_id)
-    unsubscribe_text_messages.where("`unsubscribes`.phone_number_id = ?", phone_number_id).count < 1
+  def is_sms_subscribe?(phone_number)
+    sms_unsubscribes.where("phone_number = ?", phone_number).count < 1
   end
 
   def is_root_and_has_only_one_admin?

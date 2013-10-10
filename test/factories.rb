@@ -58,6 +58,15 @@ FactoryGirl.define do
     # association :sms_keyword
   end
 
+  factory :message do
+    association :organization
+    message     'Hello messages'
+  end
+
+  factory :outbound_text_message, parent: :message do
+    sent_via    'sms'
+  end
+
   factory :received_sms do
     phone_number '15555555555'
     carrier      'sprint'

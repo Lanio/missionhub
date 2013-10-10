@@ -149,55 +149,62 @@ class SmsControllerTest < ActionController::TestCase
       assert_equal 'MHub SMS. Msg & data rates may apply. Reply STOP to quit. Go to http://mhub.cc/terms for more help. Msg frequency depends on user.', assigns(:msg)
     end
 
-    should "have response when user sends 'on' subscribe" do
-      post :mo, @post_params.merge!({message: 'on', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
-      assert_equal 'You have been subscribed from MHub SMS alerts. You can now receive text messages.', assigns(:msg)
-    end
-
-    should "have response when user sends 'stop' unsubscribe" do
-      post :mo, @post_params.merge!({message: 'stop', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
-      assert_equal 'You have been unsubscribed from MHub SMS alerts. You will receive no more messages.', assigns(:msg)
-    end
-
-    context "subscriptions" do
+    context "subscriptions WITHOUT sms_session" do
       setup do
         @person = Factory(:person)
-        @organization = Factory(:organization)
+        @outbound_message = Factory(:outbound_text_message, :to => @phone_number)
+        @organization = @outbound_message.organization
         @organization.add_user(@person)
         Factory(:phone_number, number: @phone_number, person_id: @person.id)
       end
 
-      should "add unsubscribe record when user sends 'stop' message WITHOUT sms session" do
-        assert_difference "Unsubscribe.count", 1 do
+      should "add unsubscribe record when user sends 'stop' message" do
+        assert_difference "SmsUnsubscribe.count", 1 do
           post :mo, @post_params.merge!({message: 'stop', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
         end
       end
 
-      should "remove unsubscribe record when user sends 'on' message  WITHOUT sms session" do
-        Unsubscribe.create(phone_number_id: @person.phone_numbers.first.id, organization_id: @organization.id)
-        assert_difference "Unsubscribe.count", -1 do
+      should "remove unsubscribe record when user sends 'on' message" do
+        SmsUnsubscribe.create(phone_number: @phone_number, organization_id: @organization.id)
+        assert_difference "SmsUnsubscribe.count", -1 do
           post :mo, @post_params.merge!({message: 'on', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
         end
       end
+    end
+
+    context "subscriptions WITH sms_session" do
+      setup do
+        @person = Factory(:person)
+        Factory(:phone_number, number: @phone_number, person_id: @person.id)
+
+        @sms_session = Factory(:sms_session, person_id: @person.id, sms_keyword_id: @keyword.id, phone_number: @phone_number)
+        @organization = @sms_session.sms_keyword.organization
+        @organization.add_user(@person)
+      end
 
       should "add unsubscribe record when user sends 'stop' message WITH sms session" do
-        @sms_session = Factory(:sms_session, person_id: @person.id, sms_keyword_id: @keyword.id, phone_number: @phone_number)
-        @sms_session.sms_keyword.organization.add_user(@person)
         @sms_session.update_attribute(:interactive, false)
-        assert_difference "Unsubscribe.count", 1 do
+        assert_difference "SmsUnsubscribe.count", 1 do
           post :mo, @post_params.merge!({message: 'stop', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
         end
       end
 
       should "remove unsubscribe record when user sends 'on' message WITH sms session" do
-        @sms_session = Factory(:sms_session, person_id: @person.id, sms_keyword_id: @keyword.id, phone_number: @phone_number)
-        @organization = @sms_session.sms_keyword.organization
-        @organization.add_user(@person)
         @sms_session.update_attribute(:interactive, false)
-        Unsubscribe.create(phone_number_id: @person.phone_numbers.first.id, organization_id: @organization.id)
-        assert_difference "Unsubscribe.count", -1 do
+        SmsUnsubscribe.create(phone_number: @phone_number, organization_id: @organization.id)
+        assert_difference "SmsUnsubscribe.count", -1 do
           post :mo, @post_params.merge!({message: 'on', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
         end
+      end
+
+      should "have response when user sends 'on' subscribe" do
+        post :mo, @post_params.merge!({message: 'on', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
+        assert_equal 'You have been subscribed from MHub SMS alerts. You can now receive text messages.', assigns(:msg)
+      end
+
+      should "have response when user sends 'stop' unsubscribe" do
+        post :mo, @post_params.merge!({message: 'stop', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
+        assert_equal 'You have been unsubscribed from MHub SMS alerts. You will receive no more messages.', assigns(:msg)
       end
     end
   end

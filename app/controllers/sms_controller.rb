@@ -24,51 +24,29 @@ class SmsController < ApplicationController
 
     case message.downcase
     when 'stop'
-      @phone_numbers = PhoneNumber.where('phone_numbers.number' => PhoneNumber.strip_us_country_code(sms_params[:phone_number]))
       if @sms_session
-        # If SMS Session initiated, means there's a keyword generated which has organization
-        # Unsubscribe specific phone number within a organization
         @sms_session.update_attribute(:interactive, false)
         @organization = @sms_session.sms_keyword.organization
-        @phone_numbers.each do |phone|
-          orgs = phone.person.active_organizations
-          if orgs && orgs.collect(&:id).include?(@organization.id)
-            Unsubscribe.find_or_create_by_phone_number_id_and_organization_id(phone.id, @organization.id)
-          end
-        end if @phone_numbers
+        SmsUnsubscribe.add_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization.present?
       else
-        # No organization, set all to unsubscribe the matched phone_numbers data by "number"
-        @phone_numbers = PhoneNumber.where('phone_numbers.number' => PhoneNumber.strip_us_country_code(sms_params[:phone_number]))
-        @phone_numbers.each do |phone|
-          orgs = phone.person.active_organizations
-          orgs.collect(&:id).each do |org_id|
-            Unsubscribe.find_or_create_by_phone_number_id_and_organization_id(phone.id, org_id)
-          end if orgs
-        end if @phone_numbers
+        if outbound = Message.outbound_text_messages(sms_params[:phone_number])
+          @organization = outbound.last.organization
+          SmsUnsubscribe.add_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization
+        end
       end
       @msg = 'You have been unsubscribed from MHub SMS alerts. You will receive no more messages.'
 
       @sent_sms = send_message(@msg, sms_params[:phone_number])
       render xml: @sent_sms.to_twilio and return
     when 'on'
-      @phone_numbers = PhoneNumber.where('phone_numbers.number' => PhoneNumber.strip_us_country_code(sms_params[:phone_number]))
       if @sms_session
-        # If SMS Session initiated, means there's a keyword generated which has organization
-        # Subscribe specific phone number within a organization
         @organization = @sms_session.sms_keyword.organization
-        @phone_numbers.each do |phone|
-          orgs = phone.person.active_organizations
-          if orgs && orgs.collect(&:id).include?(@organization.id)
-            unsubscribe = Unsubscribe.find_by_phone_number_id_and_organization_id(phone.id, @organization.id)
-            unsubscribe.destroy if unsubscribe
-          end
-        end if @phone_numbers
+        SmsUnsubscribe.remove_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization.present?
       else
-        # No organization, remove all unsubscribe records within the matched phone_number
-        @phone_numbers.each do |phone|
-          unsubscribe = Unsubscribe.where(phone_number_id: phone.id)
-          unsubscribe.destroy_all if unsubscribe
-        end if @phone_numbers
+        if outbound = Message.outbound_text_messages(sms_params[:phone_number])
+          @organization = outbound.last.organization
+          SmsUnsubscribe.remove_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization
+        end
       end
       @msg = 'You have been subscribed from MHub SMS alerts. You can now receive text messages.'
 

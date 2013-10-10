@@ -402,7 +402,7 @@ class PeopleController < ApplicationController
     person_ids.uniq.each do |id|
     	person = Person.find_by_id(id)
       if person.present? && primary_phone = person.primary_phone_number
-        if is_subscribe = current_organization.is_subscribe?(primary_phone.id)
+        if is_subscribe = current_organization.is_sms_subscribe?(primary_phone.number)
           # Do not allow to send text if the phone number is not subscribed
 
           if person.primary_phone_number.email_address.present? && params[:change_default_email]
