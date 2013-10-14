@@ -22,6 +22,8 @@ $ ->
 
   $("#survey_updated_from").datepicker dateFormat: "mm/dd/yy"
   $("#survey_updated_to").datepicker dateFormat: "mm/dd/yy"
+  $("#advanced_search_survey_range_from").datepicker dateFormat: "mm/dd/yy"
+  $("#advanced_search_survey_range_to").datepicker dateFormat: "mm/dd/yy"
   $("#archive_contacts_before").datepicker dateFormat: "yy-mm-dd"
   $("#date_leaders_not_logged_in_after").datepicker dateFormat: "yy-mm-dd"
 
