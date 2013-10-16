@@ -1,4 +1,7 @@
 $ ->
+  $(document).on 'change', '#select_language', ()->
+    language = $("#select_language option:selected").val()
+    window.location.href = "?locale="+language
 
   $('.org_control').not('.tree_no_child').each ->
     if $("." + $(this).attr('id')).not('.tree_no_child').size() > 1

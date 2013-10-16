@@ -1476,6 +1476,7 @@ class Person < ActiveRecord::Base
   end
 
   NATIONALITIES = ["Chinese", "South Asian (India, Nepal, Sri Lanka)", "TIP/Muslim", "American", "All Other Nations"]
+  LANGUAGES = [["Chinese", "zh"],["English", "en"], ["Espanol", "es"], ["French", "fr"], ["German", "de"], ["Russian", "ru"]]
 
   def set_followup_status(organization, status)
     permission = permission_for_org(organization)

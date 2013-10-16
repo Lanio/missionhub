@@ -202,7 +202,7 @@ class ApplicationController < ActionController::Base
   end
 
   def available_locales
-    %w{en ru es fr}
+    %w{en ru es fr de zh}
   end
 
   def check_valid_subdomain

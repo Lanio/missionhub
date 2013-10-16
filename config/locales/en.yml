@@ -920,6 +920,25 @@ en:
     drop_down_field:
       choose_one: "Choose One"
   survey_responses:
+    select_language: "Select Language"
+    first_name: "What is your first name?"
+    last_name: "What is your last name?"
+    phone_number: "What is your phone number?"
+    email: "Email Address"
+    graduation_date: "Graduation Date"
+    zip: "Zip Code"
+    year_in_school: "What is your year in school?"
+    state: "State"
+    room: "Room Number"
+    nationality: "Nationality"
+    major: "What is your major?"
+    gender: "What is your gender?"
+    faculty: "Are you a faculty?"
+    dorm: "Dorm Building"
+    country: "Country"
+    campus: "Campus"
+    birth_date: "What is your birth date?"
+    address1: "Street Address"
     new:
       greeting_with_name: "Hi %{name}!"
       greeting_no_name: Hi!
