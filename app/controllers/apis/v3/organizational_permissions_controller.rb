@@ -117,7 +117,7 @@ class Apis::V3::OrganizationalPermissionsController < Apis::V3::BaseController
     if params[:permission].present? && params[:permission].split(',').include?(Permission::ADMIN_ID.to_s) && current_person.is_user_for_org?(current_organization)
       render_unauthorized_call
     else
-      archive_permissions(filtered_people('bulk_archive'))
+      archive_permissions(filtered_people, params[:permission])
       render json: filtered_people,
              callback: params[:callback],
              scope: {include: includes, organization: current_organization},
