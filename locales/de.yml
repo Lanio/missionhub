@@ -1121,45 +1121,45 @@ de:
     notify:
       content: 
   survey_responses:
-    address1: 
+    address1: Strasse
     answer_other_surveys:
       title: 
-    birth_date: 
-    campus: 
-    country: 
-    dorm: 
+    birth_date: Was ist Ihr Geburtsdatum?
+    campus: Campus
+    country: Land
+    dorm: 宿舍樓
     edit:
       cancel: 
       multiple_answers: 
       title: 
-    email: 
+    email: Wohnheim
     facebook:
       facebook_login: 
       pick_keyword: 
-    faculty: 
-    first_name: 
+    faculty: Sind Sie ein Vermögen?
+    first_name: Was ist Ihr Vorname?
     form:
       frozen: 
-    gender: 
-    graduation_date: 
-    last_name: 
-    major: 
-    nationality: 
+    gender: Was ist Ihr Geschlecht?
+    graduation_date: Abschlussdatum
+    last_name: Was ist Ihr Nachname?
+    major: Was ist dein Hauptfach?
+    nationality: Nationalität
     new:
       greeting_no_name: 
       greeting_with_name: 
-    phone_number: 
-    room: 
-    select_language: 
+    phone_number: Was ist Ihre Telefonnummer?
+    room: Zimmer Nummer
+    select_language: Sprache auswählen
     show:
       edit_answers: 
       no_answers: 
       title: 
-    state: 
+    state: Staat
     thanks:
       thanks: 
-    year_in_school: 
-    zip: 
+    year_in_school: Was ist Ihr Jahr in der Schule?
+    zip: Postleitzahl
   surveys:
     edit:
       edit_survey: 
