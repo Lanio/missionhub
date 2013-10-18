@@ -1142,6 +1142,16 @@ bs:
       frozen: 
     gender: Kakav je tvoj rod?
     graduation_date: Datum diplomiranja
+<<<<<<< HEAD
+=======
+    iso_bs: bosanski
+    iso_de: njemački
+    iso_en: engleski
+    iso_es: Español
+    iso_fr: francuski
+    iso_ru: ruski
+    iso_zh: kineski
+>>>>>>> MH-793
     last_name: Koji je prezime?
     major: Koji je glavni predmet?
     nationality: nacionalnost

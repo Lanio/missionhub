@@ -1246,6 +1246,16 @@ en:
       frozen: Sorry. The survey '%{survey}' is currently on hold.
     gender: What is your gender?
     graduation_date: Graduation Date
+<<<<<<< HEAD
+=======
+    iso_bs: Bosnian
+    iso_de: German
+    iso_en: English
+    iso_es: Español
+    iso_fr: French
+    iso_ru: Russian
+    iso_zh: Chinese
+>>>>>>> MH-793
     last_name: What is your last name?
     major: What is your major?
     nationality: Nationality

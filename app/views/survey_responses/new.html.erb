@@ -4,10 +4,11 @@
 <% if @survey.logo_file_name.present? %>
   <%= image_tag(@survey.logo.url(:small), class: 'logo') %>
 <% end %>
-
 <div id="select_language_container">
   <label class="desc" for="select_language"><%= t('survey_responses.select_language') %></label>
-  <%= select_tag :select_language, options_for_select(Person::LANGUAGES, params[:locale]), include_blank: "Choose..." %>
+  <%= select_tag :select_language, options_for_select(Person::LANGUAGES.collect{|name, iso_code|
+    [(params[:locale] == "en") ? name : "#{name} (#{I18n.t(".survey_responses.iso_#{iso_code}")})", iso_code]
+  }, params[:locale]), include_blank: "Choose..." %>
 </div>
 <div>
   <h2><%= @survey.title %></h2>
