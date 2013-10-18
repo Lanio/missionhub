@@ -1,3 +1,4 @@
+#encoding: utf-8
 require 'vpim/vcard'
 require 'vpim/book'
 
@@ -1476,7 +1477,7 @@ class Person < ActiveRecord::Base
   end
 
   NATIONALITIES = ["Chinese", "South Asian (India, Nepal, Sri Lanka)", "TIP/Muslim", "American", "All Other Nations"]
-  LANGUAGES = [["Bosnian", "bs"], ["Chinese", "zh"], ["English", "en"], ["Espanol", "es"], ["French", "fr"], ["German", "de"], ["Russian", "ru"]]
+  LANGUAGES = [["босански (Bosnian)", "bs"], ["官话 (Chinese) ", "zh"], ["English (English)", "en"], ["Español (Spanish)", "es"], ["Français (French)", "fr"], ["Deutsch (German)", "de"], ["Pусский (Russian)", "ru"]]
 
   def set_followup_status(organization, status)
     permission = permission_for_org(organization)

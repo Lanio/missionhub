@@ -347,7 +347,7 @@ en:
     - Fri
     - Sat
     abbr_month_names:
-    - 
+    -
     - Jan
     - Feb
     - Mar
@@ -374,7 +374,7 @@ en:
       short: ! '%b %d'
       time: ! '%l:%M %p'
     month_names:
-    - 
+    -
     - January
     - February
     - March
@@ -873,9 +873,9 @@ en:
           quadrillion: Quadrillion
           thousand: Thousand
           trillion: Trillion
-          unit: 
+          unit:
       format:
-        delimiter: 
+        delimiter:
         precision: 3
         significant: true
         strip_insignificant_zeros: true
@@ -891,10 +891,10 @@ en:
           tb: TB
     percentage:
       format:
-        delimiter: 
+        delimiter:
     precision:
       format:
-        delimiter: 
+        delimiter:
   org_membership:
     confirm_delete: Are you sure you want to dissociate yourself from %{org}
   organization_mailer:
@@ -1246,8 +1246,6 @@ en:
       frozen: Sorry. The survey '%{survey}' is currently on hold.
     gender: What is your gender?
     graduation_date: Graduation Date
-<<<<<<< HEAD
-=======
     iso_bs: Bosnian
     iso_de: German
     iso_en: English
@@ -1255,7 +1253,6 @@ en:
     iso_fr: French
     iso_ru: Russian
     iso_zh: Chinese
->>>>>>> MH-793
     last_name: What is your last name?
     major: What is your major?
     nationality: Nationality
