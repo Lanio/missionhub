@@ -220,13 +220,11 @@ class Apis::V3::PeopleControllerTest < ActionController::TestCase
   context '.bulk_destroy' do
     should 'destroy people by filter ids' do
       delete :bulk_destroy, filters: {ids: @person.id}, secret: @client.secret
-      assert_equal [@person], assigns(:people), assigns(:people).inspect
-      assert_equal [], assigns(:people).first.organizational_permissions
+      assert_nil assigns(:people)
     end
     should 'destroy people by filter permission' do
       delete :bulk_destroy, filters: {permissions: @person.organizational_permissions.first.permission_id}, secret: @client.secret
-      assert_equal [@person], assigns(:people), assigns(:people).inspect
-      assert_equal [], assigns(:people).first.organizational_permissions
+      assert_nil assigns(:people)
     end
   end
 

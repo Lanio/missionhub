@@ -1,6 +1,6 @@
 class Apis::V3::OrganizationalPermissionsController < Apis::V3::BaseController
   before_filter :ensure_filters, only: [:bulk, :bulk_create, :bulk_destroy]
-  before_filter :get_organizational_permission, only: [:show, :update, :destroy]
+  before_filter :get_organizational_permission, only: [:show, :update, :destroy, :archive]
 
   def index
     list = add_includes_and_order(organizational_permissions)
@@ -43,6 +43,13 @@ class Apis::V3::OrganizationalPermissionsController < Apis::V3::BaseController
              status: :unprocessable_entity,
              callback: params[:callback]
     end
+  end
+
+  def archive
+    @organizational_permission.archive
+    render json: @organizational_permission,
+           callback: params[:callback],
+           scope: {include: includes, organization: current_organization, user: current_user}
   end
 
   def destroy
