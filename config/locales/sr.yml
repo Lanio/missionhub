@@ -1,4 +1,4 @@
-de:
+sr:
   activerecord:
     errors:
       full_messages:
@@ -1121,52 +1121,52 @@ de:
     notify:
       content: 
   survey_responses:
-    address1: Strasse
+    address1: Адреса
     answer_other_surveys:
       title: 
-    birth_date: Was ist Ihr Geburtsdatum?
-    campus: Campus
-    country: Land
-    dorm: 宿舍樓
+    birth_date: Који је ваш датум рођења?
+    campus: студентски град
+    country: земља
+    dorm: Дорм Грађевина
     edit:
       cancel: 
       multiple_answers: 
       title: 
-    email: Wohnheim
+    email: Е-маил адреса
     facebook:
       facebook_login: 
       pick_keyword: 
-    faculty: Sind Sie ein Vermögen?
-    first_name: Was ist Ihr Vorname?
+    faculty: Да ли сте факултет?
+    first_name: Какво је ваше име?
     form:
       frozen: 
-    gender: Was ist Ihr Geschlecht?
-    graduation_date: Abschlussdatum
-    iso_bs: Bosnisch
-    iso_de: Deutsch
-    iso_en: Englisch
-    iso_es: Español
-    iso_fr: Französisch
-    iso_ru: Russisch
-    iso_zh: Chinesisch
-    last_name: Was ist Ihr Nachname?
-    major: Was ist dein Hauptfach?
-    nationality: Nationalität
+    gender: Који је ваш пол?
+    graduation_date: Дипломски Датум
+    iso_bs: босански
+    iso_de: немачки
+    iso_en: енглески
+    iso_es: Еспанол
+    iso_fr: француски
+    iso_ru: руски
+    iso_zh: кинески
+    last_name: Какво је ваше презиме?
+    major: Који је ваш главни?
+    nationality: националност
     new:
       greeting_no_name: 
       greeting_with_name: 
-    phone_number: Was ist Ihre Telefonnummer?
-    room: Zimmer Nummer
-    select_language: Sprache auswählen
+    phone_number: 
+    room: 
+    select_language: 
     show:
       edit_answers: 
       no_answers: 
       title: 
-    state: Staat
+    state: 
     thanks:
       thanks: 
-    year_in_school: Was ist Ihr Jahr in der Schule?
-    zip: Postleitzahl
+    year_in_school: 
+    zip: 
   surveys:
     edit:
       edit_survey: 
