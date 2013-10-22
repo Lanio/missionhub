@@ -1,10 +1,12 @@
 require 'csv'
 require 'open-uri'
 require 'contact_methods'
+require 'async'
 class Import < ActiveRecord::Base
+  include Async
+  include Sidekiq::Worker
   include ContactMethods
 
-  @queue = :general
   serialize :headers
   serialize :preview
   serialize :header_mappings
@@ -118,7 +120,7 @@ class Import < ActiveRecord::Base
   def create_contact_from_row(row, current_organization)
 		row[:person] = row[:person].each_value {|p| p.strip! if p.present? }
 		row[:answers] = row[:answers].each_value {|a| a.strip! if a.present? }
-		
+
     person = Person.find_existing_person(Person.new(row[:person]))
     person.save
 
@@ -135,7 +137,7 @@ class Import < ActiveRecord::Base
       question_set.post(row[:answers], answer_sheet)
       question_sets << question_set
     end
-		
+
 		new_phone_numbers = []
     # Set values for predefined questions
     answer_sheet = AnswerSheet.new(person: person)
@@ -144,11 +146,11 @@ class Import < ActiveRecord::Base
     	answer = row[:answers][question.id]
     	if answer.present?
     		#set response
-	    	question.set_response(answer, answer_sheet) 
-	    	
+	    	question.set_response(answer, answer_sheet)
+
 	    	#create unique phone number but not a primary
 	    	if question.attribute_name == "phone_number"
-	    		numbers = person.phone_numbers	    		
+	    		numbers = person.phone_numbers
 	    		if numbers.find_by_primary(true).present?
     				new_phone_numbers << person.phone_numbers.new(number: answer, primary: false) unless numbers.where("number = ?", answer).present?
 	    		end
@@ -171,7 +173,7 @@ class Import < ActiveRecord::Base
   end
 
   private
-  
+
   def create_table(new_person_ids, excel_answers)
     @answered_question_ids = header_mappings.values.reject{ |c| c.empty? || c == 'do_not_import' }.collect(&:to_i)
 
@@ -181,7 +183,7 @@ class Import < ActiveRecord::Base
       questions << Element.find(a).label
     end
     @table << questions
-    
+
     if excel_answers.present?
 		  excel_answers.each do |new_person|
 	  		all_answers = []
