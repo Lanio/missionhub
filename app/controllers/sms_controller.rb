@@ -29,7 +29,8 @@ class SmsController < ApplicationController
         @organization = @sms_session.sms_keyword.organization
         SmsUnsubscribe.add_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization.present?
       else
-        if outbound = Message.outbound_text_messages(sms_params[:phone_number])
+        outbound = Message.outbound_text_messages(sms_params[:phone_number])
+        if outbound.present?
           @organization = outbound.last.organization
           SmsUnsubscribe.add_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization
         end
@@ -43,7 +44,8 @@ class SmsController < ApplicationController
         @organization = @sms_session.sms_keyword.organization
         SmsUnsubscribe.remove_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization.present?
       else
-        if outbound = Message.outbound_text_messages(sms_params[:phone_number])
+        outbound = Message.outbound_text_messages(sms_params[:phone_number])
+        if outbound.present?
           @organization = outbound.last.organization
           SmsUnsubscribe.remove_to_unsubscribe(sms_params[:phone_number], @organization.id) if @organization
         end

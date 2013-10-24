@@ -17,7 +17,7 @@ class Message < ActiveRecord::Base
   end
 
   def self.outbound_text_messages(phone_number)
-    self.where("(`messages`.to = ? OR SUBSTRING_INDEX(`messages`.to,'@',1) = ?) AND `messages`.sent_via = 'sms'", phone_number, phone_number)
+    self.where("(`messages`.to = ? AND `messages`.sent_via = 'sms') OR (SUBSTRING_INDEX(`messages`.to,'@',1) = ? AND `messages`.sent_via = 'email')", phone_number, phone_number)
   end
 
   private
