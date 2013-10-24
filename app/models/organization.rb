@@ -287,6 +287,10 @@ class Organization < ActiveRecord::Base
     !ancestry.nil?
   end
 
+  def is_sms_subscribe?(phone_number)
+    sms_unsubscribes.where("phone_number = ?", phone_number).count < 1
+  end
+
   def is_root_and_has_only_one_admin?
     (ancestry.nil? || !parent.show_sub_orgs ) && admins.count == 1
   end
