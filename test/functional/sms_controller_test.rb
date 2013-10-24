@@ -152,10 +152,11 @@ class SmsControllerTest < ActionController::TestCase
     context "subscriptions WITHOUT sms_session" do
       setup do
         @person = Factory(:person)
-        @outbound_message = Factory(:outbound_text_message, :to => @phone_number)
+        Factory(:phone_number, number: @phone_number, person_id: @person.id)
+        @strip_phone_number = PhoneNumber.strip_us_country_code(@phone_number)
+        @outbound_message = Factory(:outbound_text_message, :to => @strip_phone_number)
         @organization = @outbound_message.organization
         @organization.add_user(@person)
-        Factory(:phone_number, number: @phone_number, person_id: @person.id)
       end
 
       should "add unsubscribe record when user sends 'stop' message" do
@@ -165,7 +166,7 @@ class SmsControllerTest < ActionController::TestCase
       end
 
       should "remove unsubscribe record when user sends 'on' message" do
-        SmsUnsubscribe.create(phone_number: @phone_number, organization_id: @organization.id)
+        SmsUnsubscribe.create(phone_number: @strip_phone_number, organization_id: @organization.id)
         assert_difference "SmsUnsubscribe.count", -1 do
           post :mo, @post_params.merge!({message: 'on', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
         end
@@ -180,6 +181,8 @@ class SmsControllerTest < ActionController::TestCase
         @sms_session = Factory(:sms_session, person_id: @person.id, sms_keyword_id: @keyword.id, phone_number: @phone_number)
         @organization = @sms_session.sms_keyword.organization
         @organization.add_user(@person)
+
+        @strip_phone_number = PhoneNumber.strip_us_country_code(@phone_number)
       end
 
       should "add unsubscribe record when user sends 'stop' message WITH sms session" do
@@ -191,7 +194,7 @@ class SmsControllerTest < ActionController::TestCase
 
       should "remove unsubscribe record when user sends 'on' message WITH sms session" do
         @sms_session.update_attribute(:interactive, false)
-        SmsUnsubscribe.create(phone_number: @phone_number, organization_id: @organization.id)
+        SmsUnsubscribe.create(phone_number: @strip_phone_number, organization_id: @organization.id)
         assert_difference "SmsUnsubscribe.count", -1 do
           post :mo, @post_params.merge!({message: 'on', timestamp: Time.now.strftime('%m/%d/%Y %H:%M:%S')})
         end
