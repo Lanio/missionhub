@@ -468,11 +468,6 @@ FactoryGirl.define do
     association :organization
   end
 
-  factory :infobase_user, class: Ccc::InfobaseUser do
-    association :user
-    type        'InfobaseUser'
-  end
-
   factory :super_admin do
     association :user
   end
