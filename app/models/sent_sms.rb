@@ -54,6 +54,37 @@ class SentSms < ActiveRecord::Base
     END
   end
 
+  def to_smseco
+    url = APP_CONFIG['smseco_url']
+    login = APP_CONFIG['smseco_username']
+    password = APP_CONFIG['smseco_password']
+    numero = recipient
+    expediteur = "0"
+
+    SentSms.smart_split(message, separator).each_with_index do |message, i|
+      msgid = URI.encode("#{id}-#{i+1}")
+      msg = URI.encode(message.strip)
+
+      request = "#{url}?login=#{login}&password=#{password}"
+      request += "&msgid=#{msgid}&expediteur=#{expediteur}&msg=#{msg}&numero=#{numero}"
+      request += "&flash=0&unicode=0&binaire=0"
+
+      begin
+        response = open(request).read
+        response_hash = Hash.from_xml(response)
+        response_code = response_hash['REPONSE']['statut'].to_i
+        self.update_attribute('reports', response_hash)
+        if response_code == 0
+          puts "Success (#{response_code})"
+        else
+          puts "Failed (#{response_code})"
+        end
+      rescue
+        puts "Connection Failed"
+      end
+    end
+  end
+
   def queue_sms
     async(:send_sms)
   end
@@ -61,13 +92,18 @@ class SentSms < ActiveRecord::Base
   private
 
   def send_sms
-    if received_sms
-      from = received_sms.shortcode
+    case sent_via
+    when 'smseco'
+      to_smseco
     else
-      from = SmsKeyword::LONG
-    end
-    SentSms.smart_split(message, separator).each do |message|
-      Twilio::SMS.create(:to => recipient, :body => message.strip, :from => from)
+      if received_sms
+        from = received_sms.shortcode
+      else
+        from = SmsKeyword::LONG
+      end
+      SentSms.smart_split(message, separator).each do |message|
+        Twilio::SMS.create(:to => recipient, :body => message.strip, :from => from)
+      end
     end
   end
 
