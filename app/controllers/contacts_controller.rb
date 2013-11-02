@@ -755,7 +755,7 @@ class ContactsController < ApplicationController
                   params[:survey_answer][survey.id.to_s][question_id.to_s]['start'] = answer["start"]
                   params[:survey_answer][survey.id.to_s][question_id.to_s]['end'] = answer["end"]
 
-                  if answer["start"].present? && answer["end"].present?
+                  if answer["start"].present?
                     if element.is_in_object?
                       if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
                         people = element.search_survey_people(answer, current_organization, option, params[:survey_range])
