@@ -12,7 +12,12 @@
       <% rescue %>
         <% selected_option = Element::TEXTFIELD_MATCH.first[1] %>
       <% end %>
-      <% is_active = (answer.present? || ['is_blank','is_not_blank'].include?(selected_option)) && params[:advanced_search].present?%>
+
+      <% if question.kind == "DateField" %>
+        <% is_active = (answer.present? && answer["start"].present?) && params[:advanced_search].present?%>
+      <% else %>
+        <% is_active = (answer.present? || ['is_blank','is_not_blank'].include?(selected_option)) && params[:advanced_search].present?%>
+      <% end %>
       <% if question.kind == "ChoiceField" %>
         <div class="search_filter_options" style="display:<%= is_active ? 'block' : 'none'%>">
           <div class="search_filter_option">
@@ -57,25 +62,30 @@
           <div class="field_option near custom_datefield">
             <%= select_tag "survey_answer_option[#{survey.id}][#{question.id}]", options_for_select(Element::DATEFIELD_MATCH, selected_option), class: "datefield_option_select" %>
           </div>
-          <% unless answer.present? %>
-            <% answer = Hash.new %>
-            <% answer["start"] = Date.today.strftime("%Y-%m-%d") %>
-            <% answer["end"] = Date.today.strftime("%Y-%m-%d") %>
+          <% if answer.present? && answer["start"].present? %>
+            <% answer_start = answer["start"].to_date %>
+            <% answer_start_year = answer["start"].split("-").first() %>
+            <% answer_end = answer["end"].to_date %>
+            <% answer_end_year = answer["end"].split("-").first() %>
+          <% else %>
+            <% answer_start = nil %>
+            <% answer_start_year = nil %>
+            <% answer_end = nil %>
+            <% answer_end_year = nil %>
           <% end %>
           <div class="field_option datefield datefield_start_select">
-            <% answer_year = answer["start"].present? ? answer["start"].split("-").first() : nil %>
             Day:
-            <%= date_select "survey_answer[#{survey.id}][#{question.id}][start]", "", {:default => answer["start"].to_date, :discard_year => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
+            <%= date_select "survey_answer[#{survey.id}][#{question.id}][start]", "", {:default => answer_start, :discard_year => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
             Year:
-            <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}][start][(1i)]", answer_year, style: "width: 35px", placeholder: "" %>
+            <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}][start][(1i)]", answer_start_year, style: "width: 35px", placeholder: "" %>
           </div>
           <div class="field_option near custom_datefield"></div>
           <div class="field_option datefield datefield_end_select" style="display: <%= selected_option == 'between' ? 'inline-block' : 'none'%>">
             <% answer_year = answer["end"].present? ? answer["end"].split("-").first() : nil %>
             Day:
-            <%= date_select "survey_answer[#{survey.id}][#{question.id}][end]", "", {:default => answer["end"].to_date, :discard_year => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
+            <%= date_select "survey_answer[#{survey.id}][#{question.id}][end]", "", {:default => answer_end, :include_blank => true, :discard_year => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
             Year:
-            <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}][end][(1i)]", answer_year, style: "width: 35px", placeholder: "" %>
+            <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}][end][(1i)]", answer_end_year, style: "width: 35px", placeholder: "" %>
           </div>
         <% else %>
           <%= question.kind %>
