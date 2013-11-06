@@ -61,8 +61,8 @@
   <% with_save_search = (params[:do_search] == "1" || params[:search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
 
 	<ul class="button_bar">
-		<li class="action_lightblue <%= 'btn_left' if with_save_search %>">
-		  <%= link_to "Search", "#", id: "action_menu_search_filters" %>
+		<li class="action_lightblue">
+		  <%= link_to "New Search", "#", id: "action_menu_advanced_search" %>
 		</li>
 	</ul>
 
@@ -204,6 +204,9 @@
 
 <!-- Search Filters Dialog -->
 <%= render 'dialogs/search_people_filters' %>
+
+<!-- Advanced Search Dialog -->
+<%= render 'dialogs/advanced_search' %>
 
 <!-- Show Hidden Question Dialog -->
 <%= render 'dialogs/search_hidden_questions'%>

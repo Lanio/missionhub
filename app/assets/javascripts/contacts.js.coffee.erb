@@ -77,9 +77,23 @@ $ ->
     e.preventDefault()
     $.showDialog($("#search_people_filters_div"))
 
+  $('#action_menu_advanced_search').live 'click', (e)->
+    e.preventDefault()
+    $.showDialog($("#advanced_search_div"))
+
+
   $('#search_people_filters_search_button').live 'click', (e)->
     e.preventDefault()
     $('#search_people_form_submit').click()
+
+
+  $('#search_people_filters_search_button').live 'click', (e)->
+    e.preventDefault()
+    $('#search_people_form_submit').click()
+
+  $('#advanced_search_button').live 'click', (e)->
+    e.preventDefault()
+    $('#advanced_search_submit').click()
 
   $('#search_people_filters_save_search_button').live 'click', (e)->
     e.preventDefault()
@@ -358,9 +372,8 @@ $ ->
         else
           field.val(v)
 
-  $('#contacts_controller.index .filter_link').attr('href','#')
-
-  $('#contacts_controller.index .filter_link').click ->
+  $('#contacts_controller.index .filter_link').click (e)->
+    e.preventDefault()
     $('#filter_box').toggle()
     false
 

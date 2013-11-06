@@ -17,6 +17,32 @@ en:
     edit_label_success: "Label successfully updated."
     delete_label_confirmation: "Are you sure you want to delete this label?"
   dialogs:
+    advanced_search:
+      header: "Matching the criteria for Advanced Search"
+      search_any: "Search for a Person:"
+      search_any_guide: "... by first name, last name, phone number or email address"
+      search_filter:
+        title: "Filtered Search:"
+        contact_data:
+          title: "Contact Data"
+          gender: "Gender"
+          faculty: "Faculty"
+          assigned: "Assigned"
+          status: "Status"
+        label_and_group_data:
+          title: "Label and Group Data"
+          labels: "Labels"
+          groups: "Groups"
+        surveys:
+          title: "Surveys to include in Search"
+          range: "Survey Date Range"
+          range_guide: "Include only survey responses given between:"
+          scope: "Survey List"
+          scope_guide: "Include these survey titles:"
+        survey_questions:
+          title: "Survey Responses"
+          loader: "Updating Survey Questions"
+          no_questions: "There are no questions in this survey."
     search_people_filters:
       search_placeholder: 'Search for the first name, last name or email.'
       search_title: 'Search'

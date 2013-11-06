@@ -4,6 +4,9 @@ class Element < ActiveRecord::Base
                   :meta => { organization_id: :organization_id }
 
   QUESTION_TYPES = %w{TextField ChoiceField DateField StateChooser ReferenceQuestion SchoolPicker AttachmentField PaymentQuestion}
+  TEXTFIELD_MATCH = [["Contains","contains"], ["Is Exactly","is_exactly"], ["Does Not Contain","does_not_contain"], ["No Response","is_blank"], ["Any Response","is_not_blank"]]
+  DATEFIELD_MATCH = [["Matches","match"],["Is Between","between"]]
+
   belongs_to :question_grid, :class_name => "QuestionGrid", :foreign_key => "question_grid_id"
   belongs_to :choice_field, :class_name => "ChoiceField", :foreign_key => "conditional_id"
 
@@ -40,6 +43,95 @@ class Element < ActiveRecord::Base
   # def has_response?(answer_sheet = nil)
   #   false
   # end
+
+  def is_in_object?
+    object_name.present? && attribute_name.present?
+  end
+
+  def search_survey_people(answer, organization, option = TEXTFIELD_MATCH.first[1].underscore, range = nil)
+    begin
+      answer.strip!
+    rescue; end
+    option = "is_blank" if answer == "no_response"
+    if object_name.present? && attribute_name.present? && object_name == "person"
+      if range.present?
+        date_from = translate_date(range.first())
+        date_to = translate_date(range.last())
+        answer_sheets = AnswerSheet.where(survey_id: surveys.where(organization_id: organization.id, created_at: date_from..date_to).pluck(:id))
+      else
+        answer_sheets = AnswerSheet.where(survey_id: surveys.where(organization_id: organization.id).pluck(:id))
+      end
+      all_people = organization.all_people.where(id: answer_sheets.pluck(:person_id))
+
+      case attribute_name
+      when "email"
+        all_people = all_people.joins(:email_addresses)
+        query_object = "email_addresses.email"
+      when "phone_number"
+        all_people = all_people.joins(:phone_numbers)
+        query_object = "phone_numbers.number"
+      when 'address1', 'city', 'state', 'country', 'dorm', 'room', 'zip'
+        all_people = all_people.joins(:addresses)
+        query_object = "addresses.#{attribute_name}"
+      else
+        query_object = "people.#{attribute_name}"
+      end
+
+      if option == "contains"
+        people = all_people.where("#{query_object} LIKE ?", "%#{answer}%")
+      elsif option == "is_exactly"
+        people = all_people.where("#{query_object} = ?", answer)
+      elsif option == "does_not_contain"
+        people = all_people.where("#{query_object} NOT LIKE ?", "%#{answer}%")
+      elsif option == "is_blank"
+        people = all_people.where("#{query_object} IS NULL OR #{query_object} = ''")
+      elsif option == "is_not_blank"
+        people = all_people.where("#{query_object} IS NOT NULL AND #{query_object} <> ''")
+      elsif option == "match"
+        people = all_people.where("DATE(#{query_object}) = DATE(?)", answer["start"])
+      elsif option == "between"
+        people = all_people.where("DATE(#{query_object}) >= DATE(?) AND DATE(#{query_object}) <= DATE(?)", answer["start"], answer["end"])
+      end
+      return people
+    end
+  end
+
+  def search_survey_answer_textfield(answer, option = TEXTFIELD_MATCH.first[1].underscore, range = nil)
+    answer.strip!
+    if range.present?
+      date_from = translate_date(range.first())
+      date_to = translate_date(range.last())
+      all_answers = Answer.where("question_id = ? AND (DATE(created_at) >= DATE(?) AND DATE(created_at) <= DATE(?))", id, date_from, date_to)
+    end
+    all_answers ||= Answer.where("question_id = ?", id)
+    if option == "contains"
+      answers =  all_answers.where("value LIKE ?", "%#{answer}%")
+    elsif option == "is_exactly"
+      answers =all_answers.where("value = ?", answer)
+    elsif option == "does_not_contain"
+      answers = all_answers.where("value NOT LIKE ?", "%#{answer}%")
+    elsif option == "is_blank"
+      answers = all_answers.where("value IS NULL OR value = ''")
+    elsif option == "is_not_blank"
+      answers = all_answers.where("value IS NOT NULL AND value <> ''")
+    end
+    return answers
+  end
+
+  def search_survey_answer_datefield(answer, option = DATEFIELD_MATCH.first[1].underscore, range = nil)
+    if range.present?
+      date_from = translate_date(range.first())
+      date_to = translate_date(range.last())
+      all_answers = Answer.where("question_id = ? AND (DATE(created_at) >= DATE(?) AND DATE(created_at) <= DATE(?))", id, date_from, date_to)
+    end
+    all_answers ||= Answer.where("question_id = ?", id)
+    if option == "match"
+      answers =  all_answers.where("DATE(value) = DATE(?)", answer["start"])
+    elsif option == "between"
+      answers =  all_answers.where("DATE(value) >= DATE(?) AND DATE(value) <= DATE(?)", answer["start"], answer["end"])
+    end
+    return answers
+  end
 
   def organization_id
     surveys.first.try(:organization_id)
@@ -136,6 +228,14 @@ class Element < ActiveRecord::Base
       else
         self.style ||= self.class.to_s.underscore
       end
+    end
+  end
+
+  def translate_date(date)
+    begin
+      get_date = date.split('/')
+      return Date.parse("#{get_date[2]}-#{get_date[0]}-#{get_date[1]}").strftime("%Y-%m-%d")
+    rescue
     end
   end
 

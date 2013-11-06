@@ -86,6 +86,7 @@ group :development do
   #gem 'rails-dev-tweaks'
   gem 'rails-footnotes'
   gem 'bullet'
+  gem 'rack-mini-profiler'
   gem 'travis-lint'
   gem 'mailcatcher'
   gem 'railroady'

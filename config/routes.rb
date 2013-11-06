@@ -266,6 +266,7 @@ Mh::Application.routes.draw do
   match "/my_contacts_all" => "contacts#my_contacts_all", as: "my_contacts_all"
   resources :contacts, :only => [:show, :create, :edit, :update, :destroy, :index] do
     collection do
+      get :update_advanced_search_surveys
       get :all_contacts
       get :my_contacts
       get :mine

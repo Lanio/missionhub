@@ -11,6 +11,7 @@ class Organization < ActiveRecord::Base
   has_many :interactions
   has_many :labels, inverse_of: :organization
   has_many :organizational_labels, inverse_of: :organization
+  has_many :group_memberships
 
   belongs_to :importable, polymorphic: true
   has_many :messages
