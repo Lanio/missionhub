@@ -1384,11 +1384,23 @@ class Person < ActiveRecord::Base
 
   def assigned_organizational_permissions(organization_id)
     permissions = get_organizational_permissions(organization_id)
-    # if set_current organization is included to the sub organizations. We should check if the current_person has any permission to the parent organization and it should stay the same permission to the sub organization.
+
+    # if in current org/sub org has no permission, get the permission to the parent org
     if !permissions.present? && get_org = Organization.find_by_id(organization_id)
-      get_org.parent.present? && admin_of_org?(get_org.parent)
-      permissions = get_organizational_permissions(get_org.parent.id)
+      if get_org.ancestors.present?
+        if get_org.ancestors.count > 1 && admin_of_org?(get_org.ancestors.last)
+          # get permission from the parent of the current organization
+          permissions = get_organizational_permissions(get_org.parent.id)
+        end
+
+        # if in parent org has no permission, get the permission to the root org
+        unless permissions.present?
+          # get permission from the root of the current organization
+          permissions = get_organizational_permissions(get_org.ancestors.first.id)
+        end
+      end
     end
+
     return permissions
   end
 
