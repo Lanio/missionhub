@@ -66,8 +66,8 @@
       </div>
   	</div>
 
-  	<div class="interaction_field interaction_reveal more_div">
-      <%= link_to raw("More Options &#x25BC;"), "", class: "more_options_link"%>
+  	<div class="interaction_field interaction_edit_date fancy more_option date_field_box">Date / Time:
+      <%= f.text_field :timestamp, id: 'datepicker', value: "#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}" %>
   	</div>
 
   	<div class="interaction_field interaction_edit_permission fancy more_option">Visible to:<br/>
@@ -84,8 +84,8 @@
       </div>
   	</div>
 
-  	<div class="interaction_field interaction_edit_date fancy more_option date_field_box">Date / Time:
-      <%= f.text_field :timestamp, id: 'datepicker', value: "#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}" %>
+  	<div class="interaction_reveal more_div">
+      <%= link_to raw("More Options &#x25BC;"), "", class: "more_options_link"%>
   	</div>
     <%= f.text_area :comment, class: "interaction_edit_comment comment_box", placeholder: "Add a comment...", rows: 4 %>
 

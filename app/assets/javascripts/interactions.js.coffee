@@ -477,7 +477,7 @@ $ ->
         for id in selected
           $("#leader_" + id).prop('checked',true)
 
-  $('.interaction_field.more_div .more_options_link').live 'click', (e)->
+  $(document).on 'click', '.more_div .more_options_link', (e)->
     e.preventDefault()
     if $(this).hasClass('shown')
       $(this).removeClass('shown')
@@ -499,7 +499,7 @@ $ ->
           type: 'GET',
           url: '/interactions/show_new_interaction_form?person_id=' + $('#interaction_save_cancel_button').attr('data-person-id')
 
-  $('#interaction_new_record_button').live 'click', (e)->
+  $(document).on 'click', '#interaction_new_record_button', (e)->
     e.preventDefault()
     $(this).parents('.interaction_new_buttons').first().hide()
     $('.feed_content .tab_content.profile_interactions .edit_space .feed_slug').text("New")
@@ -507,7 +507,6 @@ $ ->
     $('.feed_content .tab_content.profile_interactions .edit_space').slideDown 'fast', ->
       $('.custom_dropdown').css('position','absolute')
     $('.interaction_field.more_option').hide()
-    $('.interaction_field.more_div .more_options_link').html('More Options &#x25BC;')
     $('.interaction_field.more_div .more_options_link').removeClass('shown')
     $('#interaction_save_delete_button').hide()
     $('#interaction_comment').focus()
