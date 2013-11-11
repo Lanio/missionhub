@@ -401,15 +401,18 @@ class PeopleController < ApplicationController
 
     person_ids.uniq.each do |id|
     	person = Person.find_by_id(id)
-      if person.present? && person.primary_phone_number
-        # Otherwise send it as a text
-        @message = current_person.sent_messages.create(
-          receiver_id: person.id,
-          organization_id: current_organization.id,
-          to: person.phone_number,
-          sent_via: 'sms',
-          message: params[:body]
-        )
+      if person.present? && primary_phone = person.primary_phone_number
+        if is_subscribe = current_organization.is_sms_subscribe?(primary_phone.number)
+          # Do not allow to send text if the phone number is not subscribed
+
+          @message = current_person.sent_messages.create(
+            receiver_id: person.id,
+            organization_id: current_organization.id,
+            to: person.phone_number,
+            sent_via: 'sms',
+            message: params[:body]
+          )
+        end
       end
     end
 
