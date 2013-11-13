@@ -477,17 +477,6 @@ $ ->
         for id in selected
           $("#leader_" + id).prop('checked',true)
 
-  $(document).on 'click', '.more_div .more_options_link', (e)->
-    e.preventDefault()
-    if $(this).hasClass('shown')
-      $(this).removeClass('shown')
-      $('.interaction_field.more_option').fadeOut()
-      $(this).html('More Options &#x25BC;')
-    else
-      $('.interaction_field.more_option').fadeIn()
-      $(this).addClass('shown')
-      $(this).html('Fewer Options &#x25B2;')
-
   $('#interaction_save_cancel_button').live 'click', (e)->
     e.preventDefault()
     $('.interaction_new_buttons').show()
@@ -507,7 +496,6 @@ $ ->
     $('.feed_content .tab_content.profile_interactions .edit_space').slideDown 'fast', ->
       $('.custom_dropdown').css('position','absolute')
     $('.interaction_field.more_option').hide()
-    $('.interaction_field.more_div .more_options_link').removeClass('shown')
     $('#interaction_save_delete_button').hide()
     $('#interaction_comment').focus()
 
