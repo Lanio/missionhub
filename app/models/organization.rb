@@ -263,10 +263,12 @@ class Organization < ActiveRecord::Base
 
   def predefined_survey_questions
     questions = Survey.find(APP_CONFIG['predefined_survey']).questions
-    if is_bridge?
-      return questions
+    if is_bridge? #bridges
+      return questions.where("attribute_name <> 'faculty'")
+    elsif has_parent?(1) #cru
+      return questions.where("attribute_name <> 'nationality'")
     else
-      return questions.where("attribute_name != 'faculty'")
+      return questions
     end
   end
 
