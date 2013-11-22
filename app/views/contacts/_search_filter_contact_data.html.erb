@@ -51,6 +51,7 @@
     </div>
   </div>
   <div class="field">
+    <%- params[:assignment] = '1' if params[:assigned_to].present? %>
     <div class="search_filter_options" style="display:<%= params[:assignment].present? && params[:advanced_search].present? ? 'block' : 'none'%>">
       <div class="search_filter_option">
         <%= link_to image_tag("reset_button.png"), "#", class: "reset_search tip checkbox_search", title: "Reset Search", data: {value: (params[:assignment] || "").split(",").join(","), id: "assignment"} %>

@@ -5,6 +5,10 @@
       <%= link_to raw("<button class='action_gray full_width_button' id='allcontacts_import_contacts_button'>#{t('contacts.index.import_contacts')}</button>"), new_import_path %>
     </div>
   	<div id="sidebar_lists" class="leftmenu">
+      <%= render partial: 'search/sidebar' %>
+      <br/>
+      <br/>
+      <br/>
       <%= render partial: 'contacts/new_sidebar' %>
     </div>
   </div>

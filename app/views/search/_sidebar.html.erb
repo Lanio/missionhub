@@ -1,0 +1,60 @@
+<div id="search-sidebar">
+  <%= form_tag params, method: :get, id: 'advanced_search_form', autocomplete: "off" do %>
+    <%= hidden_field_tag :advanced_search, 1 %>
+
+    <!-- Search Any -->
+    <div id="side-search-any" class="category">
+      <%= text_field_tag :search_any, params[:search_any], class: "side-search-field", placeholder: t('.search_any_placeholder') %>
+    	<button class="action_gray" id="search_any_button">
+    	  <%= image_tag "icon-search.png" %>
+    	</button>
+    </div>
+
+    <!-- Active Filters -->
+    <div id="side-search-result">
+      <div class="title"><%= t('.results_title') %></div>
+      <div id="side-search-result-active">
+        <!-- Append Active Filters Here -->
+      </div>
+      <div id="side-search-result-buttons">
+      	<button class="action_gray search_result_button" id="search_reset_button">Reset</button>
+      	<button class="action_gray search_result_button" id="search_apply_button">Apply</button>
+      </div>
+    </div>
+
+    <!-- Available Filters -->
+    <div id="side-search-options">
+      <!-- Contact Assignment -->
+      <div class="side-search-option">
+        <div class="title"><%= t('.contact_assignment_title') %></div>
+        <div class="fields">
+          <% conditions = params[:assigned_to].present? %>
+          <% @organization.leaders.each do |leader| %>
+            <div class="option checkbox">
+              <%= check_box_tag "assigned_to[]", leader.id, conditions && params[:assigned_to].include?(leader.id.to_s), id: "search_assigned_to#{leader.id}", class: "search_assigned_to_checkbox" %>
+              <%= leader.name %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="side-search-option">
+        <div class="title"><%= t('.status_title') %></div>
+        <div class="fields">
+          <% conditions = params[:status].present? && params[:advanced_search].present? %>
+    			<% OrganizationalPermission::FOLLOWUP_STATUSES.each do |status| %>
+    				<div class="option checkbox">
+    					<%= check_box_tag "status[]", status, conditions && params[:status].include?(status.to_s), id: "search_status_#{status}", class: "search_status_checkbox" %>
+    					<%= status.titleize %>
+    				</div>
+    			<% end %>
+        </div>
+      </div>
+
+    </div>
+
+
+
+  <% end %>
+</div>

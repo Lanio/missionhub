@@ -469,11 +469,15 @@ class ContactsController < ApplicationController
           @people_scope = @organization.send(:"#{params[:assigned_to]}_contacts")
           @header = I18n.t("rejoicables.#{params[:assigned_to]}")
         else
-          if params[:assigned_to].present? && @assigned_to = Person.find_by_id(params[:assigned_to])
+          unless params[:assigned_to].is_a?(Array)
+            params[:assigned_to] = [params[:assigned_to]]
+          end
+          selected_leaders = @organization.leaders.where(id: params[:assigned_to])
+          if selected_leaders.present?
             if params[:include_archived].present? && params[:include_archived] == 'true'
-              @people_scope = @assigned_to.assigned_contacts_limit_org_with_archived(@organization)
+              @people_scope = @organization.assigned_contacts_with_archived_to(selected_leaders)
             else
-              @people_scope = @assigned_to.assigned_contacts_limit_org(@organization)
+              @people_scope = @organization.assigned_contacts_to(selected_leaders)
             end
             @header = I18n.t('contacts.index.responses_assigned_to', assigned_to: @assigned_to)
           end
