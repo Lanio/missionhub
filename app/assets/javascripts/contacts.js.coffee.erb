@@ -38,11 +38,15 @@ $ ->
 
   $("#pagination_limit_select select").change (e)->
     url = $.url(window.location.href)
+    path = url.attr('path')
     params = window.location.search
     if url.param('limit')
       window.location.href = params.replace("limit=#{url.param('limit')}", "limit=#{$(this).val()}")
     else
-      window.location.href = "#{params}&limit=#{$(this).val()}"
+      if params == ""
+        window.location.href = "#{path}?limit=#{$(this).val()}"
+      else
+        window.location.href = "#{params}&limit=#{$(this).val()}"
 
   $('#bulk_vcard_dialog_download_button').live 'click', (e)->
     e.preventDefault()
