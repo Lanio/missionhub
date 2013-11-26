@@ -274,6 +274,13 @@ class Organization < ActiveRecord::Base
     else
       return questions
     end
+
+    if is_bridge?
+      raise questions.collect(&:label).inspect
+      return questions
+    else
+      return questions.where("attribute_name != 'faculty'")
+    end
   end
 
   def pending_transfer
@@ -600,10 +607,11 @@ class Organization < ActiveRecord::Base
     person.ensure_single_permission_for_org_id(id) if person.present?
 
     if permission_ids.present?
-      OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil).update_all(deleted_at: Time.now)
+      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil)
     else
-      OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil).update_all(deleted_at: Time.now)
+      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil)
     end
+    org_permissions.update_all(deleted_at: Time.now) if org_permissions.present?
   end
 
   def remove_permissions_from_people(people, permissions = nil)
@@ -621,10 +629,11 @@ class Organization < ActiveRecord::Base
     end
     person.ensure_single_permission_for_org_id(id) if person.present?
     if permission_ids.present?
-      OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil).update_all(archive_date: Time.now)
+      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, permission_id: permission_ids, deleted_at: nil)
     else
-      OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil).update_all(archive_date: Time.now)
+      org_permissions = OrganizationalPermission.where(person_id: person_id, organization_id: id, deleted_at: nil)
     end
+    org_permissions.update_all(archive_date: Time.now) if org_permissions.present?
   end
 
   def archive_permissions_from_people(people, permissions = nil)

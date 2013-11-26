@@ -50,14 +50,21 @@ class Apis::V3::OrganizationalPermissionsController < Apis::V3::BaseController
     end
   end
 
+  def archive
+    @organizational_permission.archive
+    render json: @organizational_permission,
+           callback: params[:callback],
+           scope: {include: includes, organization: current_organization, user: current_user}
+  end
+
   def destroy
     if @organizational_permission.permission_id == Permission::ADMIN_ID && current_person.is_user_for_org?(current_organization)
       render_unauthorized_call
     else
       @organizational_permission.delete
       render json: @organizational_permission,
-            callback: params[:callback],
-            scope: {include: includes, organization: current_organization}
+             callback: params[:callback],
+             scope: {include: includes, organization: current_organization}
     end
   end
 
@@ -107,9 +114,9 @@ class Apis::V3::OrganizationalPermissionsController < Apis::V3::BaseController
     else
       remove_permissions(filtered_people('bulk_destroy'))
       render json: filtered_people,
-              callback: params[:callback],
-              scope: {include: includes, organization: current_organization},
-              root: 'people'
+             callback: params[:callback],
+             scope: {include: includes, organization: current_organization},
+             root: 'people'
     end
   end
 
@@ -117,7 +124,7 @@ class Apis::V3::OrganizationalPermissionsController < Apis::V3::BaseController
     if params[:permission].present? && params[:permission].split(',').include?(Permission::ADMIN_ID.to_s) && current_person.is_user_for_org?(current_organization)
       render_unauthorized_call
     else
-      archive_permissions(filtered_people, params[:permission])
+      archive_permissions(filtered_people('bulk_archive'))
       render json: filtered_people,
              callback: params[:callback],
              scope: {include: includes, organization: current_organization},

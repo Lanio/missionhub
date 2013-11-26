@@ -119,7 +119,6 @@ class Apis::V3::PeopleController < Apis::V3::BaseController
   def filtered_people(process = nil)
     unless @filtered_people
       order = params[:order] || 'last_name, first_name'
-
       if process == 'bulk_archive'
         @filtered_people = current_organization.not_archived_people
       elsif process == 'bulk_destroy'
