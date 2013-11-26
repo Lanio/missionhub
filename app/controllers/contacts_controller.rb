@@ -19,6 +19,7 @@ class ContactsController < ApplicationController
   end
 
   def all_contacts
+    # raise params.inspect
     permissions_for_assign
     groups_for_assign
     labels_for_assign

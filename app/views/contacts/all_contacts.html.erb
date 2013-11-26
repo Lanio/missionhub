@@ -62,7 +62,7 @@
 
 	<ul class="button_bar">
 		<li class="action_lightblue">
-		  <%= link_to "New Search", "#", id: "action_menu_advanced_search" %>
+		  <%= link_to "Search", "#", id: "action_menu_advanced_search" %>
 		</li>
 	</ul>
 
@@ -93,11 +93,7 @@
 </div>
 
 <div id="ac_pagination">
-  <% min_display = (params[:page].to_i * 25) - 24 %>
-  <% max_display = @people.total_count <= 25 ? @people.total_count : params[:page].to_i * 25 %>
-	<div class="fancy"><%= "#{min_display} - #{max_display} of #{@people.total_count}" %></div>
-	<%= link_to_previous_page @people, raw("<button class='action_lightblue btn_left nav_arrows'>&#9668;</button>"), :params => params %>
-	<%= link_to_next_page @people, raw("<button class='action_lightblue btn_right nav_arrows'>&#9658;</button>"), :params => params %>
+  <%= render "contacts/top_pagination" %>
 </div>
 
 <br>
@@ -159,21 +155,23 @@
         <% end %>
       </tbody>
     </table>
+
+    <% if @people.blank? %>
+      <div class="contentpad no_contacts">
+        <%= t('contacts.index.no_contacts') %>
+      </div>
+  	<% end %>
+
     <%= render 'application/assign' %>
   <% end %>
 
-  <% if @people.blank? %>
-    <div class="contentpad no_contacts">
-      <%= t('contacts.index.no_contacts') %>
-    </div>
-  <% else %>
-    <%= form_tag all_contacts_path, method: :get, id: "pagination_limit_form" do %>
-      Display
-      <%= select_tag :limit, options_for_select([25, 50, 100], selected: params[:limit] || 25), id: "pagination_limit" %>
-      results
-    <% end %>
+  <div id='pagination_space'>
     <%= paginate @people %>
-	<% end %>
+    <%= form_tag all_contacts_path(params), method: :get, id: "pagination_limit_select" do %>
+       <%= select_tag :limit, options_for_select([25, 50, 100], selected: params[:limit] || 25) %>
+       contacts per page
+    <% end %>
+  </div>
 
   <%- if false %>
     <div id="update_notice_div">
