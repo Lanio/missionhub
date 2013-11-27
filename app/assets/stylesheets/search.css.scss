@@ -39,21 +39,36 @@
   }
   #side-search-options {
     .side-search-option {
-      margin-top: 10px;
+      margin-top: 5px;
+      .toggler {
+        margin-top: 3px;
+        float: right;
+        cursor: pointer;
+        color: #888;
+        &:hover {
+          color: #aaa;
+        }
+      }
+      .fields {
+        display: none;
+        &.active {
+          display: block;
+        }
+      }
       .title {
         font-weight: bold;
         font-size: 14px;
         color: #808284;
-        margin: 3px 0 3px 5px;
+        padding: 3px 0 3px 5px;
       }
       .option {
-        margin-top: 3px;
+        padding-top: 3px;
         color: #777;
         &.checkbox {
-          padding-left: 10px;
+          padding-left: 5px;
         }
         &:last-child {
-          margin-bottom: 10px;
+          padding-bottom: 10px;
         }
         .count, .info {
           color: #999;

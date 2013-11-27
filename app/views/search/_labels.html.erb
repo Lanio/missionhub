@@ -1,7 +1,7 @@
 <div class="side-search-option">
+  <div class="toggler">more</div>
   <div class="title"><%= t('.title') %></div>
   <div class="fields">
-
     <% conditions = params[:label].present? && params[:advanced_search].present? %>
 		<% current_organization.label_set.each do |label| %>
 
