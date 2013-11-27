@@ -1,0 +1,22 @@
+<div class="side-search-option">
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields">
+
+    <% conditions = params[:label].present? && params[:advanced_search].present? %>
+		<% current_organization.label_set.each do |label| %>
+
+      <% if params[:include_archived_labels] %>
+        <% count = label.label_contacts_from_org_with_archived(@organization).collect(&:id).count %>
+      <% else %>
+        <% count = label.label_contacts_from_org(@organization).collect(&:id).count %>
+      <% end %>
+
+      <div class="option checkbox">
+        <%= check_box_tag "label[]", label.id, conditions && params[:label].include?(label.id.to_s), id: "search_label_#{label.id}", class: "search_label_checkbox" %>
+        <%= label.name %>
+        <span class="info">(<span class="count"><%= count %></span>)</span>
+      </div>
+		<% end %>
+
+  </div>
+</div>

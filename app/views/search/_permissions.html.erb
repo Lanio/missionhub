@@ -1,0 +1,21 @@
+<div class="side-search-option">
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields">
+    <% conditions = params[:permission].present? %>
+
+    <% @organization.permissions.each do |permission| %>
+      <% if params[:include_archived] %>
+        <% count = permission.permission_contacts_from_org_with_archived(@organization).count %>
+      <% else %>
+        <% count = permission.permission_contacts_from_org(@organization).count %>
+      <% end %>
+
+      <div class="option checkbox">
+        <%= check_box_tag "permission[]", permission.id, conditions && params[:permission].include?(permission.id.to_s), id: "search_permission_#{permission.id}", class: "search_permission_checkbox" %>
+        <%= permission.name %>
+        <span class="info">(<span class="count"><%= count %></span>)</span>
+      </div>
+    <% end %>
+
+  </div>
+</div>

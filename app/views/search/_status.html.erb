@@ -1,0 +1,12 @@
+<div class="side-search-option">
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields">
+    <% conditions = params[:status].present? && params[:advanced_search].present? %>
+		<% OrganizationalPermission::FOLLOWUP_STATUSES.each do |status| %>
+			<div class="option checkbox">
+				<%= check_box_tag "status[]", status, conditions && params[:status].include?(status.to_s), id: "search_status_#{status}", class: "search_status_checkbox" %>
+				<%= status.titleize %>
+			</div>
+		<% end %>
+  </div>
+</div>

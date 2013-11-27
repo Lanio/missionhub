@@ -6,9 +6,18 @@ en:
   search:
     sidebar:
       search_any_placeholder: "Search"
-      results_title: "Filter Results"
-      contact_assignment_title: "Assigned To:"
-      status_title: "Status:"
+    triggers:
+      title: "Filter Results"
+    assignments:
+      title: "Assigned To"
+    status:
+      title: "Status"
+    interactions:
+      title: "Interactions"
+    permissions:
+      title: "Permissions"
+    labels:
+      title: "Labels"
   manage_labels:
     title: "%{org} Labels"
     add_title: "Add a Organizational Label"
