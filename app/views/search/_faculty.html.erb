@@ -1,0 +1,15 @@
+<% conditions = params[:faculty].present? %>
+<div class="side-search-option">
+  <%= render "search/toggler", active: conditions %>
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields <%= 'active' if conditions%>">
+    <div class="option checkbox">
+      <%= check_box_tag "faculty[]", "1", conditions && params[:group].include?("1"), id: "search_faculty_1", class: "search_faculty_1" %>
+      <div class="sidebar-label"><%= t('.yes') %></div>
+    </div>
+    <div class="option checkbox">
+      <%= check_box_tag "faculty[]", "0", conditions && params[:group].include?("0"), id: "search_faculty_0", class: "search_faculty_0" %>
+      <div class="sidebar-label"><%= t('.no') %></div>
+    </div>
+  </div>
+</div>

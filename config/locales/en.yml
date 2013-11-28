@@ -22,6 +22,14 @@ en:
       title: "Labels"
     groups:
       title: "Groups"
+    gender:
+      title: "Gender"
+      male: "Male"
+      female: "Female"
+    faculty:
+      title: "Faculty"
+      yes: "Yes"
+      no: "No"
   manage_labels:
     title: "%{org} Labels"
     add_title: "Add a Organizational Label"

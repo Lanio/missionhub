@@ -11,7 +11,6 @@
     </div>
 
     <!-- Active Filters -->
-    <%= render "search/triggers" %>
 
     <div class="side-search-links">
       <div class="pull-right">
@@ -25,7 +24,16 @@
       </div>
     </div>
     <!-- Available Filters -->
-    <div class='side-search'>
+    <%- active = nil %>
+    <%- active ||= params[:assigned_to].present? %>
+    <%- active ||= params[:status].present? %>
+    <%- active ||= params[:interaction_type].present? %>
+    <%- active ||= params[:permission].present? %>
+    <%- active ||= params[:label].present? %>
+    <%- active ||= params[:group].present? %>
+    <%- active ||= params[:gender].present? %>
+    <%- active ||= params[:faculty].present? %>
+    <div class="side-search <%= 'active' if active %>">
       <div class="side-search-title"><%= t('.standard_title') %></div>
       <div class="side-search-options">
         <%= render "search/assignments" %>
@@ -34,6 +42,8 @@
         <%= render "search/permissions" %>
         <%= render "search/labels" %>
         <%= render "search/groups" %>
+        <%= render "search/gender" %>
+        <%= render "search/faculty" %>
       </div>
     </div>
 

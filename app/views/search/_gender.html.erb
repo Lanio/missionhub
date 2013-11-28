@@ -1,0 +1,15 @@
+<% conditions = params[:gender].present? %>
+<div class="side-search-option">
+  <%= render "search/toggler", active: conditions %>
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields <%= 'active' if conditions%>">
+    <div class="option checkbox">
+      <%= check_box_tag "gender[]", "1", conditions && params[:gender].include?("1"), id: "search_gender_1", class: "search_gender_1" %>
+      <div class="sidebar-label"><%= t('.male') %></div>
+    </div>
+    <div class="option checkbox">
+      <%= check_box_tag "gender[]", "0", conditions && params[:gender].include?("0"), id: "search_gender_0", class: "search_gender_0" %>
+      <div class="sidebar-label"><%= t('.female') %></div>
+    </div>
+  </div>
+</div>
