@@ -5,7 +5,7 @@ $ ->
       fields = $(this).siblings(".fields")
       if fields.is(":visible")
         $(this).siblings(".fields").slideUp()
-        $(this).text("more")
+        $(this).removeClass("active")
       else
         $(this).siblings(".fields").slideDown()
-        $(this).text("less")
+        $(this).addClass("active")

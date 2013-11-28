@@ -41,12 +41,27 @@
     .side-search-option {
       margin-top: 5px;
       .toggler {
-        margin-top: 3px;
-        float: right;
+        margin: 4px 5px 0px;
+        float: left;
         cursor: pointer;
         color: #888;
         &:hover {
           color: #aaa;
+        }
+        .expanded {
+          display: none;
+        }
+        .collapsed {
+          display: inline-block;
+        }
+        &.active {
+          .expanded {
+            display: inline-block;
+          }
+          .collapsed {
+            display: none;
+          }
+
         }
       }
       .fields {
