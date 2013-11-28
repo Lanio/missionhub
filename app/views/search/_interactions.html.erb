@@ -1,5 +1,5 @@
 <div class="side-search-option">
-  <div class="toggler">more</div>
+  <%= render "search/toggler" %>
   <div class="title"><%= t('.title') %></div>
   <div class="fields">
     <% conditions = params[:interactions].present? %>
