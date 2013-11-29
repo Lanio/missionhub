@@ -10,9 +10,15 @@ $ ->
         fields.slideDown("fast")
         $(this).addClass("active")
 
-    $(document).on "click", ".side-search-title", (e)->
-      fields = $(this).siblings(".side-search-options")
+    $(document).on "click", ".side-search-option .title", (e)->
+      $(this).siblings(".toggler").click()
+
+    $(document).on "click", ".side-search .side-search-toggler", (e)->
+      toggler= $(this)
+      fields = toggler.siblings(".side-search-options")
       if fields.is(":visible")
-        fields.slideUp("fast")
+        toggler.removeClass("active")
+        fields.slideUp "fast"
       else
-        fields.slideDown("fast")
+        toggler.addClass("active")
+        fields.slideDown "fast"

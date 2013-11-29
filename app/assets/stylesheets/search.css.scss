@@ -58,7 +58,7 @@
       font-size: 15px;
       background: #2384ad;
       color: white;
-      cursor: pointer;
+      cursor: default;
     }
     .side-search-options {
       display: none;
@@ -68,11 +68,33 @@
         display: block;
       }
     }
+    .side-search-toggler {
+      padding: 7px 10px 7px 5px;
+      font-size: 13px;
+      color: #2384ad;
+      cursor: pointer;
+      .visible {
+        display: none;
+      }
+      .invisible {
+        display: block;
+      }
+      &.active {
+        .visible {
+          display: block;
+        }
+        .invisible {
+          display: none;
+        }
+      }
+    }
     .side-search-options {
+      margin: 0;
+      overflow: hidden;
       .side-search-option {
-        margin-top: 5px;
+        padding-top: 5px;
         .toggler {
-          margin: 4px 5px 0px 3px;
+          padding: 4px 5px 0px 3px;
           float: left;
           cursor: pointer;
           color: #888;
@@ -104,6 +126,7 @@
         .title {
           font-weight: normal;
           font-size: 14px;
+          cursor: pointer;
           color: #808284;
           padding: 3px 0 3px 5px;
         }

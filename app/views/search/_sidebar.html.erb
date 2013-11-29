@@ -33,7 +33,7 @@
     <%- active ||= params[:group].present? %>
     <%- active ||= params[:gender].present? %>
     <%- active ||= params[:faculty].present? %>
-    <div class="side-search <%= 'active' if active %>">
+    <div class="side-search <%= 'active' if active %>" id="search_standard_filters">
       <div class="side-search-title"><%= t('.standard_title') %></div>
       <div class="side-search-options">
         <%= render "search/assignments" %>
@@ -45,7 +45,12 @@
         <%= render "search/gender" %>
         <%= render "search/faculty" %>
       </div>
+      <div class="side-search-toggler">
+        <span class="visible">Hide Standard Filters</span>
+        <span class="invisible">Show Standard Filters</span>
+      </div>
     </div>
+
 
 
 
