@@ -8,6 +8,10 @@ en:
       standard_title: "Standard Filters"
       survey_title: "Survey Filters"
       search_any_placeholder: "Search"
+      standard_hide: "Hide Standard Filters"
+      standard_show: "Show Standard Filters"
+      survey_hide: "Hide Survey Filters"
+      survey_show: "Show Survey Filters"
     triggers:
       title: "Filter Results"
     assignments:

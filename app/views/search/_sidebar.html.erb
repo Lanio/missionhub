@@ -46,8 +46,20 @@
         <%= render "search/faculty" %>
       </div>
       <div class="side-search-toggler">
-        <span class="visible">Hide Standard Filters</span>
-        <span class="invisible">Show Standard Filters</span>
+        <span class="visible"><%= t('.standard_hide') %></span>
+        <span class="invisible"><%= t('.standard_show') %></span>
+      </div>
+    </div>
+
+    <%- active = nil %>
+    <%- active ||= params[:survey_search].present? %>
+    <div class="side-search <%= 'active' if active %>" id="search_survey_filters">
+      <div class="side-search-title"><%= t('.survey_title') %></div>
+      <div class="side-search-options">
+      </div>
+      <div class="side-search-toggler">
+        <span class="visible"><%= t('.survey_hide') %></span>
+        <span class="invisible"><%= t('.survey_show') %></span>
       </div>
     </div>
 
