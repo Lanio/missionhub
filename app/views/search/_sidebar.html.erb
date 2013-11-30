@@ -56,15 +56,12 @@
     <div class="side-search <%= 'active' if active %>" id="search_survey_filters">
       <div class="side-search-title"><%= t('.survey_title') %></div>
       <div class="side-search-options">
+        <%= render "search/included_surveys" %>
       </div>
       <div class="side-search-toggler">
         <span class="visible"><%= t('.survey_hide') %></span>
         <span class="invisible"><%= t('.survey_show') %></span>
       </div>
     </div>
-
-
-
-
   <% end %>
 </div>

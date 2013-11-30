@@ -34,6 +34,8 @@ en:
       title: "Faculty"
       yes: "Yes"
       no: "No"
+    included_surveys:
+      title: "Included Surveys"
   manage_labels:
     title: "%{org} Labels"
     add_title: "Add a Organizational Label"
