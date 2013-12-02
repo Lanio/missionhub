@@ -52,11 +52,16 @@
     </div>
 
     <%- active = nil %>
-    <%- active ||= params[:survey_search].present? %>
+    <%- active ||= params[:survey_scope].present? %>
     <div class="side-search <%= 'active' if active %>" id="search_survey_filters">
       <div class="side-search-title"><%= t('.survey_title') %></div>
       <div class="side-search-options">
         <%= render "search/included_surveys" %>
+        <div class="side-search-surveys">
+          <% @survey_scope.each do |survey| %>
+            <%= render "search/survey", survey: survey %>
+          <% end %>
+        </div>
       </div>
       <div class="side-search-toggler">
         <span class="visible"><%= t('.survey_hide') %></span>

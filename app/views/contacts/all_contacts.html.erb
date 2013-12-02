@@ -58,11 +58,11 @@
   		</li>
   	</ul>
 
-    <% with_save_search = (params[:do_search] == "1" || params[:search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
+    <% with_save_search = (params[:do_search] == "1" || params[:search] == "1" || params[:advanced_search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
 
   	<ul class="button_bar">
   		<li class="action_lightblue <%= 'btn_left' if with_save_search %>">
-  		  <%= link_to "Search", "#", id: "action_menu_search_filters" %>
+  		  <%= link_to "Search", "#", id: "action_menu_advanced_search" %>
   		</li>
   	</ul>
 
