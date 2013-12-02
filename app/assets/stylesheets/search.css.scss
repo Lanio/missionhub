@@ -1,4 +1,17 @@
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+
 #search-sidebar {
+  .side-search-links {
+    height: 10px;
+    a {
+      color: #555;
+    }
+  }
   .side-search-field {
     padding: 3px 5px;
     color: #666;
@@ -37,56 +50,81 @@
       }
     }
   }
-  #side-search-options {
-    .side-search-option {
-      margin-top: 5px;
-      .toggler {
-        margin: 4px 5px 0px;
-        float: left;
-        cursor: pointer;
-        color: #888;
-        &:hover {
-          color: #aaa;
-        }
-        .expanded {
-          display: none;
-        }
-        .collapsed {
-          display: inline-block;
-        }
-        &.active {
-          .expanded {
-            display: inline-block;
+  .side-search {
+    .side-search-title {
+      margin: 10px 0 0;
+      padding: 4px 5px;
+      font-size: 15px;
+      background: #2384ad;
+      color: white;
+      cursor: pointer;
+    }
+    .side-search-options {
+      display: none;
+    }
+    &.active {
+      .side-search-options {
+        display: block;
+      }
+    }
+    .side-search-options {
+      .side-search-option {
+        margin-top: 5px;
+        .toggler {
+          margin: 4px 5px 0px 3px;
+          float: left;
+          cursor: pointer;
+          color: #888;
+          &:hover {
+            color: #aaa;
           }
-          .collapsed {
+          .expanded {
             display: none;
           }
+          .collapsed {
+            display: inline-block;
+          }
+          &.active {
+            .expanded {
+              display: inline-block;
+            }
+            .collapsed {
+              display: none;
+            }
 
+          }
         }
-      }
-      .fields {
-        display: none;
-        &.active {
-          display: block;
+        .fields {
+          display: none;
+          &.active {
+            display: block;
+          }
         }
-      }
-      .title {
-        font-weight: bold;
-        font-size: 14px;
-        color: #808284;
-        padding: 3px 0 3px 5px;
-      }
-      .option {
-        padding-top: 3px;
-        color: #777;
-        &.checkbox {
-          padding-left: 5px;
+        .title {
+          font-weight: normal;
+          font-size: 14px;
+          color: #808284;
+          padding: 3px 0 3px 5px;
         }
-        &:last-child {
-          padding-bottom: 10px;
-        }
-        .count, .info {
-          color: #999;
+        .option {
+          padding-top: 3px;
+          color: #777;
+          &.checkbox {
+            padding-left: 5px;
+            .sidebar-label {
+              width: 120px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              display: inline-block;
+            }
+          }
+          &:last-child {
+            padding-bottom: 10px;
+          }
+          .count, .info {
+            color: #999;
+          }
         }
       }
     }

@@ -1,8 +1,8 @@
+<% conditions = params[:interaction_type].present? %>
 <div class="side-search-option">
-  <%= render "search/toggler" %>
+  <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
-  <div class="fields">
-    <% conditions = params[:interactions].present? %>
+  <div class="fields <%= 'active' if conditions%>">
     <% @organization.interaction_types.exclude_comment.each do |interaction_type| %>
       <% if params[:include_archived_interactions] %>
         <% count = interaction_type.interaction_receivers_from_org_with_archived(@organization).collect(&:id).count %>
@@ -11,7 +11,7 @@
       <% end %>
       <div class="option checkbox">
         <%= check_box_tag "interaction_type[]", interaction_type.id, conditions && params[:interaction_type].include?(interaction_type.id.to_s), id: "search_interaction_type_#{interaction_type.id}", class: "search_interaction_type_checkbox" %>
-        <%= interaction_type.name %>
+        <div class="sidebar-label"><%= interaction_type.name %></div>
         <span class="info">(<span class="count"><%= count %></span>)</span>
       </div>
     <% end %>

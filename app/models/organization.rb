@@ -428,32 +428,32 @@ class Organization < ActiveRecord::Base
 
   def assigned_contacts
     assignments = contact_assignments.where(person_id: all_people.collect(&:id), assigned_to_id: leaders.collect(&:id))
-    assignments.present? ? all_people.where(id: assignments.collect(&:person_id)) : []
+    return all_people.where(id: assignments.collect(&:person_id))
   end
 
   def assigned_contacts_to(leaders)
     assignments = contact_assignments.where(person_id: all_people.collect(&:id), assigned_to_id: leaders.collect(&:id))
-    assignments.present? ? all_people.where(id: assignments.collect(&:person_id)) : []
+    return all_people.where(id: assignments.collect(&:person_id))
   end
 
   def assigned_contacts_with_archived
     assignments = contact_assignments.where(person_id: contacts_with_archived.collect(&:id), assigned_to_id: leaders.collect(&:id))
-    assignments.present? ? contacts_with_archived.where(id: assignments.collect(&:person_id)) : contacts_with_archived
+    return contacts_with_archived.where(id: assignments.collect(&:person_id))
   end
 
   def assigned_contacts_with_archived_to(leaders)
     assignments = contact_assignments.where(person_id: contacts_with_archived.collect(&:id), assigned_to_id: leaders.collect(&:id))
-    assignments.present? ? contacts_with_archived.where(id: assignments.collect(&:person_id)) : contacts_with_archived
+    return contacts_with_archived.where(id: assignments.collect(&:person_id))
   end
 
   def unassigned_contacts
     assignments = contact_assignments.where(person_id: all_people.collect(&:id), assigned_to_id: leaders.collect(&:id))
-    assignments.present? ? all_people.where("people.id NOT IN (?)", assignments.collect(&:person_id)) : all_people
+    return all_people.where("people.id NOT IN (?)", assignments.collect(&:person_id))
   end
 
   def unassigned_contacts_with_archived
     assignments = contact_assignments.where(person_id: contacts_with_archived.collect(&:id), assigned_to_id: leaders.collect(&:id))
-    assignments.present? ? contacts_with_archived.where("people.id NOT IN (?)", assignments.collect(&:person_id)) : contacts_with_archived
+    return contacts_with_archived.where("people.id NOT IN (?)", assignments.collect(&:person_id))
   end
 
   def inprogress_contacts

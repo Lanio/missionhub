@@ -1,0 +1,13 @@
+<% conditions = params[:group].present? %>
+<div class="side-search-option">
+  <%= render "search/toggler", active: conditions %>
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields <%= 'active' if conditions%>">
+		<% current_organization.groups.each do |group| %>
+      <div class="option checkbox">
+        <%= check_box_tag "group[]", group.id, conditions && params[:group].include?(group.id.to_s), id: "search_group_#{group.id}", class: "search_group_checkbox" %>
+        <div class="sidebar-label"><%= group.name %></div>
+      </div>
+		<% end %>
+  </div>
+</div>

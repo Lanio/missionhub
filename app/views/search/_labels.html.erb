@@ -1,8 +1,8 @@
+<% conditions = params[:label].present? %>
 <div class="side-search-option">
-  <%= render "search/toggler" %>
+  <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
-  <div class="fields">
-    <% conditions = params[:label].present? && params[:advanced_search].present? %>
+  <div class="fields <%= 'active' if conditions%>">
 		<% current_organization.label_set.each do |label| %>
 
       <% if params[:include_archived_labels] %>
@@ -13,7 +13,7 @@
 
       <div class="option checkbox">
         <%= check_box_tag "label[]", label.id, conditions && params[:label].include?(label.id.to_s), id: "search_label_#{label.id}", class: "search_label_checkbox" %>
-        <%= label.name %>
+        <div class="sidebar-label"><%= label.name %></div>
         <span class="info">(<span class="count"><%= count %></span>)</span>
       </div>
 		<% end %>

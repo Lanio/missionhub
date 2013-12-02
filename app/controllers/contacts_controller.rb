@@ -562,7 +562,6 @@ class ContactsController < ApplicationController
         else
           @header = @labels.collect{|desc| (desc.i18n.present? ? desc.i18n : desc.name).try('titleize')}.to_sentence
         end
-
         @people_scope = @people_scope.joins(:organizational_labels).where('organizational_labels.organization_id = ?', current_organization.id)
 
       	if params[:label_tag].present? && params[:label_tag].to_i == Label::ALL_SELECTED_LABEL[1]

@@ -1,4 +1,5 @@
-<div class="toggler">
+<%- active ||= false %>
+<div class="toggler <%= 'active' if active %>">
   <span class="expanded">
     <%= image_tag("collapse.png")%>
   </span>

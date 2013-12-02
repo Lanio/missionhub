@@ -1,12 +1,12 @@
+<% conditions = params[:status].present? %>
 <div class="side-search-option">
-  <%= render "search/toggler" %>
+  <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
-  <div class="fields">
-    <% conditions = params[:status].present? && params[:advanced_search].present? %>
+  <div class="fields <%= 'active' if conditions%>">
 		<% OrganizationalPermission::FOLLOWUP_STATUSES.each do |status| %>
 			<div class="option checkbox">
 				<%= check_box_tag "status[]", status, conditions && params[:status].include?(status.to_s), id: "search_status_#{status}", class: "search_status_checkbox" %>
-				<%= status.titleize %>
+				<div class="sidebar-label"><%= status.titleize %></div>
 			</div>
 		<% end %>
   </div>

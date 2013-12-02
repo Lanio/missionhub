@@ -5,6 +5,8 @@
 en:
   search:
     sidebar:
+      standard_title: "Standard Filters"
+      survey_title: "Survey Filters"
       search_any_placeholder: "Search"
     triggers:
       title: "Filter Results"
@@ -18,6 +20,8 @@ en:
       title: "Permissions"
     labels:
       title: "Labels"
+    groups:
+      title: "Groups"
   manage_labels:
     title: "%{org} Labels"
     add_title: "Add a Organizational Label"

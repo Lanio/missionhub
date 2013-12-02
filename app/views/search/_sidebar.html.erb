@@ -13,13 +13,28 @@
     <!-- Active Filters -->
     <%= render "search/triggers" %>
 
+    <div class="side-search-links">
+      <div class="pull-right">
+        <%= link_to("Reset All", all_contacts_path, id: 'search_people_filters_reset_all_button') %>
+      </div>
+      <% with_save_search = (params[:do_search] == "1" || params[:search] == "1" || params[:advanced_search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
+      <div class="pull-left">
+        <% if with_save_search %>
+          <%= link_to("Save this Search", "", id: 'search_people_filters_save_search_button') %>
+        <% end %>
+      </div>
+    </div>
     <!-- Available Filters -->
-    <div id="side-search-options">
-      <%= render "search/assignments" %>
-      <%= render "search/status" %>
-      <%= render "search/interactions" %>
-      <%= render "search/permissions" %>
-      <%= render "search/labels" %>
+    <div class='side-search'>
+      <div class="side-search-title"><%= t('.standard_title') %></div>
+      <div class="side-search-options">
+        <%= render "search/assignments" %>
+        <%= render "search/status" %>
+        <%= render "search/interactions" %>
+        <%= render "search/permissions" %>
+        <%= render "search/labels" %>
+        <%= render "search/groups" %>
+      </div>
     </div>
 
 

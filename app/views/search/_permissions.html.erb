@@ -1,8 +1,8 @@
+<% conditions = params[:permission].present? %>
 <div class="side-search-option">
-  <%= render "search/toggler" %>
+  <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
-  <div class="fields">
-    <% conditions = params[:permission].present? %>
+  <div class="fields <%= 'active' if conditions%>">
 
     <% @organization.permissions.each do |permission| %>
       <% if params[:include_archived] %>
@@ -13,7 +13,7 @@
 
       <div class="option checkbox">
         <%= check_box_tag "permission[]", permission.id, conditions && params[:permission].include?(permission.id.to_s), id: "search_permission_#{permission.id}", class: "search_permission_checkbox" %>
-        <%= permission.name %>
+        <div class="sidebar-label"><%= permission.name %></div>
         <span class="info">(<span class="count"><%= count %></span>)</span>
       </div>
     <% end %>
