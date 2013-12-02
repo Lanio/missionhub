@@ -1,0 +1,19 @@
+<% conditions = params[:included_surveys].present? %>
+<div class="side-search-option">
+  <%= render "search/toggler", active: conditions %>
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields <%= 'active' if conditions%>">
+    <% @organization.leaders.each do |leader| %>
+      <% if params[:include_archived] %>
+        <% count = leader.assigned_contacts_limit_org_with_archived(@organization).collect(&:id).count %>
+      <% else %>
+        <% count = leader.assigned_contacts_limit_org(@organization).collect(&:id).count %>
+      <% end %>
+      <div class="option checkbox">
+        <%= check_box_tag "assigned_to[]", leader.id, conditions && params[:assigned_to].include?(leader.id.to_s), id: "search_assigned_to_#{leader.id}", class: "search_assigned_to_checkbox" %>
+        <div class="sidebar-label"><%= leader.name %></div>
+        <span class="info">(<span class="count"><%= count %></span>)</span>
+      </div>
+    <% end %>
+  </div>
+</div>
