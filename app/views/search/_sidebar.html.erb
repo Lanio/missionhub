@@ -45,7 +45,7 @@
         <%= render "search/gender" %>
         <%= render "search/faculty" %>
       </div>
-      <div class="side-search-toggler">
+      <div class="side-search-toggler <%= 'active' if active %>">
         <span class="visible"><%= t('.standard_hide') %></span>
         <span class="invisible"><%= t('.standard_show') %></span>
       </div>
@@ -63,7 +63,7 @@
           <% end %>
         </div>
       </div>
-      <div class="side-search-toggler">
+      <div class="side-search-toggler <%= 'active' if active %>">
         <span class="visible"><%= t('.survey_hide') %></span>
         <span class="invisible"><%= t('.survey_show') %></span>
       </div>
