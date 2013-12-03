@@ -22,3 +22,22 @@ $ ->
       else
         toggler.addClass("active")
         fields.slideDown "fast"
+
+    $(".field .textfield").on
+      keyup: (e)->
+        if $(this).val() == ""
+          options = $(this).parents(".field").siblings(".options")
+          contains = options.children(".text_option.contains")
+          contains.children("input").prop("disabled", true)
+          is_exactly = options.children(".text_option.is_exactly")
+          is_exactly.children("input").prop("disabled", true)
+          does_not_contain = options.children(".text_option.does_not_contain")
+          does_not_contain.children("input").prop("disabled", true)
+        else
+          options = $(this).parents(".field").siblings(".options")
+          contains = options.children(".text_option.contains")
+          contains.children("input").prop("disabled", false)
+          is_exactly = options.children(".text_option.is_exactly")
+          is_exactly.children("input").prop("disabled", false)
+          does_not_contain = options.children(".text_option.does_not_contain")
+          does_not_contain.children("input").prop("disabled", false)

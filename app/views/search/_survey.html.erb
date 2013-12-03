@@ -1,3 +1,51 @@
 <div class="side-search-survey">
-  <div class="title"><%= survey.title %></div>
+  <div class="survey-title"><%= survey.title %></div>
+  <div class="side-search-survey-questions">
+    <% if survey.questions.count > 0 %>
+      <% survey.questions.each do |question| %>
+        <% begin %>
+          <% answer = params[:survey_answer][survey.id.to_s][question.id.to_s] %>
+        <% rescue %>
+          <% answer = "" %>
+        <% end %>
+
+        <% conditions = answer.present? %>
+        <div class="side-search-option">
+          <%= render "search/toggler", active: conditions %>
+          <div class="title"><%= question.label %></div>
+          <div class="fields <%= 'active' if conditions %>">
+            <% begin %>
+              <% selected_option = params[:survey_answer_option][survey.id.to_s][question.id.to_s] %>
+            <% rescue %>
+              <% selected_option = Element::TEXTFIELD_MATCH.first[1] %>
+            <% end %>
+
+            <% if question.kind == "DateField" %>
+              <% is_active = (answer.present? && answer["start"].present?) %>
+            <% else %>
+              <% is_active = (answer.present? || ['is_blank','is_not_blank'].include?(selected_option)) %>
+            <% end %>
+
+            <% if question.kind == "TextField" %>
+              <div class="field">
+                <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
+                    autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
+              </div>
+              <div class="options">
+                <% Element::TEXTFIELD_MATCH.each do |option| %>
+                  <div class="text_option <%= option[1] %>">
+                    <% disabled = answer.strip == "" && ['contains','is_exactly','does_not_contain'].include?(option[1]) %>
+                    <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option", disabled: disabled %>
+                    <%= option[0].titleize %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+
+          </div>
+        </div>
+
+      <% end %>
+    <% end %>
+  </div>
 </div>

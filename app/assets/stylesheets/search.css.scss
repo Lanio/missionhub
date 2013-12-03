@@ -62,19 +62,17 @@
     }
     .side-search-options {
       display: none;
-      .side-search-survey {
+      .side-search-survey .survey-title {
         margin: 5px 0;
         padding: 4px 5px;
         background: #aaa;
         color: white;
         cursor: default;
-        .title{
-          font-size: 13px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          display: block;
-        }
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
       }
     }
     &.active {
@@ -107,6 +105,11 @@
       overflow: hidden;
       .side-search-option {
         padding-top: 5px;
+        .options {
+          margin: 5px 10px 10px;
+          padding: 3px 5px;
+          background: #f0f0f0;
+        }
         .toggler {
           padding: 4px 5px 0px 3px;
           float: left;
@@ -136,8 +139,24 @@
           &.active {
             display: block;
           }
+          .field {
+            text-align: center;
+            .textfield {
+              width: 150px;
+              padding: 3px 5px;
+            }
+          }
+          .options {
+            .text_option {
+              font-weight: normal;
+              font-size: 12px;
+              cursor: pointer;
+              color: #808284;
+              padding: 1px 0 1px 5px;
+            }
+          }
         }
-        .title {
+        .title, .side-search-survey .question-title {
           font-weight: normal;
           font-size: 14px;
           cursor: pointer;
