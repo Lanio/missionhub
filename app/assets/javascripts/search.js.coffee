@@ -23,6 +23,20 @@ $ ->
         toggler.addClass("active")
         fields.slideDown "fast"
 
+    # Toggle option if the parent is clicked
+    $(".options .selected").on "click", (e)->
+      $(this).hide()
+      $(this).siblings(".choices").slideDown()
+
+    # Show options when the selected option is clicked
+    $(".options .choices .text_option").on "click", (e)->
+      alert("clicked")
+      input = $(".options .choices .text_option").first().children('input')
+      console.log(input.is(":disabled"))
+      unless input.is(":disabled")
+        input.prop("checked", true)
+
+    # Disable some options when no keyword is defined
     $(".field .textfield").on
       keyup: (e)->
         if $(this).val() == ""

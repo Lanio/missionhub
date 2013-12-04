@@ -32,13 +32,19 @@
                     autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
               </div>
               <div class="options">
-                <% Element::TEXTFIELD_MATCH.each do |option| %>
-                  <div class="text_option <%= option[1] %>">
-                    <% disabled = answer.strip == "" && ['contains','is_exactly','does_not_contain'].include?(option[1]) %>
-                    <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option", disabled: disabled %>
-                    <%= option[0].titleize %>
-                  </div>
-                <% end %>
+                <div class="selected">
+                  <% selected_title = Element::TEXTFIELD_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first)%>
+                  <%= selected_title %>
+                </div>
+                <div class="choices">
+                  <% Element::TEXTFIELD_MATCH.each do |option| %>
+                    <div class="text_option <%= option[1] %>">
+                      <% disabled = answer.strip == "" && ['contains','is_exactly','does_not_contain'].include?(option[1]) %>
+                      <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option", disabled: disabled %>
+                      <%= option[0].titleize %>
+                    </div>
+                  <% end %>
+                </div>
               </div>
             <% end %>
 
