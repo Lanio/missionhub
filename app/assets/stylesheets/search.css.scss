@@ -169,11 +169,18 @@
           }
           .actions {
             margin: -5px 10px;
+            display: none;
             .apply {
-              text-align: right;
-              display: none;
+              float: right;
               button {
                 display: inline-block;
+              }
+            }
+            .other {
+              height: 30px;
+              a {
+                color: #555;
+                text-decoration: none;
               }
             }
           }

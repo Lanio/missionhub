@@ -8,17 +8,17 @@
         <% rescue %>
           <% answer = "" %>
         <% end %>
+        <% begin %>
+          <% selected_option = params[:survey_answer_option][survey.id.to_s][question.id.to_s] %>
+        <% rescue %>
+          <% selected_option = Element::TEXTFIELD_MATCH.first[1] %>
+        <% end %>
 
         <% conditions = answer.present? %>
-        <div class="side-search-option">
+        <div class="side-search-option" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
           <%= render "search/toggler", active: conditions %>
           <div class="title"><%= question.label %></div>
           <div class="fields <%= 'active' if conditions %>">
-            <% begin %>
-              <% selected_option = params[:survey_answer_option][survey.id.to_s][question.id.to_s] %>
-            <% rescue %>
-              <% selected_option = Element::TEXTFIELD_MATCH.first[1] %>
-            <% end %>
 
             <% if question.kind == "DateField" %>
               <% is_active = (answer.present? && answer["start"].present?) %>
@@ -53,6 +53,9 @@
                   <button class="action_gray search_result_button" id="search_apply_button">
                     Apply
                   </button>
+                </div>
+                <div class="other">
+                  <%= link_to "Reset Filter", "#", class: "reset_filter"%>
                 </div>
               </div>
             <% end %>

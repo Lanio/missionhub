@@ -23,6 +23,28 @@ $ ->
         toggler.addClass("active")
         fields.slideDown "fast"
 
+    # Reset survey filter
+    $(".side-search-option .reset_filter").on "click", (e)->
+      e.preventDefault()
+      parent = $(this).parents(".side-search-option")
+      type = parent.data("type")
+      value = parent.data("value")
+      option = parent.data("option")
+
+      if type == "TextField"
+        field = parent.find(".field input")
+        actions = $(this).parents(".actions")
+        options = actions.siblings(".options")
+        field.val(value)
+        options.find(".text_option." + option + " input").prop("checked", true)
+        options.find(".choices").slideUp()
+        options.find(".selected").show()
+        field.keyup()
+        actions.hide()
+
+
+
+
     # Toggle option if the parent is clicked
     $(".options .selected").on "click", (e)->
       $(this).hide()
@@ -34,7 +56,7 @@ $ ->
       unless input.is(":disabled")
         input.prop("checked", true)
         # Show apply button
-        apply = $(this).parents(".options").siblings(".actions").children(".apply")
+        apply = $(this).parents(".options").siblings(".actions")
         apply.show()
 
     # Disable some options when no keyword is defined
@@ -47,7 +69,7 @@ $ ->
         is_blank = options.children(".choices").children(".text_option.is_blank").children("input")
         is_not_blank= options.children(".choices").children(".text_option.is_not_blank").children("input")
         # Show apply button
-        apply = $(this).parents(".field").siblings(".actions").children(".apply")
+        apply = $(this).parents(".field").siblings(".actions")
         apply.show()
         if $(this).val() == ""
           if contains.is(":checked") || is_exactly.is(":checked") || does_not_contain.is(":checked")
