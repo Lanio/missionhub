@@ -55,6 +55,7 @@ $ ->
       input = $(this).children('input')
       unless input.is(":disabled")
         input.prop("checked", true)
+
         # Show apply button
         apply = $(this).parents(".options").siblings(".actions")
         apply.show()
@@ -68,9 +69,11 @@ $ ->
         does_not_contain = options.children(".choices").children(".text_option.does_not_contain").children("input")
         is_blank = options.children(".choices").children(".text_option.is_blank").children("input")
         is_not_blank= options.children(".choices").children(".text_option.is_not_blank").children("input")
+
         # Show apply button
         apply = $(this).parents(".field").siblings(".actions")
         apply.show()
+
         if $(this).val() == ""
           if contains.is(":checked") || is_exactly.is(":checked") || does_not_contain.is(":checked")
             is_blank.prop("checked", true)
