@@ -27,10 +27,6 @@
             <% end %>
 
             <% if question.kind == "TextField" %>
-              <div class="field">
-                <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
-                    autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
-              </div>
               <div class="options">
                 <div class="selected">
                   <% selected_title = Element::TEXTFIELD_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first)%>
@@ -45,6 +41,10 @@
                     </div>
                   <% end %>
                 </div>
+              </div>
+              <div class="field">
+                <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
+                    autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
               </div>
             <% end %>
 

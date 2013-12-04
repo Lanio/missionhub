@@ -30,28 +30,28 @@ $ ->
 
     # Show options when the selected option is clicked
     $(".options .choices .text_option").on "click", (e)->
-      alert("clicked")
-      input = $(".options .choices .text_option").first().children('input')
-      console.log(input.is(":disabled"))
+      input = $(this).children('input')
       unless input.is(":disabled")
         input.prop("checked", true)
 
     # Disable some options when no keyword is defined
     $(".field .textfield").on
       keyup: (e)->
+        options = $(this).parents(".field").siblings(".options")
+        contains = options.children(".choices").children(".text_option.contains").children("input")
+        is_exactly = options.children(".choices").children(".text_option.is_exactly").children("input")
+        does_not_contain = options.children(".choices").children(".text_option.does_not_contain").children("input")
+        is_blank = options.children(".choices").children(".text_option.is_blank").children("input")
+        is_not_blank= options.children(".choices").children(".text_option.is_not_blank").children("input")
         if $(this).val() == ""
-          options = $(this).parents(".field").siblings(".options")
-          contains = options.children(".text_option.contains")
-          contains.children("input").prop("disabled", true)
-          is_exactly = options.children(".text_option.is_exactly")
-          is_exactly.children("input").prop("disabled", true)
-          does_not_contain = options.children(".text_option.does_not_contain")
-          does_not_contain.children("input").prop("disabled", true)
+          if contains.is(":checked") || is_exactly.is(":checked") || does_not_contain.is(":checked")
+            is_blank.prop("checked", true)
+          contains.prop("disabled", true)
+          is_exactly.prop("disabled", true)
+          does_not_contain.prop("disabled", true)
         else
-          options = $(this).parents(".field").siblings(".options")
-          contains = options.children(".text_option.contains")
-          contains.children("input").prop("disabled", false)
-          is_exactly = options.children(".text_option.is_exactly")
-          is_exactly.children("input").prop("disabled", false)
-          does_not_contain = options.children(".text_option.does_not_contain")
-          does_not_contain.children("input").prop("disabled", false)
+          if is_blank .is(":checked") || is_not_blank.is(":checked")
+            contains .prop("checked", true)
+          contains.prop("disabled", false)
+          is_exactly.prop("disabled", false)
+          does_not_contain.prop("disabled", false)
