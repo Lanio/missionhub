@@ -53,7 +53,7 @@
   }
   .side-search {
     .side-search-title {
-      margin: 10px 0 0;
+      margin: 10px 0 5px;
       padding: 4px 5px;
       font-size: 15px;
       background: #2384ad;
@@ -104,7 +104,17 @@
       margin: 0;
       overflow: hidden;
       .side-search-option {
-        padding-top: 5px;
+
+        &.checkboxes_only .actions {
+          margin-top: 10px !important;
+        }
+        &.active {
+          border-top: 2px dashed #2384ad;
+          border-bottom: 2px dashed #2384ad;
+          padding: 10px 0 15px;
+          margin: 10px 0;
+          background: #fdfdfd;
+        }
         .options {
           margin: 5px 10px 5px;
           padding: 3px 5px;
@@ -169,17 +179,17 @@
           }
           .actions {
             margin: -5px 10px;
-            display: none;
             .apply {
-              float: right;
+              display: none;
               button {
+                float: right;
                 display: inline-block;
               }
             }
-            .other {
-              height: 30px;
+            .other, .clear {
+              height: 40px;
               a {
-                color: #777;
+                color: #aaa;
                 text-decoration: none;
               }
             }
@@ -198,9 +208,9 @@
           padding-top: 3px;
           color: #777;
           &.checkbox {
-            padding-left: 5px;
+            padding-left: 10px;
             .sidebar-label {
-              width: 120px;
+              width: 110px;
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;

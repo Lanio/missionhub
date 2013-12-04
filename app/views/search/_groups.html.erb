@@ -1,5 +1,5 @@
 <% conditions = params[:group].present? %>
-<div class="side-search-option">
+<div class="side-search-option checkboxes_only <%= 'active' if conditions%>" data-type="Standard" data-value="<%= params[:group] %>">
   <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
   <div class="fields <%= 'active' if conditions%>">
@@ -9,5 +9,6 @@
         <div class="sidebar-label"><%= group.name %></div>
       </div>
 		<% end %>
+    <%= render "search/actions", clear: conditions %>
   </div>
 </div>

@@ -1,5 +1,5 @@
 <% conditions = params[:assigned_to].present? %>
-<div class="side-search-option">
+<div class="side-search-option checkboxes_only <%= 'active' if conditions%>" data-type="Standard" data-value="<%= params[:assigned_to] %>">
   <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
   <div class="fields <%= 'active' if conditions%>">
@@ -15,5 +15,6 @@
         <span class="info">(<span class="count"><%= count %></span>)</span>
       </div>
     <% end %>
+    <%= render "search/actions", clear: conditions %>
   </div>
 </div>

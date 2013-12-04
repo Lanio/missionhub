@@ -11,11 +11,13 @@
         <% begin %>
           <% selected_option = params[:survey_answer_option][survey.id.to_s][question.id.to_s] %>
         <% rescue %>
-          <% selected_option = Element::TEXTFIELD_MATCH.first[1] %>
+          <% selected_option = Element::TEXTFIELD_MATCH[4][1] %>
         <% end %>
 
+        <% selected_title = Element::TEXTFIELD_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first)%>
+
         <% conditions = answer.present? %>
-        <div class="side-search-option" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
+        <div class="side-search-option <%= 'active' if conditions %>" data-option-title="<%= selected_title %>" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
           <%= render "search/toggler", active: conditions %>
           <div class="title"><%= question.label %></div>
           <div class="fields <%= 'active' if conditions %>">
@@ -29,7 +31,6 @@
             <% if question.kind == "TextField" %>
               <div class="options">
                 <div class="selected">
-                  <% selected_title = Element::TEXTFIELD_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first)%>
                   <%= selected_title %>
                 </div>
                 <div class="choices">
@@ -47,17 +48,7 @@
                 <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
                     autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
               </div>
-
-              <div class="actions">
-                <div class="apply">
-                  <button class="action_gray search_result_button" id="search_apply_button">
-                    Apply
-                  </button>
-                </div>
-                <div class="other">
-                  <%= link_to "Reset Filter", "#", class: "reset_filter"%>
-                </div>
-              </div>
+              <%= render "search/actions", clear: conditions %>
             <% end %>
 
           </div>

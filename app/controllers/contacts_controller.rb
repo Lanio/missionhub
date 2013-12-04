@@ -710,9 +710,9 @@ class ContactsController < ApplicationController
                 if element.kind == "TextField"
                   if element.is_in_object?
                     if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
-                      people = element.search_survey_people(ans, current_organization, option, params[:survey_range])
+                      people = element.search_survey_people(answer, current_organization, option, params[:survey_range])
                     else
-                      people = element.search_survey_people(ans, current_organization, option)
+                      people = element.search_survey_people(answer, current_organization, option)
                     end
                     people_ids = people.present? ? people.pluck(:id) : []
                   else
