@@ -42,9 +42,18 @@
                   <% end %>
                 </div>
               </div>
+
               <div class="field">
                 <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
                     autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
+              </div>
+
+              <div class="actions">
+                <div class="apply">
+                  <button class="action_gray search_result_button" id="search_apply_button">
+                    Apply
+                  </button>
+                </div>
               </div>
             <% end %>
 
