@@ -1,22 +1,39 @@
 <% conditions = params[:label].present? %>
-<div class="side-search-option checkboxes_only <%= 'active' if conditions%>" data-type="Standard" data-value="<%= params[:label] %>">
+<% selected_option = params[:label_filter].present? ? params[:label_filter] : Element::CHOICEFILED_MATCH[0][1] %>
+<% selected_title = Element::CHOICEFILED_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first) %>
+<div class="side-search-option <%= 'active' if conditions%>" data-option="<%= selected_option %>" data-option-title="<%= selected_title %>" data-type="Standard" data-value="<%= params[:label] %>">
   <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
   <div class="fields <%= 'active' if conditions%>">
-		<% current_organization.label_set.each do |label| %>
-
-      <% if params[:include_archived_labels] %>
-        <% count = label.label_contacts_from_org_with_archived(@organization).collect(&:id).count %>
-      <% else %>
-        <% count = label.label_contacts_from_org(@organization).collect(&:id).count %>
-      <% end %>
-
-      <div class="option checkbox">
-        <%= check_box_tag "label[]", label.id, conditions && params[:label].include?(label.id.to_s), id: "search_label_#{label.id}", class: "search_label_checkbox" %>
-        <div class="sidebar-label"><%= label.name %></div>
-        <span class="info">(<span class="count"><%= count %></span>)</span>
+    <div class="options">
+      <div class="selected">
+        <%= selected_title %>
       </div>
-		<% end %>
+      <div class="choices">
+        <% Element::CHOICEFILED_MATCH.each do |option| %>
+          <div class="text_option <%= option[1] %>">
+            <%= radio_button_tag :label_filter, option[1], selected_option == option[1] %>
+            <%= option[0].titleize %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="field">
+  		<% current_organization.label_set.each do |label| %>
+
+        <% if params[:include_archived_labels] %>
+          <% count = label.label_contacts_from_org_with_archived(@organization).collect(&:id).count %>
+        <% else %>
+          <% count = label.label_contacts_from_org(@organization).collect(&:id).count %>
+        <% end %>
+
+        <div class="option checkbox choice_option">
+          <%= check_box_tag "label[]", label.id, conditions && params[:label].include?(label.id.to_s), id: "search_label_#{label.id}", class: "search_label_checkbox" %>
+          <div class="sidebar-label"><%= label.name %></div>
+          <span class="info">(<span class="count"><%= count %></span>)</span>
+        </div>
+  		<% end %>
+    </div>
     <%= render "search/actions", clear: conditions %>
   </div>
 </div>

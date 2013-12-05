@@ -208,7 +208,7 @@ class Element < ActiveRecord::Base
     if self.content.blank?
       case self.class.to_s
         when "ChoiceField" then self.content ||= "Choice One\nChoice Two\nChoice Three"
-        when "Paragraph" then self.content ||="Lorem ipsum..."
+        when "Paragraph" then self.content ||= "Lorem ipsum..."
       end
     end
 

@@ -56,13 +56,17 @@ $ ->
         options = actions.siblings(".options")
         options.find(".text_option").first().children("input").prop("checked", true)
         options.find(".choices").slideUp()
-        options.find(".selected").text("Match Any Selected")
+        options.find(".selected").text("Match Any")
         options.find(".selected").show()
         field.prop("checked", false)
       else if type == "Standard"
-        options = actions.siblings(".option.checkbox")
-        checkboxes = options.find("input[type='checkbox']")
-        checkboxes.prop("checked", false)
+        field = parent.find(".field input")
+        options = actions.siblings(".options")
+        options.find(".text_option").first().children("input").prop("checked", true)
+        options.find(".choices").slideUp()
+        options.find(".selected").text("Match Any")
+        options.find(".selected").show()
+        field.prop("checked", false)
 
       parent.find(".actions .apply").show()
       parent.find(".actions .clear").hide()
@@ -82,11 +86,11 @@ $ ->
 
       if type == "TextField"
         options = actions.siblings(".options")
-        field.val(value)
         options.find(".text_option." + option + " input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text(option_title)
         options.find(".selected").show()
+        field.val(value)
         field.keyup()
       else if type == "ChoiceField"
         options = actions.siblings(".options")
@@ -101,11 +105,17 @@ $ ->
         for val in value
           fields.find("input[type='checkbox'][value='" + val + "']").prop("checked", true)
       else if type == "Standard"
-        options = actions.siblings(".option.checkbox")
-        checkboxes = options.find("input[type='checkbox']")
+        options = actions.siblings(".options")
+        options.find(".text_option." + option + " input").prop("checked", true)
+        options.find(".choices").slideUp()
+        options.find(".selected").text(option_title)
+        options.find(".selected").show()
+
+        fields = actions.siblings(".field").find(".option.checkbox")
+        checkboxes = fields.find("input[type='checkbox']")
         checkboxes.prop("checked", false)
         for val in value
-          options.find("input[type='checkbox'][value='" + val + "']").prop("checked", true)
+          fields.find("input[type='checkbox'][value='" + val + "']").prop("checked", true)
 
       parent.find(".actions .apply").hide()
       parent.find(".actions .clear").show() if value != ""
