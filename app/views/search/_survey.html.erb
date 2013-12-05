@@ -11,10 +11,18 @@
         <% begin %>
           <% selected_option = params[:survey_answer_option][survey.id.to_s][question.id.to_s] %>
         <% rescue %>
-          <% selected_option = Element::TEXTFIELD_MATCH[4][1] %>
+          <% if question.kind == "TextField" %>
+            <% selected_option = Element::TEXTFIELD_MATCH[4][1] %>
+          <% elsif question.kind == "ChoiceField" %>
+            <% selected_option = Element::CHOICEFILED_MATCH[0][1] %>
+          <% end %>
         <% end %>
 
-        <% selected_title = Element::TEXTFIELD_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first)%>
+        <% if question.kind == "TextField" %>
+          <% selected_title = Element::TEXTFIELD_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first) %>
+        <% elsif question.kind == "ChoiceField" %>
+          <% selected_title = Element::CHOICEFILED_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first) %>
+        <% end %>
 
         <% conditions = answer.present? %>
         <div class="side-search-option <%= 'active' if conditions %>" data-option-title="<%= selected_title %>" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
@@ -44,11 +52,40 @@
                 </div>
               </div>
 
-              <div class="field">
+              <div class="field text_field">
                 <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
                     autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
               </div>
               <%= render "search/actions", clear: conditions %>
+            <% elsif question.kind == "ChoiceField" %>
+              <div class="options">
+                <div class="selected">
+                  <%= selected_title %>
+                </div>
+                <div class="choices">
+                  <% Element::CHOICEFILED_MATCH.each do |option| %>
+                    <div class="text_option <%= option[1] %>">
+                      <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option" %>
+                      <%= option[0].titleize %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+              <div class="field choice_field">
+                <% question.content.split(/\r\n|\n/).each do |option| %>
+                  <div class="option checkbox choice_option">
+                    <%= check_box_tag "survey_answer[#{survey.id}][#{question.id}][]", option, answer.present? && answer.include?(option), class: "answer_#{survey.id}_#{question.id}_checkbox" %>
+                    <div class="sidebar-label"><%= option %></div>
+                  </div>
+                <% end %>
+                <div class="option checkbox choice_option">
+                  <%= check_box_tag "survey_answer[#{survey.id}][#{question.id}][]", "no_response", answer.present? && answer.include?("no_response"), class: "answer_#{survey.id}_#{question.id}_checkbox" %>
+                  <div class="sidebar-label">No Response</div>
+                </div>
+              </div>
+              <%= render "search/actions", clear: conditions %>
+            <% else %>
+              <%= question.kind %>
             <% end %>
 
           </div>
