@@ -5,8 +5,8 @@ class Element < ActiveRecord::Base
 
   QUESTION_TYPES = %w{TextField ChoiceField DateField StateChooser ReferenceQuestion SchoolPicker AttachmentField PaymentQuestion}
   TEXTFIELD_MATCH = [["Contains","contains"], ["Is Exactly","is_exactly"], ["Does Not Contain","does_not_contain"], ["No Response","is_blank"], ["Any Response","is_not_blank"]]
-  CHOICEFILED_MATCH = [["Match Any Selected","any"], ["Match All Selected","all"]]
-  DATEFIELD_MATCH = [["Matches","match"],["Is Between","between"]]
+  CHOICEFILED_MATCH = [["Match Any","any"], ["Match All","all"]]
+  DATEFIELD_MATCH = [["Exact","match"],["Between","between"]]
 
   belongs_to :question_grid, :class_name => "QuestionGrid", :foreign_key => "question_grid_id"
   belongs_to :choice_field, :class_name => "ChoiceField", :foreign_key => "conditional_id"

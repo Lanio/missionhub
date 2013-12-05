@@ -164,7 +164,7 @@
           .field {
             text-align: left;
             margin: 0 10px;
-            &.text_field {
+            &.text_field, &.date_field {
               margin-bottom: 10px !important;
             }
             .textfield {
