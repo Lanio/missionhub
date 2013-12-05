@@ -407,7 +407,7 @@ class ContactsController < ApplicationController
       if params[:survey_scope].present?
         @survey_scope = current_organization.surveys.where(id: params[:survey_scope]).includes(:questions).order(:title)
       else
-        @survey_scope = current_organization.surveys.includes(:questions).order(:title)
+        @survey_scope = []
       end
     end
 
