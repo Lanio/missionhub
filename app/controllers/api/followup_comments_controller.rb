@@ -141,7 +141,7 @@ class Api::FollowupCommentsController < ApiController
     attributes[:organization_id] = comment_json['organization_id']
     attributes[:created_by_id] = comment_json['commenter_id']
     attributes[:comment] = comment_json['comment']
-    attributes[:privacy_setting] = 'everyone'
+    attributes[:privacy_setting] = Interaction::DEFAULT_PRIVACY
 
     unless what == 'comment' && attributes[:comment].blank?
       interaction = Interaction.new(attributes)
