@@ -30,7 +30,7 @@ class Person < ActiveRecord::Base
   has_one :latest_location, order: "updated_at DESC", class_name: 'Location'
   has_many :interests
   has_many :education_histories
-  has_many :email_addresses, autosave: true, dependent: :destroy
+  has_many :email_addresses, autosave: true, dependent: :destroy, group: "email"
   has_one :primary_email_address, class_name: "EmailAddress", foreign_key: "person_id", conditions: {primary: true}
   has_one :primary_org_permission, class_name: "OrganizationalPermission", foreign_key: "person_id", conditions: {primary: true}
   has_one :primary_org, through: :primary_org_permission, source: :organization
