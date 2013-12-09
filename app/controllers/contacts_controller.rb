@@ -18,13 +18,23 @@ class ContactsController < ApplicationController
     @remove_survey_ids = current_organization.surveys.pluck(:id) - @filtered_surveys.pluck(:id)
   end
 
+  def prepare_pagination
+    params[:page] ||= 1
+    if params[:per_page].present?
+      session[:per_page] = params[:per_page].to_i
+    else
+      unless session[:per_page].present?
+        session[:per_page] ||= 25
+      end
+    end
+  end
+
   def all_contacts
     # raise params.inspect
     permissions_for_assign
     groups_for_assign
     labels_for_assign
-    params[:page] ||= 1
-    params[:limit] ||= 25
+    prepare_pagination
     url = request.url.split('?')
     @attr = url.size > 1 ? url[1] : ''
 
@@ -955,8 +965,7 @@ class ContactsController < ApplicationController
 
         @people = @all_people.page(page).per(limit)
       else
-        @people = @people_scope.order(order_query).group('people.id').page(page).per(limit)
-      end
+        @people = @people_scope.order(order_query).group('people.id').page(page).per(session[:per_page])      end
     end
 
     def fetch_mine
