@@ -24,7 +24,7 @@ class Person < ActiveRecord::Base
   has_many :new_people
   has_one :transferred_by, class_name: "PersonTransfer", foreign_key: "transferred_by_id"
   belongs_to :user, class_name: 'User', foreign_key: 'user_id'
-  has_many :phone_numbers, autosave: true
+  has_many :phone_numbers, autosave: true, group: "number"
   has_one :primary_phone_number, class_name: "PhoneNumber", foreign_key: "person_id", conditions: {primary: true}
   has_many :locations
   has_one :latest_location, order: "updated_at DESC", class_name: 'Location'
