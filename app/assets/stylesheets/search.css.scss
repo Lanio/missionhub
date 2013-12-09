@@ -171,6 +171,29 @@
               width: 150px;
               padding: 3px 5px;
             }
+            .dateselect {
+              padding-top: 4px;
+              .dateselect_intro {
+                text-align: center;
+                padding: 5px 10px 10px;
+                color: #666;
+                &.inactive {
+                  color: #aaa;
+                }
+              }
+              .dateselect_label {
+                display: inline-block;
+                width: 45px;
+                color: #666;
+                text-align: right;
+                &.inactive {
+                  color: #aaa;
+                }
+              }
+              .dateselect_field {
+                display: inline-block;
+              }
+            }
           }
           .options {
             .text_option {

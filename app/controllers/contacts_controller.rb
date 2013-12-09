@@ -754,18 +754,28 @@ class ContactsController < ApplicationController
                   @people_scope = @people_scope.where(id: result_ids)
                 elsif element.kind == "DateField"
                   result_ids = []
-                  # start date
-                  if answer['start']['(1i)'].present?
-                    answer["start"] = "#{answer['start']['(1i)']}-#{'%02d' % answer['start']['(2i)'].to_i}-#{'%02d' % answer['start']['(3i)'].to_i}"
+                  if answer['start_day'].present? && answer['start_month'].present? && answer['start_year'].present?
+                    answer["start"] = "#{answer['start_year']}-#{'%02d' % answer['start_month'].to_i}-#{'%02d' % answer['start_day'].to_i}"
                   else
                     answer["start"] = ""
                   end
-                  # end date
-                  if answer['end']['(1i)'].present?
-                    answer["end"] = "#{answer['end']['(1i)']}-#{'%02d' % answer['end']['(2i)'].to_i}-#{'%02d' % answer['end']['(3i)'].to_i}"
+                  if answer['end_day'].present? && answer['end_month'].present? && answer['end_year'].present?
+                    answer["end"] = "#{answer['end_year']}-#{'%02d' % answer['end_month'].to_i}-#{'%02d' % answer['end_day'].to_i}"
                   else
                     answer["end"] = ""
                   end
+                  # # start date
+                  # if answer['start']['(1i)'].present?
+                  #   answer["start"] = "#{answer['start']['(1i)']}-#{'%02d' % answer['start']['(2i)'].to_i}-#{'%02d' % answer['start']['(3i)'].to_i}"
+                  # else
+                  #   answer["start"] = ""
+                  # end
+                  # # end date
+                  # if answer['end']['(1i)'].present?
+                  #   answer["end"] = "#{answer['end']['(1i)']}-#{'%02d' % answer['end']['(2i)'].to_i}-#{'%02d' % answer['end']['(3i)'].to_i}"
+                  # else
+                  #   answer["end"] = ""
+                  # end
                   params[:survey_answer][survey.id.to_s][question_id.to_s]['start'] = answer["start"]
                   params[:survey_answer][survey.id.to_s][question_id.to_s]['end'] = answer["end"]
 

@@ -104,20 +104,66 @@
               </div>
               <div class="field date_field">
                 <% if answer.present? && answer["start"].present? %>
-                  <% answer_start = answer["start"].to_date %>
-                  <% answer_start_year = answer["start"].split("-").first() %>
-                  <% answer_end = answer["end"].to_date %>
-                  <% answer_end_year = answer["end"].split("-").first() %>
-                <% else %>
-                  <% answer_start = nil %>
-                  <% answer_start_year = nil %>
-                  <% answer_end = nil %>
-                  <% answer_end_year = nil %>
+                  <% @answer_start = answer["start"].to_date %>
+                  <% @answer_start_year = answer["start"].split("-")[0].to_i %>
+                  <% @answer_start_month = answer["start"].split("-")[1].to_i %>
+                  <% @answer_start_day = answer["start"].split("-")[2].to_i %>
+                  <% if answer["end"].present? %>
+                    <% @answer_end = answer["end"].to_date %>
+                    <% @answer_end_year = answer["end"].split("-")[0].to_i %>
+                    <% @answer_end_month = answer["end"].split("-")[1].to_i %>
+                    <% @answer_end_day = answer["end"].split("-")[2].to_i %>
+                  <% end %>
                 <% end %>
 
-                <%= date_select "survey_answer[#{survey.id}][#{question.id}][start]", "", {:default => answer_start, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
+                <div class="dateselect start">
+                  <div class="dateselect_item day">
+                    <div class="dateselect_label">Day</div>
+                    <div class="dateselect_field">
+                      <%= select_tag "survey_answer[#{survey.id}][#{question.id}][start_day]", options_for_select(1..31, @answer_start_day), include_blank: true, data: {value: @answer_start_day} %>
+                    </div>
+                  </div>
+                  <div class="dateselect_item month">
+                    <div class="dateselect_label">Month</div>
+                    <div class="dateselect_field">
+                      <%= select_month @answer_start_month, {field_name: 'start_month', prefix: "survey_answer[#{survey.id}][#{question.id}]", include_blank: true}, {data: {value: @answer_start_month}} %>
+                    </div>
+                  </div>
+                  <div class="dateselect_item year">
+                    <div class="dateselect_label">Year</div>
+                    <div class="dateselect_field">
+                      <%= select_tag "survey_answer[#{survey.id}][#{question.id}][start_year]", options_for_select(1950..Date.today.year, @answer_start_year), include_blank: true, data: {value: @answer_start_year} %>
+                    </div>
+                  </div>
+                </div>
 
-                <%= date_select "survey_answer[#{survey.id}][#{question.id}][end]", "", {:default => answer_end, :include_blank => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
+                <div class="dateselect end">
+                  <% status_class = selected_option == Element::DATEFIELD_MATCH[0][1] ? "inactive" : "" %>
+                  <% disabled = selected_option == Element::DATEFIELD_MATCH[0][1] %>
+                  <div class="dateselect_intro <%= status_class %>">and</div>
+                  <div class="dateselect_item day">
+                    <div class="dateselect_label <%= status_class %>">Day</div>
+                    <div class="dateselect_field">
+                      <%= select_tag "survey_answer[#{survey.id}][#{question.id}][end_day]", options_for_select(1..31, @answer_end_day), disabled: disabled, include_blank: true, data: {value: @answer_end_day} %>
+                    </div>
+                  </div>
+                  <div class="dateselect_item month">
+                    <div class="dateselect_label <%= status_class %>">Month</div>
+                    <div class="dateselect_field">
+                      <%= select_month @answer_end_month, {field_name: 'end_month', prefix: "survey_answer[#{survey.id}][#{question.id}]", include_blank: true}, {disabled: disabled, data: {value: @answer_end_month}} %>
+                    </div>
+                  </div>
+                  <div class="dateselect_item year">
+                    <div class="dateselect_label <%= status_class %>">Year</div>
+                    <div class="dateselect_field">
+                      <%= select_tag "survey_answer[#{survey.id}][#{question.id}][end_year]", options_for_select(1950..Date.today.year, @answer_end_year), disabled: disabled, include_blank: true, data: {value: @answer_end_year} %>
+                    </div>
+                  </div>
+                </div>
+
+                <%# date_select "survey_answer[#{survey.id}][#{question.id}][start]", "", {:default => answer_start, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
+
+                <%# date_select "survey_answer[#{survey.id}][#{question.id}][end]", "", {:default => answer_end, :include_blank => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
               </div>
               <%= render "search/actions", clear: conditions %>
             <% else %>

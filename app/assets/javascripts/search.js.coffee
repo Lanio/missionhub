@@ -43,29 +43,38 @@ $ ->
       actions = $(this).parents(".actions")
 
       if type == "TextField"
-        field = parent.find(".field input")
         options = actions.siblings(".options")
         options.find(".text_option").last().children("input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text("Any Response")
         options.find(".selected").show()
+        field = parent.find(".field input")
         field.val("")
         field.keyup()
       else if type == "ChoiceField"
-        field = parent.find(".field input")
         options = actions.siblings(".options")
         options.find(".text_option").first().children("input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text("Match Any")
         options.find(".selected").show()
+        field = parent.find(".field input")
         field.prop("checked", false)
+      else if type == "DateField"
+        options = actions.siblings(".options")
+        options.find(".text_option").first().children("input").prop("checked", true)
+        options.find(".choices").slideUp()
+        options.find(".selected").text("Exact")
+        options.find(".selected").show()
+        fields = parent.find(".dateselect select")
+        fields.each ->
+          $(this).val($(this).data("null"))
       else if type == "Standard"
-        field = parent.find(".field input")
         options = actions.siblings(".options")
         options.find(".text_option").first().children("input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text("Match Any")
         options.find(".selected").show()
+        field = parent.find(".field input")
         field.prop("checked", false)
 
       parent.find(".actions .apply").show()
@@ -104,6 +113,16 @@ $ ->
         checkboxes.prop("checked", false)
         for val in value
           fields.find("input[type='checkbox'][value='" + val + "']").prop("checked", true)
+      else if type == "DateField"
+        options = actions.siblings(".options")
+        options.find(".text_option." + option + " input").prop("checked", true)
+        options.find(".choices").slideUp()
+        options.find(".selected").text(option_title)
+        options.find(".selected").show()
+
+        fields = parent.find(".dateselect select")
+        fields.each ->
+          $(this).val($(this).data("value"))
       else if type == "Standard"
         options = actions.siblings(".options")
         options.find(".text_option." + option + " input").prop("checked", true)
@@ -126,16 +145,33 @@ $ ->
       $(this).hide()
       $(this).siblings(".choices").slideDown()
 
+    # Show apply button for dateselect fields
+    $(".side-search-option .dateselect select").on "change", (e)->
+      apply = $(this).parents(".side-search-option").find(".actions")
+      apply.find(".apply").show()
+      apply.find(".clear").hide()
+
+
     # Show options when the selected option is clicked
     $(".options .choices .text_option").on "click", (e)->
       input = $(this).children('input')
       unless input.is(":disabled")
         input.prop("checked", true)
-
         # Show apply button for survey question
         apply = $(this).parents(".options").siblings(".actions")
         apply.find(".apply").show()
         apply.find(".clear").hide()
+        # Parent based behavior
+        parent = input.parents(".side-search-option")
+        if parent.data("type") == "DateField"
+          if input.val() == "match"
+            parent.find(".field .dateselect.end .dateselect_intro").addClass("inactive")
+            parent.find(".field .dateselect.end .dateselect_label").addClass("inactive")
+            parent.find(".field .dateselect.end select").prop("disabled", true)
+          else
+            parent.find(".field .dateselect.end .dateselect_intro").removeClass("inactive")
+            parent.find(".field .dateselect.end .dateselect_label").removeClass("inactive")
+            parent.find(".field .dateselect.end select").prop("disabled", false)
 
     # Disable some options when no keyword is defined
     $(".field .textfield").on
