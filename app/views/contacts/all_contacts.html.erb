@@ -21,9 +21,6 @@
 </div>
 
 <div id="ac_contact_spread">
-
-
-
   <div id='pagination_space'>
     <%= paginate @people %>
   </div>
@@ -197,6 +194,9 @@
 
 <!-- Search Filters Dialog -->
 <%= render 'dialogs/search_people_filters' %>
+
+<!-- Advanced Search Dialog -->
+<%= render 'dialogs/advanced_search' %>
 
 <!-- Show Hidden Question Dialog -->
 <%= render 'dialogs/search_hidden_questions'%>

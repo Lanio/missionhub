@@ -24,8 +24,12 @@ class ContactsController < ApplicationController
     end
   end
 
+  def update_advanced_search_surveys
+    @filtered_surveys = current_organization.surveys.where(id: params[:survey_ids].split(",")).order(:title)
+    @remove_survey_ids = current_organization.surveys.pluck(:id) - @filtered_surveys.pluck(:id)
+  end
+
   def all_contacts
-    # raise params.inspect
     permissions_for_assign
     groups_for_assign
     labels_for_assign
@@ -384,17 +388,27 @@ class ContactsController < ApplicationController
 
       # Get people
       build_people_scope
-      # get_and_merge_unfiltered_people unless params[:dnc] == 'true'
+      build_survey_questions
 
       # Filter results
       filter_by_label if params[:label].present? || (params[:label_tag].to_i == Label::NO_SELECTED_LABEL[1])
+      filter_by_group if params[:group].present?
       filter_by_permission if params[:permission].present?
       filter_by_interaction_type if params[:interaction_type].present?
+      filter_by_advanced_search if params[:advanced_search].present?
       filter_by_search if params[:do_search].present?
       filter_by_mine if params[:status].present?
 
       # Sort & Limit Results
       sort_people(params[:page], load_all)
+    end
+
+    def build_survey_questions
+      if params[:survey_scope].present?
+        @survey_scope = current_organization.surveys.where(id: params[:survey_scope]).includes(:questions).order(:title)
+      else
+        @survey_scope = current_organization.surveys.includes(:questions).order(:title)
+      end
     end
 
     def update_fb_friends
@@ -520,6 +534,21 @@ class ContactsController < ApplicationController
       params[:do_search] = "1"
     end
 
+    def filter_by_group
+      @groups = current_organization.groups.where("id IN (?)", params[:group].is_a?(Array) ? params[:group] : [params[:group]])
+      if @groups.present?
+        if params[:group_filter] == "all"
+          @groups.each do |group|
+            filtered_ids = GroupMembership.where(group_id: group.id).collect(&:person_id)
+            @people_scope = @people_scope.where("people.id IN (?)", filtered_ids)
+          end
+        else
+          filtered_ids = GroupMembership.where(group_id: @groups.pluck(:id)).collect(&:person_id).uniq
+          @people_scope = @people_scope.where("people.id IN (?)", filtered_ids)
+        end
+      end
+    end
+
     def filter_by_label
       @labels = Label.where("id IN (?)", (params[:label].is_a?(Array)) ? params[:label] : [params[:label]])
 
@@ -547,7 +576,14 @@ class ContactsController < ApplicationController
 
 					@people_scope = @people_scope.where("people.id IN (?)", (null_ids) ? [] : filtered_ids)
       	else
-        	@people_scope = @people_scope.where("organizational_labels.label_id IN (?)", @labels.collect(&:id))
+          if params[:label_filter] == "all"
+            @labels.each do |label|
+              filtered_ids = OrganizationalLabel.where(organization_id: [current_organization.id, 0], label_id: label.id, removed_date: nil).collect(&:person_id)
+              @people_scope = @people_scope.where("people.id IN (?)", filtered_ids)
+            end
+          else
+            @people_scope = @people_scope.where("organizational_labels.label_id IN (?)", @labels.collect(&:id))
+          end
         end
       elsif params[:label_tag].to_i == Label::NO_SELECTED_LABEL[1]
         filtered_ids = []
@@ -611,6 +647,153 @@ class ContactsController < ApplicationController
 
         if !params[:include_archived].present? && !params[:include_archived] == 'true'
           @people_scope = @people_scope.where("organizational_permissions.archive_date" => nil, "organizational_permissions.deleted_at" => nil)
+        end
+      end
+    end
+
+    def filter_by_advanced_search
+      @header = I18n.t('dialogs.advanced_search.header')
+      if params[:search_any].present?
+        key = "%#{params[:search_any].downcase.strip}%"
+        @people_scope = @people_scope
+          .joins("LEFT OUTER JOIN email_addresses ON people.id = email_addresses.person_id")
+          .joins("LEFT OUTER JOIN phone_numbers ON people.id = phone_numbers.person_id")
+          .where("people.last_name LIKE :key OR people.first_name LIKE :key OR email_addresses.email LIKE :key OR phone_numbers.number LIKE :key", key: key)
+      end
+      if params[:gender].present?
+        params[:gender] = params[:gender].is_a?(Array) ? params[:gender] : [params[:gender]]
+        if params[:gender].include?("no_response")
+          @people_scope = @people_scope.where("(people.gender <> '1' AND people.gender <> '0') OR people.gender IS NULL OR people.gender IN (?)", params[:gender])
+        else
+          @people_scope = @people_scope.where("people.gender IN (?)", params[:gender])
+        end
+      end
+      if params[:assignment].present?
+        params[:assignment] = params[:assignment].is_a?(Array) ? params[:assignment] : [params[:assignment]]
+        if params[:assignment].count == 1
+          if params[:assignment].first == "1"
+            assigned_people_ids = current_organization.assigned_contacts.collect(&:id).uniq
+            @people_scope = @people_scope.where("people.id IN (?)", assigned_people_ids)
+          elsif params[:assignment].first == "0"
+            unassigned_people_ids = current_organization.unassigned_contacts.collect(&:id).uniq
+            @people_scope = @people_scope.where("people.id IN (?)", unassigned_people_ids)
+          end
+        end
+      end
+      if params[:faculty].present?
+        params[:faculty] = params[:faculty].is_a?(Array) ? params[:faculty] : [params[:faculty]]
+        @people_scope = @people_scope.where("people.faculty IN (?)", params[:faculty])
+      end
+      if params[:status].present?
+        params[:status] = params[:status].is_a?(Array) ? params[:status] : [params[:status]]
+        if params[:status].include?("uncontacted")
+          @people_scope = @people_scope.where("organizational_permissions.followup_status IN (?) OR organizational_permissions.followup_status IS NULL", params[:status])
+        else
+          @people_scope = @people_scope.where("organizational_permissions.followup_status IN (?)", params[:status])
+        end
+      end
+      if params[:survey_answer].present?
+        surveys = current_organization.surveys.where(id: params[:survey_answer].keys)
+        surveys.each do |survey|
+          if questions = params[:survey_answer][survey.id.to_s]
+            questions.each do |question_id, answer|
+              if answer.present?
+                begin
+                  option = params[:survey_answer_option][survey.id.to_s][question_id]
+                rescue
+                  option = Element::TEXTFIELD_MATCH.first.underscore
+                end
+                element = Element.find(question_id)
+                if element.kind == "TextField"
+                  if element.is_in_object?
+                    if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
+                      people = element.search_survey_people(ans, current_organization, option, params[:survey_range])
+                    else
+                      people = element.search_survey_people(ans, current_organization, option)
+                    end
+                    people_ids = people.present? ? people.pluck(:id) : []
+                  else
+                    if answer.present? || (answer.nil? && ['in_blank','in_not_blank'].include?(option))
+                      if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
+                        answers = element.search_survey_answer_textfield(answer, option, params[:survey_range])
+                      else
+                        answers = element.search_survey_answer_textfield(answer, option)
+                      end
+                      people_ids = answers.includes(:answer_sheet).collect{|x| x.answer_sheet.person_id}
+                    end
+                  end
+                  @people_scope = @people_scope.where(id: people_ids)
+                elsif element.kind == "ChoiceField"
+                  result_ids = []
+                  answer.each do |ans|
+                    if element.is_in_object?
+                      if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
+                        people = element.search_survey_people(ans, current_organization, option, params[:survey_range])
+                      else
+                        people = element.search_survey_people(ans, current_organization, option)
+                      end
+                      people_ids = people.present? ? people.pluck(:id) : []
+                      result_ids += people_ids
+                    else
+                      if answer.present? || (answer.nil? && ['in_blank','in_not_blank'].include?(option))
+                        if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
+                          answers = element.search_survey_answer_textfield(ans, option, params[:survey_range])
+                        else
+                          answers = element.search_survey_answer_textfield(ans, option)
+                        end
+                        if answers
+                          people_ids = answers.includes(:answer_sheet).collect{|x| x.answer_sheet.person_id}
+                          result_ids += people_ids
+                        end
+                      end
+                    end
+                  end
+                  @people_scope = @people_scope.where(id: result_ids)
+                elsif element.kind == "DateField"
+                  result_ids = []
+                  # start date
+                  if answer['start']['(1i)'].present?
+                    answer["start"] = "#{answer['start']['(1i)']}-#{'%02d' % answer['start']['(2i)'].to_i}-#{'%02d' % answer['start']['(3i)'].to_i}"
+                  else
+                    answer["start"] = ""
+                  end
+                  # end date
+                  if answer['end']['(1i)'].present?
+                    answer["end"] = "#{answer['end']['(1i)']}-#{'%02d' % answer['end']['(2i)'].to_i}-#{'%02d' % answer['end']['(3i)'].to_i}"
+                  else
+                    answer["end"] = ""
+                  end
+                  params[:survey_answer][survey.id.to_s][question_id.to_s]['start'] = answer["start"]
+                  params[:survey_answer][survey.id.to_s][question_id.to_s]['end'] = answer["end"]
+
+                  if answer["start"].present? && answer["end"].present?
+                    if element.is_in_object?
+                      if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
+                        people = element.search_survey_people(answer, current_organization, option, params[:survey_range])
+                      else
+                        people = element.search_survey_people(answer, current_organization, option)
+                      end
+                      people_ids = people.present? ? people.pluck(:id) : []
+                      result_ids += people_ids
+                    else
+                      if answer.present? || (answer.nil? && ['in_blank','in_not_blank'].include?(option))
+                        if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
+                          answers = element.search_survey_answer_datefield(answer, option, params[:survey_range])
+                        else
+                          answers = element.search_survey_answer_datefield(answer, option)
+                        end
+                        if answers
+                          people_ids = answers.includes(:answer_sheet).collect{|x| x.answer_sheet.person_id}
+                          result_ids += people_ids
+                        end
+                      end
+                    end
+                    @people_scope = @people_scope.where(id: result_ids)
+                  end
+                end
+              end
+            end
+          end
         end
       end
     end

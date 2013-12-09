@@ -9,6 +9,197 @@ class ContactsControllerTest < ActionController::TestCase
     end
   end
 
+  context "Advanced Search - " do
+    setup do
+      @user = Factory(:user_with_auxs)
+      @person = @user.person
+      sign_in @user
+
+      @org = Factory(:organization)
+      @org.add_admin(@person)
+      @request.session[:current_organization_id] = @org.id
+
+      @contact1 = Factory(:person, first_name: "abc", last_name: "qrs")
+      Factory(:email_address, email: 'contact1@email.com', person: @contact1)
+      @org.add_contact(@contact1)
+
+      @contact2 = Factory(:person, first_name: "bcd", last_name: "rst")
+      Factory(:email_address, email: 'contact2@email.com', person: @contact2)
+      Factory(:phone_number, person: @contact2, number: "1111122222", primary: true)
+      @org.add_contact(@contact2)
+
+      @contact3 = Factory(:person, first_name: "cde", last_name: "stu")
+      Factory(:phone_number, person: @contact3, number: "2222233333", primary: true)
+      @org.add_contact(@contact3)
+
+      @predefined_survey = Factory(:survey, organization: @org)
+      APP_CONFIG['predefined_survey'] = @predefined_survey.id
+      @predefined_survey.questions << Factory(:year_in_school_element)
+    end
+
+    context "Search Person" do
+      should "search by first name" do
+        xhr :get, :index, {:advanced_search => "1", :search_any => "bc"}
+        assert_response :success
+        assert_equal 2, assigns(:people).total_count
+      end
+      should "search by last name" do
+        xhr :get, :index, {:advanced_search => "1", :search_any => "r"}
+        assert_response :success
+        assert_equal 2, assigns(:people).total_count
+      end
+      should "search by email" do
+        xhr :get, :index, {:advanced_search => "1", :search_any => "contact"}
+        assert_response :success
+        assert_equal 2, assigns(:people).total_count
+      end
+      should "search by phone" do
+        xhr :get, :index, {:advanced_search => "1", :search_any => "222"}
+        assert_response :success
+        assert_equal 2, assigns(:people).total_count
+      end
+    end
+
+    context "Search by Contact Data" do
+      setup do
+        @person.update_attribute(:gender, nil)
+        @contact1.update_attribute(:gender, 1)
+        @contact2.update_attribute(:gender, 1)
+        @contact3.update_attribute(:gender, 0)
+        @contact3.update_attribute(:faculty, true)
+        @assignment = Factory(:contact_assignment, organization: @org, person: @contact1, assigned_to: @person).inspect
+
+        @contact1.permission_for_org(@org).update_attribute(:followup_status, 'contacted')
+        @contact2.permission_for_org(@org).update_attribute(:followup_status, 'completed')
+      end
+      # Gender
+      should "search by gender - male" do
+        xhr :get, :index, {:advanced_search => "1", :gender => "1"}
+        assert_response :success
+        assert_equal 2, assigns(:people).total_count
+      end
+      should "search by gender - female" do
+        xhr :get, :index, {:advanced_search => "1", :gender => "0"}
+        assert_response :success
+        assert_equal 1, assigns(:people).total_count
+      end
+      should "search by gender - no_response" do
+        xhr :get, :index, {:advanced_search => "1", :gender => "no_response"}
+        assert_response :success
+        assert_equal 1, assigns(:people).total_count
+      end
+      # Faculty
+      should "search by faculty - yes" do
+        xhr :get, :index, {:advanced_search => "1", :faculty => "1"}
+        assert_response :success
+        assert_equal 1, assigns(:people).total_count
+      end
+      should "search by faculty - no" do
+        xhr :get, :index, {:advanced_search => "1", :faculty => "0"}
+        assert_response :success
+        assert_equal 3, assigns(:people).total_count
+      end
+      # Assigned
+      should "search by assignment - yes" do
+        xhr :get, :index, {:advanced_search => "1", :assignment => "1"}
+        assert_response :success
+        assert_equal 1, assigns(:people).total_count
+      end
+      should "search by assignment - no" do
+        xhr :get, :index, {:advanced_search => "1", :assignment => "0"}
+        assert_response :success
+        assert_equal 3, assigns(:people).total_count
+      end
+      # Status
+      should "search by status - uncontacted & blank" do
+        xhr :get, :index, {:advanced_search => "1", :status => "uncontacted"}
+        assert_response :success
+        assert_equal 2, assigns(:people).total_count
+      end
+      should "search by status - contacted" do
+        xhr :get, :index, {:advanced_search => "1", :status => "contacted"}
+        assert_response :success
+        assert_equal 1, assigns(:people).total_count
+      end
+      should "search by status - completed" do
+        xhr :get, :index, {:advanced_search => "1", :status => "completed"}
+        assert_response :success
+        assert_equal 1, assigns(:people).total_count
+      end
+    end
+
+    context "Search by Label & Group" do
+      setup do
+        Factory(:organizational_label, organization: @org, person: @contact1, label: Label.involved)
+        Factory(:organizational_label, organization: @org, person: @contact2, label: Label.involved)
+        Factory(:organizational_label, organization: @org, person: @contact2, label: Label.leader)
+        Factory(:organizational_label, organization: @org, person: @contact3, label: Label.leader)
+
+        @group1 = Factory(:group, organization: @org, name: "Test Group 1")
+        @group2 = Factory(:group, organization: @org, name: "Test Group 2")
+        Factory(:group_membership, group: @group1, person: @contact1)
+        Factory(:group_membership, group: @group1, person: @contact2)
+        Factory(:group_membership, group: @group2, person: @contact2)
+        Factory(:group_membership, group: @group2, person: @contact3)
+      end
+
+      context "search by label (match any)" do
+        should "return any people with 1 selected label" do
+          xhr :get, :index, {:advanced_search => "1", label_filter: "any", label: [Label.involved.id]}
+          assert_response :success
+          assert_equal 2, assigns(:people).total_count
+        end
+        should "return any people with 2 selected label" do
+          xhr :get, :index, {:advanced_search => "1", label_filter: "any", label: [Label.involved.id, Label.leader.id]}
+          assert_response :success
+          assert_equal 3, assigns(:people).total_count
+        end
+      end
+
+      context "search by label (match all)" do
+        should "return any people with 1 selected label" do
+          xhr :get, :index, {:advanced_search => "1", label_filter: "all", label: [Label.involved.id]}
+          assert_response :success
+          assert_equal 2, assigns(:people).total_count
+        end
+        should "return any people with 2 selected label" do
+          xhr :get, :index, {:advanced_search => "1", label_filter: "all", label: [Label.involved.id, Label.leader.id]}
+          assert_response :success
+          assert_equal 1, assigns(:people).total_count
+        end
+      end
+
+      context "search by group (match any)" do
+        should "return any people with 1 selected group" do
+          xhr :get, :index, {:advanced_search => "1", group_filter: "any", group: [@group1.id]}
+          assert_response :success
+          assert_equal 2, assigns(:people).total_count
+        end
+        should "return any people with 2 selected group" do
+          xhr :get, :index, {:advanced_search => "1", group_filter: "any", group: [@group1.id, @group2.id]}
+          assert_response :success
+          assert_equal 3, assigns(:people).total_count
+        end
+      end
+
+      context "search by group (match all)" do
+        should "return any people with 1 selected group" do
+          xhr :get, :index, {:advanced_search => "1", group_filter: "all", group: [@group1.id]}
+          assert_response :success
+          assert_equal 2, assigns(:people).total_count
+        end
+        should "return any people with 2 selected group" do
+          xhr :get, :index, {:advanced_search => "1", group_filter: "all", group: [@group1.id, @group2.id]}
+          assert_response :success
+          assert_equal 1, assigns(:people).total_count
+        end
+      end
+    end
+    # should "raise error" do
+    #   raise "ERROR"
+    # end
+  end
+
   should "redirect when there is no current_organization" do
     get :index
     assert_response :redirect
