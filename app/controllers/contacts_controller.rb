@@ -25,7 +25,7 @@ class ContactsController < ApplicationController
   end
 
   def update_advanced_search_surveys
-    @filtered_surveys = current_organization.surveys.where(id: params[:survey_ids].split(",")).order(:title)
+    @filtered_surveys = current_organization.surveys.where(id: params[:survey_ids].split(",")).includes(:questions).order(:title)
     @remove_survey_ids = current_organization.surveys.pluck(:id) - @filtered_surveys.pluck(:id)
   end
 
