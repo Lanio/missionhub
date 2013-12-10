@@ -5,10 +5,10 @@
   <div class="fields <%= 'active' if conditions%>">
     <% current_organization.surveys.order(:title).each do |survey| %>
       <div class="option checkbox">
-        <%= check_box_tag "survey_scope[]", survey.id, conditions && params[:survey_scope].include?(survey.id.to_s), id: "search_survey_#{survey.id}", class: "search_survey_checkbox" %>
+        <%= check_box_tag "survey_scope[]", survey.id, conditions && params[:survey_scope].include?(survey.id.to_s), id: "search_survey_#{survey.id}", class: "search_survey_checkbox survey_item" %>
         <div class="sidebar-label wide"><%= survey.title %></div>
       </div>
     <% end %>
-    <%= render "search/actions", clear: conditions %>
+    <%# render "search/actions", clear: conditions %>
   </div>
 </div>
