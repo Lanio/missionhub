@@ -1,7 +1,7 @@
 <% conditions = params[:label].present? %>
 <% selected_option = params[:label_filter].present? ? params[:label_filter] : Element::CHOICEFILED_MATCH[0][1] %>
 <% selected_title = Element::CHOICEFILED_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first) %>
-<div class="side-search-option <%= 'active' if conditions%>" data-option="<%= selected_option %>" data-option-title="<%= selected_title %>" data-type="Standard" data-value="<%= params[:label] %>">
+<div class="side-search-option singleton <%= 'active' if conditions%>" data-id="side_search_label" data-option="<%= selected_option %>" data-option-title="<%= selected_title %>" data-type="Standard" data-value="<%= params[:label] %>">
   <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
   <div class="fields <%= 'active' if conditions%>">

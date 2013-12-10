@@ -29,7 +29,7 @@
         <% end %>
 
         <% conditions = answer.present? %>
-        <div class="side-search-option <%= 'active' if conditions %>" data-option-title="<%= selected_title %>" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
+        <div class="side-search-option <%= 'active' if conditions %> singleton" data-id="side_search_survey_<%= survey.id %>_<%= question.id %>" data-option-title="<%= selected_title %>" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
           <%= render "search/toggler", active: conditions %>
           <div class="title"><%= question.label %></div>
           <div class="fields <%= 'active' if conditions %>">

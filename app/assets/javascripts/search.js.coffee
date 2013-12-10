@@ -9,9 +9,17 @@ $ ->
         $(this).removeClass("active")
         parent.removeClass("active")
       else
-        fields.slideDown("fast")
         $(this).addClass("active")
         parent.addClass("active")
+        fields.slideDown("fast")
+        $(".side-search-option.singleton.active").each ->
+          id = $(this).data("id")
+          if id != parent.data("id")
+            $(this).find("a.reset_filter").click()
+            $(this).find(".fields").slideUp("fast")
+            $(this).find(".toggler").removeClass("active")
+            $(this).removeClass("active")
+
 
     $(document).on "click", ".side-search-option .title", (e)->
       $(this).siblings(".toggler").click()

@@ -1,5 +1,5 @@
 <% conditions = params[:interaction_type].present? %>
-<div class="side-search-option checkboxes_only <%= 'active' if conditions%>" data-type="Standard" data-value="<%= params[:interaction_type] %>">
+<div class="side-search-option singleton checkboxes_only <%= 'active' if conditions%>" data-id="side_search_interaction" data-type="Standard" data-value="<%= params[:interaction_type] %>">
   <%= render "search/toggler", active: conditions %>
   <div class="title"><%= t('.title') %></div>
   <div class="fields <%= 'active' if conditions%>">
