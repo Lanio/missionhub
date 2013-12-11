@@ -35,7 +35,7 @@ $ ->
         fields.slideDown "fast"
 
     # Show apply button for standard filter
-    $(".side-search-option .checkbox input[type='checkbox']").on "click", (e)->
+    $(document).on "click", ".side-search-option .checkbox input[type='checkbox']", (e)->
       apply = $(this).parents(".fields")
       apply.find(".actions .apply").show()
       apply.find(".actions .clear").hide()
@@ -149,19 +149,19 @@ $ ->
 
 
     # Toggle option if the parent is clicked
-    $(".options .selected").on "click", (e)->
+    $(document).on "click", ".options .selected", (e)->
       $(this).hide()
       $(this).siblings(".choices").slideDown()
 
     # Show apply button for dateselect fields
-    $(".side-search-option .dateselect select").on "change", (e)->
+    $(document).on "change", ".side-search-option .dateselect select", (e)->
       apply = $(this).parents(".side-search-option").find(".actions")
       apply.find(".apply").show()
       apply.find(".clear").hide()
 
 
     # Show options when the selected option is clicked
-    $(".options .choices .text_option").on "click", (e)->
+    $(document).on "click", ".options .choices .text_option", (e)->
       input = $(this).children('input')
       unless input.is(":disabled")
         input.prop("checked", true)
@@ -182,31 +182,30 @@ $ ->
             parent.find(".field .dateselect.end select").prop("disabled", false)
 
     # Disable some options when no keyword is defined
-    $(".field .textfield").on
-      keyup: (e)->
-        options = $(this).parents(".field").siblings(".options")
-        contains = options.children(".choices").children(".text_option.contains").children("input")
-        is_exactly = options.children(".choices").children(".text_option.is_exactly").children("input")
-        does_not_contain = options.children(".choices").children(".text_option.does_not_contain").children("input")
-        is_blank = options.children(".choices").children(".text_option.is_blank").children("input")
-        is_not_blank = options.children(".choices").children(".text_option.is_not_blank").children("input")
+    $(document).on "keyup", ".field .textfield", (e)->
+      options = $(this).parents(".field").siblings(".options")
+      contains = options.children(".choices").children(".text_option.contains").children("input")
+      is_exactly = options.children(".choices").children(".text_option.is_exactly").children("input")
+      does_not_contain = options.children(".choices").children(".text_option.does_not_contain").children("input")
+      is_blank = options.children(".choices").children(".text_option.is_blank").children("input")
+      is_not_blank = options.children(".choices").children(".text_option.is_not_blank").children("input")
 
-        # Show apply button for survey question
-        apply = $(this).parents(".field").siblings(".actions")
-        apply.find(".apply").show()
-        apply.find(".clear").hide()
+      # Show apply button for survey question
+      apply = $(this).parents(".field").siblings(".actions")
+      apply.find(".apply").show()
+      apply.find(".clear").hide()
 
-        if $(this).val() == ""
-          if contains.is(":checked") || is_exactly.is(":checked") || does_not_contain.is(":checked")
-            is_not_blank.prop("checked", true)
-            options.find(".selected").text("Any Response")
-          contains.prop("disabled", true)
-          is_exactly.prop("disabled", true)
-          does_not_contain.prop("disabled", true)
-        else
-          if is_blank.is(":checked") || is_not_blank.is(":checked")
-            contains.prop("checked", true)
-            options.find(".selected").text("Contains")
-          contains.prop("disabled", false)
-          is_exactly.prop("disabled", false)
-          does_not_contain.prop("disabled", false)
+      if $(this).val() == ""
+        if contains.is(":checked") || is_exactly.is(":checked") || does_not_contain.is(":checked")
+          is_not_blank.prop("checked", true)
+          options.find(".selected").text("Any Response")
+        contains.prop("disabled", true)
+        is_exactly.prop("disabled", true)
+        does_not_contain.prop("disabled", true)
+      else
+        if is_blank.is(":checked") || is_not_blank.is(":checked")
+          contains.prop("checked", true)
+          options.find(".selected").text("Contains")
+        contains.prop("disabled", false)
+        is_exactly.prop("disabled", false)
+        does_not_contain.prop("disabled", false)
