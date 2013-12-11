@@ -82,7 +82,7 @@ $ ->
         options.find(".choices").slideUp()
         options.find(".selected").text("Match Any")
         options.find(".selected").show()
-        field = parent.find(".field input")
+        field = parent.find(".fields .option.checkbox input")
         field.prop("checked", false)
 
       parent.find(".actions .apply").show()
@@ -138,7 +138,7 @@ $ ->
         options.find(".selected").text(option_title)
         options.find(".selected").show()
 
-        fields = actions.siblings(".field").find(".option.checkbox")
+        fields = actions.parents(".fields").find(".option.checkbox")
         checkboxes = fields.find("input[type='checkbox']")
         checkboxes.prop("checked", false)
         for val in value
