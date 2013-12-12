@@ -84,6 +84,9 @@
         		<% if phone.primary %>
               <div class="info_tag">Primary</div>
             <% end %>
+        		<% unless phone.active_for_org?(current_organization) %>
+              <div class="info_tag warning">Opted Out</div>
+            <% end %>
             <br/>
           <% end %>
         <% end %>
