@@ -54,7 +54,7 @@ $ ->
 
 
     # Clear filter
-    $(".side-search-option .clear_filter").on "click", (e)->
+    $(document).on "click", ".side-search-option .clear_filter", (e)->
       e.preventDefault()
       parent = $(this).parents(".side-search-option")
       # Values
@@ -101,7 +101,7 @@ $ ->
       parent.find(".actions .clear").hide()
 
     # Reset filter
-    $(".side-search-option .reset_filter").on "click", (e)->
+    $(document).on "click", ".side-search-option .reset_filter", (e)->
       e.preventDefault()
       parent = $(this).parents(".side-search-option")
       # Values
@@ -114,7 +114,7 @@ $ ->
       actions = $(this).parents(".actions")
 
       if type == "TextField"
-        options = actions.siblings(".options")
+        options = actions.parents(".fields").siblings(".options")
         options.find(".text_option." + option + " input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text(option_title)
@@ -122,7 +122,7 @@ $ ->
         field.val(value)
         field.keyup()
       else if type == "ChoiceField"
-        options = actions.siblings(".options")
+        options = actions.parents(".fields").siblings(".options")
         options.find(".text_option." + option + " input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text(option_title)
@@ -134,7 +134,7 @@ $ ->
         for val in value
           fields.find("input[type='checkbox'][value='" + val + "']").prop("checked", true)
       else if type == "DateField"
-        options = actions.siblings(".options")
+        options = actions.parents(".fields").siblings(".options")
         options.find(".text_option." + option + " input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text(option_title)
@@ -161,6 +161,8 @@ $ ->
     $(document).on "click", ".options .selected", (e)->
       $(this).hide()
       $(this).siblings(".choices").slideDown()
+      unless $(this).parents(".options").siblings(".fields").is(":visible")
+        $(this).parents(".options").siblings(".toggler").click()
 
     # Show apply button for dateselect fields
     $(document).on "change", ".side-search-option .dateselect select", (e)->
@@ -192,7 +194,7 @@ $ ->
 
     # Disable some options when no keyword is defined
     $(document).on "keyup", ".field .textfield", (e)->
-      options = $(this).parents(".field").siblings(".options")
+      options = $(this).parents(".fields").siblings(".options")
       contains = options.children(".choices").children(".text_option.contains").children("input")
       is_exactly = options.children(".choices").children(".text_option.is_exactly").children("input")
       does_not_contain = options.children(".choices").children(".text_option.does_not_contain").children("input")
@@ -200,7 +202,7 @@ $ ->
       is_not_blank = options.children(".choices").children(".text_option.is_not_blank").children("input")
 
       # Show apply button for survey question
-      apply = $(this).parents(".field").siblings(".actions")
+      apply = $(this).parents(".fields").children(".actions")
       apply.find(".apply").show()
       apply.find(".clear").hide()
 

@@ -111,9 +111,9 @@
       overflow: hidden;
       .side-search-option {
 
-        &.checkboxes_only .actions {
-          margin-top: 10px !important;
-        }
+//        &.checkboxes_only .actions {
+//          margin-top: 10px !important;
+//        }
         &.singleton.active {
           border-top: 2px dashed #2384ad;
           border-bottom: 2px dashed #2384ad;
@@ -209,7 +209,7 @@
             }
           }
           .actions {
-            margin: 5px 10px;
+            margin: 0px 10px;
             .apply {
               display: none;
               button {

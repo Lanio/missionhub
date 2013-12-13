@@ -32,7 +32,54 @@
         <div class="side-search-option <%= 'active' if conditions %> singleton" data-id="side_search_survey_<%= survey.id %>_<%= question.id %>" data-option-title="<%= selected_title %>" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
           <%= render "search/toggler", active: conditions %>
           <div class="title"><%= question.label %></div>
-          <div class="fields <%= 'active' if conditions %>">
+
+          <% if question.kind == "TextField" %>
+            <div class="options">
+              <div class="selected">
+                <%= selected_title %>
+              </div>
+              <div class="choices">
+                <% Element::TEXTFIELD_MATCH.each do |option| %>
+                  <div class="text_option <%= option[1] %>">
+                    <% disabled = answer.strip == "" && ['contains','is_exactly','does_not_contain'].include?(option[1]) %>
+                    <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option", disabled: disabled %>
+                    <%= option[0].titleize %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% elsif question.kind == "ChoiceField" %>
+            <div class="options">
+              <div class="selected">
+                <%= selected_title %>
+              </div>
+              <div class="choices">
+                <% Element::CHOICEFILED_MATCH.each do |option| %>
+                  <div class="text_option <%= option[1] %>">
+                    <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option" %>
+                    <%= option[0].titleize %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% elsif question.kind == "DateField" %>
+            <div class="options">
+              <div class="selected">
+                <%= selected_title %>
+              </div>
+              <div class="choices">
+                <% Element::DATEFIELD_MATCH.each do |option| %>
+                  <div class="text_option <%= option[1] %>">
+                    <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option" %>
+                    <%= option[0].titleize %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+
+          <div class="fields">
 
             <% if question.kind == "DateField" %>
               <% is_active = (answer.present? && answer["start"].present?) %>
@@ -41,40 +88,12 @@
             <% end %>
 
             <% if question.kind == "TextField" %>
-              <div class="options">
-                <div class="selected">
-                  <%= selected_title %>
-                </div>
-                <div class="choices">
-                  <% Element::TEXTFIELD_MATCH.each do |option| %>
-                    <div class="text_option <%= option[1] %>">
-                      <% disabled = answer.strip == "" && ['contains','is_exactly','does_not_contain'].include?(option[1]) %>
-                      <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option", disabled: disabled %>
-                      <%= option[0].titleize %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-
               <div class="field text_field">
                 <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
                     autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
               </div>
               <%= render "search/actions", clear: conditions %>
             <% elsif question.kind == "ChoiceField" %>
-              <div class="options">
-                <div class="selected">
-                  <%= selected_title %>
-                </div>
-                <div class="choices">
-                  <% Element::CHOICEFILED_MATCH.each do |option| %>
-                    <div class="text_option <%= option[1] %>">
-                      <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option" %>
-                      <%= option[0].titleize %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
               <div class="field choice_field">
                 <% question.content.split(/\r\n|\n/).each do |option| %>
                   <div class="option checkbox choice_option">
@@ -89,19 +108,6 @@
               </div>
               <%= render "search/actions", clear: conditions %>
             <% elsif question.kind == "DateField" %>
-              <div class="options">
-                <div class="selected">
-                  <%= selected_title %>
-                </div>
-                <div class="choices">
-                  <% Element::DATEFIELD_MATCH.each do |option| %>
-                    <div class="text_option <%= option[1] %>">
-                      <%= radio_button_tag "survey_answer_option[#{survey.id}][#{question.id}]", option[1], selected_option == option[1], id: "answer_#{survey.id}_#{question.id}_textbox_option" %>
-                      <%= option[0].titleize %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
               <div class="field date_field">
                 <% if answer.present? && answer["start"].present? %>
                   <% @answer_start = answer["start"].to_date %>
