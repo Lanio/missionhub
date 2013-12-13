@@ -34,8 +34,20 @@ $ ->
         toggler.addClass("active")
         fields.slideDown "fast"
 
+    # Show apply button for standard filter (active)
+    $(document).on "click", ".side-search-option .fields_active .checkbox input[type='checkbox']", (e)->
+      apply = $(this).parents(".fields_active").siblings(".fields")
+      apply.find(".actions .apply").show()
+      apply.find(".actions .clear").hide()
+      unless apply.is(":visible")
+        parent = apply.parents(".side-search-option")
+        toggler = parent.find(".toggler")
+        toggler.addClass("active")
+        parent.addClass("active")
+        apply.slideDown("fast")
+
     # Show apply button for standard filter
-    $(document).on "click", ".side-search-option .checkbox input[type='checkbox']", (e)->
+    $(document).on "click", ".side-search-option .fields .checkbox input[type='checkbox']", (e)->
       apply = $(this).parents(".fields")
       apply.find(".actions .apply").show()
       apply.find(".actions .clear").hide()
@@ -77,12 +89,12 @@ $ ->
         fields.each ->
           $(this).val($(this).data("null"))
       else if type == "Standard"
-        options = actions.siblings(".options")
+        options = parent.find(".options")
         options.find(".text_option").first().children("input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text("Match Any")
         options.find(".selected").show()
-        field = parent.find(".fields .option.checkbox input")
+        field = parent.find(".fields .option.checkbox input, .fields_active .option.checkbox input")
         field.prop("checked", false)
 
       parent.find(".actions .apply").show()
@@ -132,17 +144,14 @@ $ ->
         fields.each ->
           $(this).val($(this).data("value"))
       else if type == "Standard"
-        options = actions.siblings(".options")
+        options = actions.parents(".fields").siblings(".options")
         options.find(".text_option." + option + " input").prop("checked", true)
         options.find(".choices").slideUp()
         options.find(".selected").text(option_title)
         options.find(".selected").show()
 
-        fields = actions.parents(".fields").find(".option.checkbox")
-        checkboxes = fields.find("input[type='checkbox']")
-        checkboxes.prop("checked", false)
-        for val in value
-          fields.find("input[type='checkbox'][value='" + val + "']").prop("checked", true)
+        actions.parents(".fields").find(".option.checkbox input").prop("checked", false)
+        actions.parents(".fields").siblings(".fields_active").find(".option.checkbox input").prop("checked", true)
 
       parent.find(".actions .apply").hide()
       parent.find(".actions .clear").show() if value != ""
@@ -166,7 +175,7 @@ $ ->
       unless input.is(":disabled")
         input.prop("checked", true)
         # Show apply button for survey question
-        apply = $(this).parents(".options").siblings(".actions")
+        apply = $(this).parents(".options").siblings(".fields").find(".actions")
         apply.find(".apply").show()
         apply.find(".clear").hide()
         # Parent based behavior

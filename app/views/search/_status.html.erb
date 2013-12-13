@@ -1,13 +1,25 @@
 <% conditions = params[:status].present? %>
-<div class="side-search-option singleton checkboxes_only <%= 'active' if conditions%>" data-id="side_search_status" data-type="Standard" data-value="<%= params[:status] %>">
-  <%= render "search/toggler", active: conditions %>
+<div class="side-search-option singleton checkboxes_only" data-id="side_search_status" data-type="Standard" data-value="<%= params[:status] %>">
+  <%= render "search/toggler" %>
   <div class="title"><%= t('.title') %></div>
-  <div class="fields <%= 'active' if conditions%>">
+  <div class="fields_active">
 		<% OrganizationalPermission::FOLLOWUP_STATUSES.each do |status| %>
-			<div class="option checkbox">
-				<%= check_box_tag "status[]", status, conditions && params[:status].include?(status.to_s), id: "search_status_#{status}", class: "search_status_checkbox" %>
-				<div class="sidebar-label"><%= status.titleize %></div>
-			</div>
+      <% if conditions && params[:status].include?(status.to_s)%>
+  			<div class="option checkbox">
+  				<%= check_box_tag "status[]", status, true, id: "search_status_#{status}", class: "search_status_checkbox" %>
+  				<div class="sidebar-label"><%= status.titleize %></div>
+  			</div>
+      <% end %>
+		<% end %>
+  </div>
+  <div class="fields">
+		<% OrganizationalPermission::FOLLOWUP_STATUSES.each do |status| %>
+      <% unless conditions && params[:status].include?(status.to_s)%>
+  			<div class="option checkbox">
+  				<%= check_box_tag "status[]", status, false, id: "search_status_#{status}", class: "search_status_checkbox" %>
+  				<div class="sidebar-label"><%= status.titleize %></div>
+  			</div>
+      <% end %>
 		<% end %>
     <%= render "search/actions", clear: conditions %>
   </div>

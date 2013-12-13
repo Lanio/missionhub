@@ -112,7 +112,7 @@
       .side-search-option {
 
         &.checkboxes_only .actions {
-          margin-top: 15px !important;
+          margin-top: 10px !important;
         }
         &.singleton.active {
           border-top: 2px dashed #2384ad;
@@ -122,6 +122,13 @@
           background: #fdfdfd;
         }
         .options {
+          .text_option {
+            font-weight: normal;
+            font-size: 12px;
+            cursor: pointer;
+            color: #808284;
+            padding: 1px 0 1px 5px;
+          }
           margin: 5px 10px 5px;
           padding: 3px 5px;
           background: #f0f0f0;
@@ -199,15 +206,6 @@
               .dateselect_field {
                 display: inline-block;
               }
-            }
-          }
-          .options {
-            .text_option {
-              font-weight: normal;
-              font-size: 12px;
-              cursor: pointer;
-              color: #808284;
-              padding: 1px 0 1px 5px;
             }
           }
           .actions {

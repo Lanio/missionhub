@@ -1,31 +1,41 @@
 <% conditions = params[:group].present? %>
 <% selected_option = params[:group_filter].present? ? params[:group_filter] : Element::CHOICEFILED_MATCH[0][1] %>
 <% selected_title = Element::CHOICEFILED_MATCH.map{|a| a[0] if a.include?(selected_option)}.compact!.try(:first) %>
-<div class="side-search-option singleton <%= 'active' if conditions%>" data-id="side_search_group" data-type="Standard" data-value="<%= params[:group] %>">
-  <%= render "search/toggler", active: conditions %>
+<div class="side-search-option singleton" data-id="side_search_group" data-type="Standard" data-value="<%= params[:group] %>">
+  <%= render "search/toggler" %>
   <div class="title"><%= t('.title') %></div>
-  <div class="fields <%= 'active' if conditions%>">
-    <div class="options">
-      <div class="selected">
-        <%= selected_title %>
-      </div>
-      <div class="choices">
-        <% Element::CHOICEFILED_MATCH.each do |option| %>
-          <div class="text_option <%= option[1] %>">
-            <%= radio_button_tag :group_filter, option[1], selected_option == option[1] %>
-            <%= option[0].titleize %>
-          </div>
-        <% end %>
-      </div>
+  <div class="options">
+    <div class="selected">
+      <%= selected_title %>
     </div>
-    <div class="field">
-  		<% current_organization.groups.each do |group| %>
-        <div class="option checkbox choice_option">
-          <%= check_box_tag "group[]", group.id, conditions && params[:group].include?(group.id.to_s), id: "search_group_#{group.id}", class: "search_group_checkbox" %>
+    <div class="choices">
+      <% Element::CHOICEFILED_MATCH.each do |option| %>
+        <div class="text_option <%= option[1] %>">
+          <%= radio_button_tag :group_filter, option[1], selected_option == option[1] %>
+          <%= option[0].titleize %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="fields_active">
+		<% current_organization.groups.each do |group| %>
+      <% if conditions && params[:group].include?(group.id.to_s) %>
+        <div class="option checkbox">
+          <%= check_box_tag "group[]", group.id, true, id: "search_group_#{group.id}", class: "search_group_checkbox" %>
           <div class="sidebar-label"><%= group.name %></div>
         </div>
-  		<% end %>
-    </div>
+      <% end %>
+		<% end %>
+  </div>
+  <div class="fields">
+		<% current_organization.groups.each do |group| %>
+      <% unless conditions && params[:group].include?(group.id.to_s) %>
+        <div class="option checkbox">
+          <%= check_box_tag "group[]", group.id, false, id: "search_group_#{group.id}", class: "search_group_checkbox" %>
+          <div class="sidebar-label"><%= group.name %></div>
+        </div>
+      <% end %>
+		<% end %>
     <%= render "search/actions", clear: conditions %>
   </div>
 </div>
