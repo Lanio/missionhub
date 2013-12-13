@@ -29,15 +29,16 @@
         <% end %>
 
         <% conditions = answer.present? %>
-        <div class="side-search-option <%= 'active' if conditions %> singleton" data-id="side_search_survey_<%= survey.id %>_<%= question.id %>" data-option-title="<%= selected_title %>" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>">
-          <%= render "search/toggler", active: conditions %>
+        <% has_answer = answer.is_a?(Hash) ? answer.values.first.present? : answer.present? %>
+        <div class="side-search-option singleton" data-id="side_search_survey_<%= survey.id %>_<%= question.id %>" data-option-title="<%= selected_title %>" data-type="<%= question.kind %>" data-value="<%= answer %>" data-option="<%= selected_option %>" data-set="<%= has_answer %>">
+          <%= render "search/toggler" %>
           <div class="title"><%= question.label %></div>
 
-          <% if question.kind == "TextField" %>
-            <div class="options">
-              <div class="selected">
-                <%= selected_title %>
-              </div>
+          <div class="options <%= 'active' if has_answer %> ">
+            <div class="selected">
+              <%= selected_title %>
+            </div>
+            <% if question.kind == "TextField" %>
               <div class="choices">
                 <% Element::TEXTFIELD_MATCH.each do |option| %>
                   <div class="text_option <%= option[1] %>">
@@ -47,12 +48,7 @@
                   </div>
                 <% end %>
               </div>
-            </div>
-          <% elsif question.kind == "ChoiceField" %>
-            <div class="options">
-              <div class="selected">
-                <%= selected_title %>
-              </div>
+            <% elsif question.kind == "ChoiceField" %>
               <div class="choices">
                 <% Element::CHOICEFILED_MATCH.each do |option| %>
                   <div class="text_option <%= option[1] %>">
@@ -61,12 +57,7 @@
                   </div>
                 <% end %>
               </div>
-            </div>
-          <% elsif question.kind == "DateField" %>
-            <div class="options">
-              <div class="selected">
-                <%= selected_title %>
-              </div>
+            <% elsif question.kind == "DateField" %>
               <div class="choices">
                 <% Element::DATEFIELD_MATCH.each do |option| %>
                   <div class="text_option <%= option[1] %>">
@@ -75,36 +66,57 @@
                   </div>
                 <% end %>
               </div>
-            </div>
+            <% end %>
+          </div>
+
+          <% if question.kind == "DateField" %>
+            <% is_active = (answer.present? && answer["start"].present?) %>
+          <% else %>
+            <% is_active = (answer.present? || ['is_blank','is_not_blank'].include?(selected_option)) %>
           <% end %>
 
 
+          <% if question.kind == "TextField" %>
+            <div class="fields_active">
+              <% if answer.present?%>
+                <div class="field text_field">
+                  <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
+                      autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
+                </div>
+              <% end %>
+            </div>
+          <% elsif question.kind == "ChoiceField" %>
+            <div class="fields_active">
+              <% question.content.split(/\r\n|\n/).push("no_response").each do |option| %>
+                <% if answer.present? && answer.include?(option) %>
+                  <div class="option checkbox">
+                    <%= check_box_tag "survey_answer[#{survey.id}][#{question.id}][]", option, true, class: "answer_#{survey.id}_#{question.id}_checkbox" %>
+                    <div class="sidebar-label"><%= option == "no_response" ? "No Response" : option %></div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+
           <div class="fields">
-
-            <% if question.kind == "DateField" %>
-              <% is_active = (answer.present? && answer["start"].present?) %>
-            <% else %>
-              <% is_active = (answer.present? || ['is_blank','is_not_blank'].include?(selected_option)) %>
-            <% end %>
-
             <% if question.kind == "TextField" %>
-              <div class="field text_field">
-                <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
-                    autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
-              </div>
+              <% unless answer.present?%>
+                <div class="field text_field">
+                  <%= text_field_tag "survey_answer[#{survey.id}][#{question.id}]", answer,
+                      autocomplete: "off", class: "textfield", id: "answer_#{survey.id}_#{question.id}_textbox_answer" %>
+                </div>
+              <% end %>
               <%= render "search/actions", clear: conditions %>
             <% elsif question.kind == "ChoiceField" %>
               <div class="field choice_field">
-                <% question.content.split(/\r\n|\n/).each do |option| %>
-                  <div class="option checkbox choice_option">
-                    <%= check_box_tag "survey_answer[#{survey.id}][#{question.id}][]", option, answer.present? && answer.include?(option), class: "answer_#{survey.id}_#{question.id}_checkbox" %>
-                    <div class="sidebar-label"><%= option %></div>
-                  </div>
+                <% question.content.split(/\r\n|\n/).push("no_response").each do |option| %>
+                  <% unless answer.present? && answer.include?(option) %>
+                    <div class="option checkbox choice_option">
+                      <%= check_box_tag "survey_answer[#{survey.id}][#{question.id}][]", option, false, class: "answer_#{survey.id}_#{question.id}_checkbox" %>
+                      <div class="sidebar-label"><%= option == "no_response" ? "No Response" : option %></div>
+                    </div>
+                  <% end %>
                 <% end %>
-                <div class="option checkbox choice_option">
-                  <%= check_box_tag "survey_answer[#{survey.id}][#{question.id}][]", "no_response", answer.present? && answer.include?("no_response"), class: "answer_#{survey.id}_#{question.id}_checkbox" %>
-                  <div class="sidebar-label">No Response</div>
-                </div>
               </div>
               <%= render "search/actions", clear: conditions %>
             <% elsif question.kind == "DateField" %>
@@ -166,10 +178,6 @@
                     </div>
                   </div>
                 </div>
-
-                <%# date_select "survey_answer[#{survey.id}][#{question.id}][start]", "", {:default => answer_start, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
-
-                <%# date_select "survey_answer[#{survey.id}][#{question.id}][end]", "", {:default => answer_end, :include_blank => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
               </div>
               <%= render "search/actions", clear: conditions %>
             <% else %>

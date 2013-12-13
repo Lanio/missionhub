@@ -117,11 +117,18 @@
         &.singleton.active {
           border-top: 2px dashed #2384ad;
           border-bottom: 2px dashed #2384ad;
-          padding: 10px 0 5px;
+          padding: 10px 0 15px;
           margin: 10px 0;
           background: #fdfdfd;
         }
         .options {
+          display: none;
+          margin: 5px 10px 5px;
+          padding: 3px 5px;
+          background: #f0f0f0;
+          &.active {
+            display: block;
+          }
           .text_option {
             font-weight: normal;
             font-size: 12px;
@@ -129,9 +136,6 @@
             color: #808284;
             padding: 1px 0 1px 5px;
           }
-          margin: 5px 10px 5px;
-          padding: 3px 5px;
-          background: #f0f0f0;
           .selected {
             padding: 3px 5px;
             display: block;
@@ -169,9 +173,12 @@
 
           }
         }
-        .fields {
+        .fields, .fields_active {
           display: none;
           &.active {
+            display: block;
+          }
+          &.fields_active {
             display: block;
           }
           .field {
@@ -209,7 +216,7 @@
             }
           }
           .actions {
-            margin: 0px 10px;
+            margin: 5px 10px 0px;
             .apply {
               display: none;
               button {
@@ -218,7 +225,7 @@
               }
             }
             .other, .clear {
-              height: 40px;
+              height: 20px;
               a {
                 color: #aaa;
                 text-decoration: none;
@@ -253,9 +260,6 @@
                 width: 150px;
               }
             }
-          }
-          &:last-child {
-            padding-bottom: 10px;
           }
           .count, .info {
             color: #999;

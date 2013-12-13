@@ -8,13 +8,18 @@ $ ->
         fields.slideUp("fast")
         $(this).removeClass("active")
         parent.removeClass("active")
+        if parent.data("set") == false
+          parent.find(".options").removeClass("active")
       else
+        parent.find(".options").addClass("active")
         $(this).addClass("active")
         parent.addClass("active")
         fields.slideDown("fast")
         $(".side-search-option.singleton.active").each ->
           id = $(this).data("id")
           if id != parent.data("id")
+            if $(this).data("set") == false
+              $(this).find(".options").removeClass("active")
             $(this).find("a.reset_filter").click()
             $(this).find(".fields").slideUp("fast")
             $(this).find(".toggler").removeClass("active")
@@ -77,7 +82,7 @@ $ ->
         options.find(".choices").slideUp()
         options.find(".selected").text("Match Any")
         options.find(".selected").show()
-        field = parent.find(".field input")
+        field = parent.find(".fields input")
         field.prop("checked", false)
       else if type == "DateField"
         options = actions.siblings(".options")
@@ -194,7 +199,8 @@ $ ->
 
     # Disable some options when no keyword is defined
     $(document).on "keyup", ".field .textfield", (e)->
-      options = $(this).parents(".fields").siblings(".options")
+      parent = $(this).parents(".side-search-option")
+      options = parent.find(".options")
       contains = options.children(".choices").children(".text_option.contains").children("input")
       is_exactly = options.children(".choices").children(".text_option.is_exactly").children("input")
       does_not_contain = options.children(".choices").children(".text_option.does_not_contain").children("input")
@@ -202,9 +208,12 @@ $ ->
       is_not_blank = options.children(".choices").children(".text_option.is_not_blank").children("input")
 
       # Show apply button for survey question
-      apply = $(this).parents(".fields").children(".actions")
+      apply = parent.find(".actions")
       apply.find(".apply").show()
       apply.find(".clear").hide()
+
+      unless parent.find(".fields").is(":visible")
+        parent.find(".toggler").click()
 
       if $(this).val() == ""
         if contains.is(":checked") || is_exactly.is(":checked") || does_not_contain.is(":checked")
