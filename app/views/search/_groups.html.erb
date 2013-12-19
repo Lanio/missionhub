@@ -4,7 +4,7 @@
 <div class="side-search-option singleton" data-id="side_search_group" data-type="Standard" data-value="<%= params[:group] %>">
   <%= render "search/toggler" %>
   <div class="title"><%= t('.title') %></div>
-  <div class="options">
+  <div class="options <%= 'active' if conditions %>">
     <div class="selected">
       <%= selected_title %>
     </div>

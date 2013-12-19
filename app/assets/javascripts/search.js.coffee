@@ -8,6 +8,7 @@ $ ->
         fields.slideUp("fast")
         $(this).removeClass("active")
         parent.removeClass("active")
+        parent.find(".reset_filter").click()
         if parent.data("set") == false
           parent.find(".options").removeClass("active")
       else
