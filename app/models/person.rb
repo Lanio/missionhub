@@ -73,7 +73,7 @@ class Person < ActiveRecord::Base
     ["birth_date","graduation_date"].each do |field_name|
       raw_date = value.send("#{field_name}_before_type_cast")
       next unless raw_date.present?
-      if raw_date =~ /^([1-9]|0[1-9]|1[012])\/([1-9]|0[1-9]|[12][1-9]|3[01])\/(19|2\d)\d\d$/
+      if raw_date =~ /^([1-9]|0[1-9]|1[012])\/([1-9]|0[1-9]|[12][0-9]|3[01])\/(19|2\d)\d\d$/
         begin
           date_str = raw_date.split('/')
           self[:"#{field_name}"] = Date.parse("#{date_str[2]}-#{date_str[0]}-#{date_str[1]}")
