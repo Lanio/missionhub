@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  person_id: 1
+  device_token: MyString
+  platform: MyString
+  deleted_at: 2013-12-20 15:59:06
+
+two:
+  person_id: 1
+  device_token: MyString
+  platform: MyString
+  deleted_at: 2013-12-20 15:59:06

@@ -337,6 +337,7 @@ Mh::Application.routes.draw do
           post :bulk_archive
         end
       end
+      resources :devices :only [:create, :destroy]
       resources :organizations
       resources :answers
       resources :surveys do
