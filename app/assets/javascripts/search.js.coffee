@@ -159,6 +159,12 @@ $ ->
         actions.parents(".fields").find(".option.checkbox input").prop("checked", false)
         actions.parents(".fields").siblings(".fields_active").find(".option.checkbox input").prop("checked", true)
 
+      if parent.data("set") == false
+        parent.find(".options").removeClass("active")
+      parent.find(".fields").slideUp("fast")
+      parent.find(".toggler").removeClass("active")
+      parent.removeClass("active")
+
       parent.find(".actions .apply").hide()
       parent.find(".actions .clear").show() if value != ""
 
