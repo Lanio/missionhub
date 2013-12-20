@@ -479,7 +479,7 @@ class ContactsController < ApplicationController
             else
               @people_scope = @organization.assigned_contacts_to(selected_leaders)
             end
-            @header = I18n.t('contacts.index.responses_assigned_to', assigned_to: @assigned_to)
+            @header = I18n.t('contacts.index.responses_assigned_to', assigned_to: selected_leaders.to_sentence)
           end
         end
       elsif params[:dnc] == 'true'
