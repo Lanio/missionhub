@@ -60,6 +60,8 @@ gem 'vpim', git: 'git://github.com/twinge/vpim.git'   # vcard maker
 gem 'whenever'
 gem 'wiser_date', '~> 0.3.0'
 gem 'infobase'
+gem 'gcm'
+gem 'grocer'
 
 
 group :development, :test do
