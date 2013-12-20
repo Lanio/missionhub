@@ -1,0 +1,26 @@
+<% conditions = params[:gender].present? %>
+<div class="side-search-option singleton checkboxes_only" data-id="side_search_gender" data-type="Standard" data-value="<%= params[:gender] %>">
+  <%= render "search/toggler" %>
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields_active">
+    <% Person::GENDER.each do |k, v| %>
+      <% if conditions && params[:gender].include?("#{v}") %>
+        <div class="option checkbox">
+          <%= check_box_tag "gender[]", "#{v}", true, id: "search_gender_#{v}", class: "search_gender_#{v}" %>
+          <div class="sidebar-label"><%= k.titleize %></div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="fields">
+    <% Person::GENDER.each do |k, v| %>
+      <% unless conditions && params[:gender].include?("#{v}") %>
+        <div class="option checkbox">
+          <%= check_box_tag "gender[]", "#{v}", false, id: "search_gender_#{v}", class: "search_gender_#{v}" %>
+          <div class="sidebar-label"><%= k.titleize %></div>
+        </div>
+      <% end %>
+    <% end %>
+    <%= render "search/actions", clear: conditions %>
+  </div>
+</div>

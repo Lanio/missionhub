@@ -5,7 +5,8 @@
       <%= link_to raw("<button class='action_gray full_width_button' id='allcontacts_import_contacts_button'>#{t('contacts.index.import_contacts')}</button>"), new_import_path %>
     </div>
   	<div id="sidebar_lists" class="leftmenu">
-      <%= render partial: 'contacts/new_sidebar' %>
+      <%= render partial: 'search/sidebar' %>
+      <!-- <%= render partial: 'contacts/new_sidebar' %> -->
     </div>
   </div>
 <% end %>
@@ -21,7 +22,6 @@
 </div>
 
 <div id="ac_contact_spread">
-
   <div id='pagination_space'>
     <%= paginate @people %>
   </div>
@@ -58,21 +58,6 @@
   		</li>
   	</ul>
 
-    <% with_save_search = (params[:do_search] == "1" || params[:search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
-
-  	<ul class="button_bar">
-  		<li class="action_lightblue <%= 'btn_left' if with_save_search %>">
-  		  <%= link_to "Search", "#", id: "action_menu_search_filters" %>
-  		</li>
-  	</ul>
-
-    <% if with_save_search %>
-      <ul class="button_bar">
-        <li class="action_lightblue btn_right">
-          <%= link_to("Save Search", "", id: 'search_people_filters_save_search_button') %>
-        </li>
-      </ul>
-    <% end %>
   	<ul class="button_bar">
   		<li class="action_lightblue">
         <%= link_to('More ▾', '#', class: 'action_dropdown') %>
@@ -198,7 +183,7 @@
 <%= render 'dialogs/search_people_filters' %>
 
 <!-- Advanced Search Dialog -->
-<%= render 'dialogs/advanced_search' %>
+<%# render 'dialogs/advanced_search' %>
 
 <!-- Show Hidden Question Dialog -->
 <%= render 'dialogs/search_hidden_questions'%>

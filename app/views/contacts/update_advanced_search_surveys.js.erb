@@ -1,16 +1,9 @@
 <% @filtered_surveys.order(:title).each do |survey| %>
-  existing = $("#search_survey_group_<%= survey.id %>").size() > 0
-  if(!existing){
-    $(".fields.advanced_search_survey_list").append("<div class='search_group' id='search_survey_group_<%= survey.id %>'><%= escape_javascript(render partial: 'contacts/search_filter_survey', locals: {survey: survey}) %></div>")
+  if($(".side-search-survey#side-search-survey-<%= survey.id %>").size() == 0){
+    $(".side-search .side-search-surveys").append("<%= escape_javascript(render partial: 'search/survey', locals: {survey: survey}) %>")
   }
 <% end %>
+
 <% @remove_survey_ids.each do |survey_id| %>
-  $("#search_survey_group_<%= survey_id %>").remove()
+  $(".side-search-survey#side-search-survey-<%= survey_id %>").remove()
 <% end %>
-$(".field_option.datefield").each(function(){
-  if(!$(this).hasClass("with_month")){
-    $(this).children("select").first().after("&nbsp;Month:")
-  }
-  $(this).addClass("with_month")
-})
-$('.advanced_search_survey_update_loader').css("display","none");

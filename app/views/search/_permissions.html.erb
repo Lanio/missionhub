@@ -1,0 +1,38 @@
+<% conditions = params[:permission].present? %>
+<div class="side-search-option singleton checkboxes_only" data-id="side_search_permission" data-type="Standard" data-value="<%= params[:permission] %>">
+  <%= render "search/toggler" %>
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields_active">
+    <% @organization.permissions.each do |permission| %>
+      <% if params[:include_archived] %>
+        <% count = permission.permission_contacts_from_org_with_archived(@organization).count %>
+      <% else %>
+        <% count = permission.permission_contacts_from_org(@organization).count %>
+      <% end %>
+      <% if conditions && params[:permission].include?(permission.id.to_s) %>
+        <div class="option checkbox">
+          <%= check_box_tag "permission[]", permission.id, true, id: "search_permission_#{permission.id}", class: "search_permission_checkbox" %>
+          <div class="sidebar-label"><%= permission.name %></div>
+          <span class="info">(<span class="count"><%= count %></span>)</span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="fields">
+    <% @organization.permissions.each do |permission| %>
+      <% if params[:include_archived] %>
+        <% count = permission.permission_contacts_from_org_with_archived(@organization).count %>
+      <% else %>
+        <% count = permission.permission_contacts_from_org(@organization).count %>
+      <% end %>
+      <% unless conditions && params[:permission].include?(permission.id.to_s) %>
+        <div class="option checkbox">
+          <%= check_box_tag "permission[]", permission.id, false, id: "search_permission_#{permission.id}", class: "search_permission_checkbox" %>
+          <div class="sidebar-label"><%= permission.name %></div>
+          <span class="info">(<span class="count"><%= count %></span>)</span>
+        </div>
+      <% end %>
+    <% end %>
+    <%= render "search/actions", clear: conditions %>
+  </div>
+</div>

@@ -3,6 +3,7 @@ require 'vpim/vcard'
 require 'vpim/book'
 
 class Person < ActiveRecord::Base
+  GENDER = {"male" => 1, "female" => 0}
   has_paper_trail :on => [:destroy],
                   :meta => { person_id: :id }
 

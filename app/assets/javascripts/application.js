@@ -44,6 +44,7 @@
 //= require welcome
 //= require surveys
 //= require imports
+//= require search
 //= require interactions
 //= require advanced_search
 //= require movement_indicator_suggestions

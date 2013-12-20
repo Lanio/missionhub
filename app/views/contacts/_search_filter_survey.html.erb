@@ -81,7 +81,7 @@
           </div>
           <div class="field_option near custom_datefield"></div>
           <div class="field_option datefield datefield_end_select" style="display: <%= selected_option == 'between' ? 'inline-block' : 'none'%>">
-            <% answer_year = answer["end"].present? ? answer["end"].split("-").first() : nil %>
+            <% answer_year = answer.present? && answer["end"].present? ? answer["end"].split("-").first() : nil %>
             Day:
             <%= date_select "survey_answer[#{survey.id}][#{question.id}][end]", "", {:default => answer_end, :include_blank => true, :discard_year => true, order: [:day, :month, :year]}, {class: "date_field_survey"} %>
             Year:

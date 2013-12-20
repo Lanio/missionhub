@@ -1,0 +1,38 @@
+<% conditions = params[:interaction_type].present? %>
+<div class="side-search-option singleton checkboxes_only " data-id="side_search_interaction" data-type="Standard" data-value="<%= params[:interaction_type] %>">
+  <%= render "search/toggler" %>
+  <div class="title"><%= t('.title') %></div>
+  <div class="fields_active">
+    <% @organization.interaction_types.exclude_comment.each do |interaction_type| %>
+      <% if params[:include_archived_interactions] %>
+        <% count = interaction_type.interaction_receivers_from_org_with_archived(@organization).collect(&:id).count %>
+      <% else %>
+        <% count = interaction_type.interaction_receivers_from_org(@organization).collect(&:id).count %>
+      <% end %>
+      <% if conditions && params[:interaction_type].include?(interaction_type.id.to_s) %>
+        <div class="option checkbox">
+          <%= check_box_tag "interaction_type[]", interaction_type.id, true, id: "search_interaction_type_#{interaction_type.id}", class: "search_interaction_type_checkbox" %>
+          <div class="sidebar-label"><%= interaction_type.name %></div>
+          <span class="info">(<span class="count"><%= count %></span>)</span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="fields">
+    <% @organization.interaction_types.exclude_comment.each do |interaction_type| %>
+      <% if params[:include_archived_interactions] %>
+        <% count = interaction_type.interaction_receivers_from_org_with_archived(@organization).collect(&:id).count %>
+      <% else %>
+        <% count = interaction_type.interaction_receivers_from_org(@organization).collect(&:id).count %>
+      <% end %>
+      <% unless conditions && params[:interaction_type].include?(interaction_type.id.to_s) %>
+        <div class="option checkbox">
+          <%= check_box_tag "interaction_type[]", interaction_type.id, false, id: "search_interaction_type_#{interaction_type.id}", class: "search_interaction_type_checkbox" %>
+          <div class="sidebar-label"><%= interaction_type.name %></div>
+          <span class="info">(<span class="count"><%= count %></span>)</span>
+        </div>
+      <% end %>
+    <% end %>
+    <%= render "search/actions", clear: conditions %>
+  </div>
+</div>

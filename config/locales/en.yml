@@ -3,6 +3,39 @@
 # Use this as the base for the locale file of your language.
 
 en:
+  search:
+    sidebar:
+      standard_title: "Standard Filters"
+      survey_title: "Survey Filters"
+      search_any_placeholder: "Search"
+      standard_hide: "Hide Standard Filters"
+      standard_show: "Show Standard Filters"
+      survey_hide: "Hide Survey Filters"
+      survey_show: "Show Survey Filters"
+    triggers:
+      title: "Filter Results"
+    assignments:
+      title: "Assigned To"
+    status:
+      title: "Status"
+    interactions:
+      title: "Interactions"
+    permissions:
+      title: "Permissions"
+    labels:
+      title: "Labels"
+    groups:
+      title: "Groups"
+    gender:
+      title: "Gender"
+      male: "Male"
+      female: "Female"
+    faculty:
+      title: "Faculty"
+      yes: "Yes"
+      no: "No"
+    included_surveys:
+      title: "Included Surveys"
   manage_labels:
     title: "%{org} Labels"
     add_title: "Add a Organizational Label"

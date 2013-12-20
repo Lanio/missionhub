@@ -29,8 +29,12 @@ class ContactsController < ApplicationController
     end
   end
 
+  def update_advanced_search_surveys
+    @filtered_surveys = current_organization.surveys.where(id: params[:survey_ids].split(",")).includes(:questions).order(:title)
+    @remove_survey_ids = current_organization.surveys.pluck(:id) - @filtered_surveys.pluck(:id)
+  end
+
   def all_contacts
-    # raise params.inspect
     permissions_for_assign
     groups_for_assign
     labels_for_assign
@@ -412,6 +416,14 @@ class ContactsController < ApplicationController
       end
     end
 
+    def build_survey_questions
+      if params[:survey_scope].present?
+        @survey_scope = current_organization.surveys.where(id: params[:survey_scope]).includes(:questions).order(:title)
+      else
+        @survey_scope = []
+      end
+    end
+
     def update_fb_friends
       fb_auth = current_user.authentications.first
       current_person.update_friends(fb_auth) if fb_auth.present?
@@ -470,11 +482,15 @@ class ContactsController < ApplicationController
           @people_scope = @organization.send(:"#{params[:assigned_to]}_contacts")
           @header = I18n.t("rejoicables.#{params[:assigned_to]}")
         else
-          if params[:assigned_to].present? && @assigned_to = Person.find_by_id(params[:assigned_to])
+          unless params[:assigned_to].is_a?(Array)
+            params[:assigned_to] = [params[:assigned_to]]
+          end
+          selected_leaders = @organization.leaders.where(id: params[:assigned_to])
+          if selected_leaders.present?
             if params[:include_archived].present? && params[:include_archived] == 'true'
-              @people_scope = @assigned_to.assigned_contacts_limit_org_with_archived(@organization)
+              @people_scope = @organization.assigned_contacts_with_archived_to(selected_leaders)
             else
-              @people_scope = @assigned_to.assigned_contacts_limit_org(@organization)
+              @people_scope = @organization.assigned_contacts_to(selected_leaders)
             end
             @header = I18n.t('contacts.index.responses_assigned_to', assigned_to: @assigned_to)
           end
@@ -559,7 +575,6 @@ class ContactsController < ApplicationController
         else
           @header = @labels.collect{|desc| (desc.i18n.present? ? desc.i18n : desc.name).try('titleize')}.to_sentence
         end
-
         @people_scope = @people_scope.joins(:organizational_labels).where('organizational_labels.organization_id = ?', current_organization.id)
 
       	if params[:label_tag].present? && params[:label_tag].to_i == Label::ALL_SELECTED_LABEL[1]
@@ -708,9 +723,9 @@ class ContactsController < ApplicationController
                 if element.kind == "TextField"
                   if element.is_in_object?
                     if params[:survey_range_toggle] == "on" && params[:survey_range].reject(&:empty?).count == 2
-                      people = element.search_survey_people(ans, current_organization, option, params[:survey_range])
+                      people = element.search_survey_people(answer, current_organization, option, params[:survey_range])
                     else
-                      people = element.search_survey_people(ans, current_organization, option)
+                      people = element.search_survey_people(answer, current_organization, option)
                     end
                     people_ids = people.present? ? people.pluck(:id) : []
                   else
@@ -752,18 +767,28 @@ class ContactsController < ApplicationController
                   @people_scope = @people_scope.where(id: result_ids)
                 elsif element.kind == "DateField"
                   result_ids = []
-                  # start date
-                  if answer['start']['(1i)'].present?
-                    answer["start"] = "#{answer['start']['(1i)']}-#{'%02d' % answer['start']['(2i)'].to_i}-#{'%02d' % answer['start']['(3i)'].to_i}"
+                  if answer['start_day'].present? && answer['start_month'].present? && answer['start_year'].present?
+                    answer["start"] = "#{answer['start_year']}-#{'%02d' % answer['start_month'].to_i}-#{'%02d' % answer['start_day'].to_i}"
                   else
                     answer["start"] = ""
                   end
-                  # end date
-                  if answer['end']['(1i)'].present?
-                    answer["end"] = "#{answer['end']['(1i)']}-#{'%02d' % answer['end']['(2i)'].to_i}-#{'%02d' % answer['end']['(3i)'].to_i}"
+                  if answer['end_day'].present? && answer['end_month'].present? && answer['end_year'].present?
+                    answer["end"] = "#{answer['end_year']}-#{'%02d' % answer['end_month'].to_i}-#{'%02d' % answer['end_day'].to_i}"
                   else
                     answer["end"] = ""
                   end
+                  # # start date
+                  # if answer['start']['(1i)'].present?
+                  #   answer["start"] = "#{answer['start']['(1i)']}-#{'%02d' % answer['start']['(2i)'].to_i}-#{'%02d' % answer['start']['(3i)'].to_i}"
+                  # else
+                  #   answer["start"] = ""
+                  # end
+                  # # end date
+                  # if answer['end']['(1i)'].present?
+                  #   answer["end"] = "#{answer['end']['(1i)']}-#{'%02d' % answer['end']['(2i)'].to_i}-#{'%02d' % answer['end']['(3i)'].to_i}"
+                  # else
+                  #   answer["end"] = ""
+                  # end
                   params[:survey_answer][survey.id.to_s][question_id.to_s]['start'] = answer["start"]
                   params[:survey_answer][survey.id.to_s][question_id.to_s]['end'] = answer["end"]
 

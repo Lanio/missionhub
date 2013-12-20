@@ -1,0 +1,271 @@
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+
+#search-sidebar {
+  .side-search-links {
+    margin-top: 10px;
+    height: 10px;
+    a {
+      color: #555;
+    }
+  }
+  .side-search-field {
+    padding: 3px 5px;
+    color: #666;
+    height: 20px;
+    font-size: 13px;
+  }
+  #side-search-any {
+    #search_any {
+      width: 126px;
+      height: 25px;
+      font-size: 18px;
+    }
+    #search_any_button {
+      height: 34px;
+      display: inline-block;
+      line-height: 2;
+      padding-top: 5px;
+    }
+  }
+  #side-search-result {
+    padding-top: 10px;
+    .title {
+      font-family: Georgia, Serif;
+      font-style: italic;
+      font-weight: normal;
+      font-size: 18px;
+      color: #808284;
+    }
+    #side-search-result-buttons {
+      button.search_result_button {
+        margin-top: 8px;
+        padding: 5px 10px;
+        height: 26px;
+        width: 88px;
+        display: inline-block;
+      }
+    }
+  }
+  .side-search {
+    .search_info {
+      color: #aaa;
+      text-align: center;
+      padding: 10px;
+      font-style: italic;
+    }
+    .side-search-title {
+      margin: 10px 0 5px;
+      padding: 4px 5px;
+      font-size: 15px;
+      background: #2384ad;
+      color: white;
+      cursor: default;
+    }
+    .side-search-options {
+      display: none;
+      .side-search-survey .survey-title {
+        margin: 5px 0;
+        padding: 4px 5px;
+        background: #aaa;
+        color: white;
+        cursor: default;
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
+    }
+    &.active {
+      .side-search-options {
+        display: block;
+      }
+    }
+    .side-search-toggler {
+      padding: 7px 10px 7px 5px;
+      font-size: 13px;
+      color: #2384ad;
+      cursor: pointer;
+      .visible {
+        display: none;
+      }
+      .invisible {
+        display: block;
+      }
+      &.active {
+        .visible {
+          display: block;
+        }
+        .invisible {
+          display: none;
+        }
+      }
+    }
+    .side-search-options {
+      margin: 0;
+      overflow: hidden;
+      .side-search-option {
+
+//        &.checkboxes_only .actions {
+//          margin-top: 10px !important;
+//        }
+        &.singleton.active {
+          border-top: 2px dashed #2384ad;
+          border-bottom: 2px dashed #2384ad;
+          padding: 10px 0 15px;
+          margin: 10px 0;
+          background: #fdfdfd;
+        }
+        .options {
+          display: none;
+          margin: 5px 10px 5px;
+          padding: 3px 5px;
+          background: #f0f0f0;
+          &.active {
+            display: block;
+          }
+          .text_option {
+            font-weight: normal;
+            font-size: 12px;
+            cursor: pointer;
+            color: #808284;
+            padding: 1px 0 1px 5px;
+          }
+          .selected {
+            padding: 3px 5px;
+            display: block;
+            color: #808284;
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            };
+          }
+          .choices {
+            display: none;
+          }
+        }
+        .toggler {
+          padding: 4px 5px 0px 3px;
+          float: left;
+          cursor: pointer;
+          color: #888;
+          &:hover {
+            color: #aaa;
+          }
+          .expanded {
+            display: none;
+          }
+          .collapsed {
+            display: inline-block;
+          }
+          &.active {
+            .expanded {
+              display: inline-block;
+            }
+            .collapsed {
+              display: none;
+            }
+
+          }
+        }
+        .fields, .fields_active {
+          display: none;
+          &.active {
+            display: block;
+          }
+          &.fields_active {
+            display: block;
+          }
+          .field {
+            text-align: left;
+            margin: 0 10px;
+            &.text_field, &.date_field {
+              margin-bottom: 10px !important;
+            }
+            .textfield {
+              width: 150px;
+              padding: 3px 5px;
+            }
+            .dateselect {
+              padding-top: 4px;
+              .dateselect_intro {
+                text-align: center;
+                padding: 5px 10px 10px;
+                color: #666;
+                &.inactive {
+                  color: #aaa;
+                }
+              }
+              .dateselect_label {
+                display: inline-block;
+                width: 45px;
+                color: #666;
+                text-align: right;
+                &.inactive {
+                  color: #aaa;
+                }
+              }
+              .dateselect_field {
+                display: inline-block;
+              }
+            }
+          }
+          .actions {
+            margin: 5px 10px 12px;
+            .apply {
+              display: none;
+              button {
+                float: right;
+                display: inline-block;
+              }
+            }
+            .other, .clear {
+              height: 20px;
+              a {
+                color: #aaa;
+                text-decoration: none;
+              }
+            }
+          }
+        }
+        .title {
+          display: block;
+          margin-left: 14px;
+          font-weight: normal;
+          font-size: 14px;
+          cursor: pointer;
+          color: #808284;
+          padding: 3px 0 3px 5px;
+        }
+        .option {
+          padding-top: 3px;
+          color: #777;
+          &.checkbox {
+            padding-left: 10px;
+            &.choice_option {
+              padding-left: 0px;
+            }
+            .sidebar-label {
+              width: 115px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              display: inline-block;
+              &.wide {
+                width: 150px;
+              }
+            }
+          }
+          .count, .info {
+            color: #999;
+          }
+        }
+      }
+    }
+  }
+}
