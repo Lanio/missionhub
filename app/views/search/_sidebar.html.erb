@@ -10,19 +10,21 @@
     	</button>
     </div>
 
-    <!-- Active Filters -->
-
-    <% with_save_search = (params[:do_search] == "1" || params[:search] == "1" || params[:advanced_search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
-    <% if with_save_search %>
-      <div class="side-search-links">
+    <!-- Special Actions -->
+    <div class="side-search-links">
+      <% if params[:advanced_search] == "1" %>
         <div class="pull-right">
           <%= link_to("Reset All", all_contacts_path, id: 'search_people_filters_reset_all_button') %>
         </div>
+      <% end %>
+      <% with_save_search = (params[:do_search] == "1" || params[:search] == "1" || params[:advanced_search] == "1") && @people.length > 0 && !@saved_contact_search.full_path.present? %>
+      <% if with_save_search %>
         <div class="pull-left">
           <%= link_to("Save this Search", "", id: 'search_people_filters_save_search_button') %>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
+
     <!-- Available Filters -->
     <%- active = nil %>
     <%- active ||= params[:assigned_to].present? %>
