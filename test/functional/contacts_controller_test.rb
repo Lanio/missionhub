@@ -504,6 +504,7 @@ class ContactsControllerTest < ActionController::TestCase
         @contact3 = Factory(:person)
         @contact4 = Factory(:person)
         @contact5 = Factory(:person)
+        Factory(:email_address, email: 'user@email.com', person: @user.person)
         @user.person.organizations.first.add_leader(@user.person, @user.person)
         @user.person.organizations.first.add_contact(@contact1)
         @user.person.organizations.first.add_contact(@contact2)
@@ -566,7 +567,7 @@ class ContactsControllerTest < ActionController::TestCase
       end
       should "have header for assigned to specific person" do
         xhr :get, :index, {:assigned_to => @user.person.id}
-        assert_equal assigns(:header), "Assigned to #{@user.person.name}"
+        assert_equal "Assigned to #{@user.person.name}", assigns(:header)
       end
     end
 
