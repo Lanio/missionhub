@@ -60,6 +60,8 @@ class Person < ActiveRecord::Base
   has_many :received_sms, class_name: "ReceivedSms", foreign_key: "person_id"
   has_many :sms_sessions, inverse_of: :person
 
+  has_many :devices
+
   has_many :group_memberships
 
   has_one :person_photo
@@ -717,6 +719,12 @@ class Person < ActiveRecord::Base
       numbers = [[I18n.t("general.sms_no_phone_numbers"), 0]]
     end
     numbers
+  end
+
+  def send_notification(message)
+    devices.each { |device|
+      device.send_notification(message)
+    }
   end
 
   delegate :address1, :address1=, :city, :city=, :state, :state=, :zip, :zip=, :country, :country=, :dorm, :dorm=, :room, :room=, to: :current_or_blank_address

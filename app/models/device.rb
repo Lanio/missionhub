@@ -7,7 +7,16 @@ class Device < ActiveRecord::Base
   validates_uniqueness_of :device_token, :scope => :person_id
   after_save :ensure_timestamp
 
-  REDIS_NOTIFICATION_KEY "com.missionhub.device.notification.list"
+  IOS_PLATFORM = "ios"
+  ANDROID_PLATFORM = "android"
+  PLATFORMS = [Device::IOS_PLATFORM, Device::ANDROID_PLATFORM]
+
+  REDIS_NOTIFICATION_KEY = "com.missionhub.device.notification.list"
+
+  scope :active,
+        where("deleted_at IS NOT NULL")
+
+  scope :person, lambda { |person| { conditions: {person_id: person.id} } }
 
   def send_notification(message)
     payload                 = {}
