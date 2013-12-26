@@ -7,7 +7,6 @@ class Person < ActiveRecord::Base
   has_paper_trail :on => [:destroy],
                   :meta => { person_id: :id }
 
-  attr_accessible :avatar
   has_attached_file :avatar,
     :styles => { :medium => "200x200>", :thumb => "100x100>", big_square: "300x300#"},
     :default_url => "/images/:style/missing.png"
