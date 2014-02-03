@@ -1,0 +1,57 @@
+body.sessions.new {
+  #content {
+    background-image: url(/assets/welcome/people-blur-bg.jpg);
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-bottom: 1px solid #e1e1e1;
+
+    section[role="global"] {
+      text-align: center;
+      padding: 80px 0;
+
+      @include at-breakpoint($tablet) {
+        padding: 180px 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        @include at-breakpoint($tablet) {
+          font-size: 30px;
+        }
+      }
+
+      p {
+        margin: 0 0 30px;
+        font-size: 14px;
+        @include at-breakpoint($tablet) {
+          font-size: 19px;
+        }
+      }
+
+      .facebook {
+        display: block;
+        width: 399px * .7;
+        height: 57px * .7;
+        @include at-breakpoint($tablet) {
+          width: 399px;
+          height: 57px;
+        }
+        margin: 0 auto 30px;
+        background-image: url(/assets/welcome/fb-sign-in-button.png);
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        text-indent: -1000em;
+        overflow: hidden;
+      }
+
+      .cancel {
+        color: #616161;
+        text-decoration: underline;
+        font-size: 14px;
+      }
+    }
+  }
+}

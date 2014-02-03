@@ -48,6 +48,6 @@ class SessionsController < Devise::SessionsController
   end
 
   def pick_layout
-    mhub? ? 'mhub' : 'login'
+    mhub? ? 'mhub' : 'welcome'
   end
 end

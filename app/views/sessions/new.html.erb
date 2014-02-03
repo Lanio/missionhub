@@ -28,23 +28,13 @@
     <% end %>
   </center>
 <% else %>
-  <div class="splash login">
-    <div class="left width30">
-      <div class="loginscreen" style="text-align: center;">
-        <p class="error_container"><%= raw(flash[:error]) %></p>
-        <%= link_to(image_tag('facebookconnect.png'), '/users/auth/facebook', rel: 'external') %>
-        <p><a href="/"><%= t('.back') %></a></p>
-      </div>
-    </div>
+  <% body_classes "welcome sessions new" %>
 
-    <div class="right width68 instruct">
-      <h3 style="margin: 10px 0 0;"><%= t('.instructions') %>:</h3>
-      <p style="margin: 6px 0px 0 0;">
-      <%= t('.login_paragraph_html') %>
-      </p>
-    </div>
+  <h1><%= t('.login_welcome') %></h1>
+  <p><%= t('.login_instructions') %></p>
 
-    <div class="clear"></div>
+  <p class="error_container"><%= raw(flash[:error]) %></p>
 
-  </div>
+  <%= link_to t('.login_facebook_button'), '/users/auth/facebook', rel: 'external', class: "facebook" %>
+  <%= link_to t('.login_cancel'), root_path, class: "cancel" %>
 <% end %>
